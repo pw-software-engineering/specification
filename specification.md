@@ -1242,7 +1242,7 @@ oznaczająca konieczność kontaktu z hotelem w celu potwierdzenia
 płatności. Jest to sytuacja szczególna, która może być zależna od
 zewnętrznego dostawcy usług płatności i błędami w tym systemie płatności
 lub brakiem odpowiedniej synchronizacji (ten przypadek szczególny został
-opisany przy ([8.5.3](#payments)). Jeśli płatność zostanie potwierdzona przez
+opisany przy ([Payments](#payments)). Jeśli płatność zostanie potwierdzona przez
 hotel, jest odsyłana odpowiedź o sukcesie do serwera, w wyniku czego
 tworzony jest wpis o rezerwacji klienckiej po stronie serwera i odsyłana
 odpowiednia odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
@@ -1610,7 +1610,7 @@ czym polegał błąd.
 
 ## Zarządzanie rezerwacjami
 
-### `RESERVATION_CREATE` {#reservation_info}
+### `RESERVATION_CREATE`
 
 Komunikat przesyła szczegółowe informacje dot. rezerwacji. Serwer wysyła
 tę wiadomość natychmiast po prośbie klienta stworzenia tejże rezerwacji.
@@ -1690,7 +1690,7 @@ Oczekiwane odpowiedzi:
 -   `RESERVATION_GET_RESPONSE`\
     Szczegółowe info. dot. rezerwacji. Struktura wiadomości identyczna
     jak w komunikacie `RESERVATION_CREATE `(patrz:
-    [Reservation_info](#reservation_info)).
+    [Reservation_Create](#reservation_create)).
 
 -   `ID_UNKNOWN`\
     Nieznane ID rezerwacji.
