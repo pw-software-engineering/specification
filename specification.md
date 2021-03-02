@@ -8,14 +8,14 @@ title: |
   System rezerwacji pokoi hotelowych
 
   ------------------------------------------------------------------------
-
   \
   IO PROJEKT - Finalna Specyfikacja
 ---
+# TOC
+6. [Diagramy aktywności i sekwencji](#6)
+7. [Hotel-Serwer](#7)
 
 # Wprowadzenie
-* [Key Features](#Glosariusz)
-* 
 Celem projektu jest stworzenie systemu do rezerwacji pokoi w hotelach.
 Aplikacja pozwala obsłudze hotelu na udostępnienie oferty w systemie, a
 użytkownikowi na zarezerwowanie pokoju z oferty w określonym oknie
@@ -1092,7 +1092,7 @@ może wystawić opinię oferty, w ramach zrealizowanej rezerwacji pokoju
 hotelowego. Zapisywana jest wówczas recenzja klienta, natomiast obiekt
 rezerwacji przechodzi wówczas do stanu \"rezerwacji ocenionej\".
 
-# Diagramy aktywności i sekwencji
+# Diagramy aktywności i sekwencji <a name="6"></a>
 
 Poniżej prezentujemy diagramy sekwencji przedstawiające przebieg
 komunikacji pomiędzy modułami przy realizacji najistotniejszych naszym
@@ -1312,7 +1312,7 @@ procedurę synchronizacji danych w odniesieniu do konkretnej oferty
 hotelowej. Przesyłane są wówczas dane zawierające przedziały czasowe
 niedostępności ofert odpowiednio wyznaczone przez hotel.
 
-# Hotel-Serwer
+# Hotel-Serwer <a name="7"></a>
 
 Do przesyłania wiadomości używane są trwałe połączenia TCP. Wynika to z
 faktu, że komunikacja między modułami hotelowymi a modułem serwerowym
