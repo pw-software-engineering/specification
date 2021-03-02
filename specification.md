@@ -558,7 +558,7 @@ języku bazy, np SQL. Ze względu na to, że pobranie danych możliwe jest
 wyłącznie za pośrednictwem tej metody, **DataManager** agreguje obiekty
 wszystkich opisanych wyżej klas.
 
-### HotelInfo {#HotelInfo}
+### HotelInfo
 
 Przechowuje informacje o danym hotelu, takie jak lokalizacja, nazwa czy
 jego opis.
@@ -651,7 +651,7 @@ biznesowym. Metody:
     metody. Administrator hotelu może ofertę dowolnie zdezaktualizować
     lub zaktualizować ponownie, manipulując w ten sposób wachlarzem
     propozycji dla swoich potencjalnych klientów (więcej nt. stanów
-    klasy Offer patrz: [5.2](#offerStateDiagram)
+    klasy Offer patrz: (offerStateDiagram)
     Zwraca wartość bool określającą, czy operacja się powiodła.
 
 ### HotelManager
@@ -882,7 +882,7 @@ związanymi z ostatnio wysłaną wiadomością. Metody:
 Klasa zawierająca wysokopoziomowe metody dostępu do bazy danych związane
 z określonymi procesami biznesowymi. Agreguje w sobie i udostępnia
 wszelkie aktywne połączenia z hotelami. Posiada również wskazanie na
-**DataManagera** ([4.3.3](#serverModuleDataManager)). W przypadku błędów wykonania
+**DataManagera** (serverModuleDataManager). W przypadku błędów wykonania
 metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
 łapane w celu określenia typu błędu. Metody:
 
@@ -949,8 +949,8 @@ oraz ich szczegółowe opisy.
 
 ## Pokój hotelowy
 
-![image](checkpoint1/RoomStateDiagram.png){width="\\linewidth"}\
-\
+![image](checkpoint1/RoomStateDiagram.png)
+
 Z każdą ofertą hotelową jest związany co najmniej jeden pokój, którego
 opis jest zawarty w reprezentującej go ofercie. Po utworzeniu nowego
 pokoju i dodaniu go do puli pokoi związanych z daną ofertą, pokój
@@ -971,7 +971,7 @@ usunięcia z puli pokoi związanych z daną ofertą pod warunkiem, że pokój
 znajduje się w stanie \"wolny\" oraz nie są przewidziane żadne jego
 rezerwacje.
 
-## Oferta pokoju {#offerStateDiagram}
+## Oferta pokoju
 
 ![image](checkpoint1/OfferStateDiagram.png)
 
@@ -1114,7 +1114,7 @@ Przebieg komunikacji dla każdej z tych operacji prezentujemy poniżej.
 ### Dodawanie oferty
 
 ![image](Aktywnosc/IO_Aktywności-Dodawanie%20oferty.png)
-![image](Sekwencje/Offer_Add.png){width="\\linewidth"}
+![image](Sekwencje/Offer_Add.png)
 
 Dodawanie oferty to operacja między Systemem Hotelowym, a Serwerem.
 System Hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
@@ -1192,10 +1192,9 @@ Podstawą systemu jest możliwość składania rezerwacji przez klientów. W
 poniższej podsekcji zobaczymy jak wygląda z grubsza komunikacja między
 modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 
-### Tworzenie rezerwacji {#reservation_diagram}
+### Tworzenie rezerwacji
 
 ![image](Aktywnosc/IO_Aktywności-Tworzenie%20rezerwacji.png)
-
 ![image](Sekwencje/Reservation_Create.png)
 
 Proces tworzenia rezerwacji zaczyna się po wybraniu przez użytkownika
@@ -1228,7 +1227,7 @@ oznaczająca konieczność kontaktu z hotelem w celu potwierdzenia
 płatności. Jest to sytuacja szczególna, która może być zależna od
 zewnętrznego dostawcy usług płatności i błędami w tym systemie płatności
 lub brakiem odpowiedniej synchronizacji (ten przypadek szczególny został
-opisany przy ([8.5.3](#payments)). Jeśli płatność zostanie potwierdzona przez
+opisany przy (payments). Jeśli płatność zostanie potwierdzona przez
 hotel, jest odsyłana odpowiedź o sukcesie do serwera, w wyniku czego
 tworzony jest wpis o rezerwacji klienckiej po stronie serwera i odsyłana
 odpowiednia odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
@@ -1236,7 +1235,7 @@ odpowiednia odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
 ### Anulowanie rezerwacji
 
 ![image](Aktywnosc/IO_Aktywności-Usuwanie%20rezerwacji.png)
-![image](Sekwencje/Reservation_Cancel.png){width="\\linewidth"}
+![image](Sekwencje/Reservation_Cancel.png)
 
 Po wybraniu swojej rezerwacji klient ma możliwość anulowania jej.
 Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do Serwera
@@ -1273,8 +1272,8 @@ opini do systemu.
 
 ### Dodawanie opinii
 
-![image](Aktywnosc/IO_Aktywności-Dodawanie%20oceny.png){width="\\linewidth"}
-![image](Sekwencje/Opinion_Add.png){width="\\linewidth"}
+![image](Aktywnosc/IO_Aktywności-Dodawanie%20oceny.png)
+![image](Sekwencje/Opinion_Add.png)
 
 Klient może dodać opinie do wybranej przez siebie rezerwacji którą już
 odbył. W tym celu wypełnia formularz w Aplikacji Klienckiej, który jest
@@ -1285,8 +1284,8 @@ powiodła czy nie.
 
 ## Synchronizacja
 
-![image](Sekwencje/Synchronization_Server.png.png){width="\\linewidth"}
-![image](Sekwencje/Synchronization_Hotel.png){width="\\linewidth"}
+![image](Sekwencje/Synchronization_Server.png.png)
+![image](Sekwencje/Synchronization_Hotel.png)
 
 W dowolnym momencie dane między hotelem a serwerem dotyczące dostępności
 ofert mogą się zdesynchronizować. Może to wynikać np. z błędów
