@@ -1635,7 +1635,7 @@ Oczekiwane odpowiedzi:
     rezerwację, w ramach której została utworzona dana płatność (innymi
     słowy, para \[HotelID, ReservationID\] jest tutaj kluczem głównym).
     Informacje te są potrzebne głównie dla późniejszego wykorzystania
-    przez klienta przy płatności (patrz: /payments).
+    przez klienta przy płatności (patrz: [/payments](#payments)).
 
     <img src="Rezerwacje/paymentInfo.jpg">
 
@@ -1666,7 +1666,7 @@ Klient może zrezygnować ze swojej rezerwacji w dowolnym momencie. Zaraz
 po otrzymaniu przez serwer takiej prośby, przekazuje ją do hotelu
 niniejszym komunikatem. Wewnątrz wiadomości znajduje się ID rezerwacji,
 której dotyczy. Struktura jest więc identyczna jak w
-([7.4.2](#payment_success).
+([Payment_success](#payment_success).
 
 Oczekiwane odpowiedzi:
 
@@ -1683,14 +1683,14 @@ Oczekiwane odpowiedzi:
 
 Zapytanie o szczegóły konkretnej rezerwacji - na przykład w celu
 przekazania tych informacji klientowi. Struktura wiadomości identyczna
-jak w ([7.4.2](#payment_success)).
+jak w ([Payment_success](#payment_success)).
 
 Oczekiwane odpowiedzi:
 
 -   `RESERVATION_GET_RESPONSE`\
     Szczegółowe info. dot. rezerwacji. Struktura wiadomości identyczna
     jak w komunikacie `RESERVATION_CREATE `(patrz:
-    [7.4.1](#reservation_info)).
+    [Reservation_info](#reservation_info)).
 
 -   `ID_UNKNOWN`\
     Nieznane ID rezerwacji.
