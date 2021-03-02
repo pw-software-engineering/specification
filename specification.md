@@ -11,9 +11,11 @@ Artur Michalski, Ignacy Sujecki, Mateusz Tabor, Dawid Maksymowski, Damian Wyszo�
 
 <br>
 
-##### Table of Contents
-[Podział na moduły](#user-stories)
-[test2](#Podział-na-moduły)
+#### Table of Contents
+1. [Podział na moduły](#all-modules)
+2. [User stories](#user-stories)
+3. [Diagramy PU](#pu-diagrams)
+4. [Use cases](#use-cases)
 
 # Wprowadzenie
 
@@ -84,7 +86,7 @@ Klienta.
     i w zależności od nich może edytować i pobierać dane z systemu
     hotelowego, które mogą usprawniać jego pracę.
 
-# Podział na moduły
+# Podział na moduły <a name="all-modules"></a>
 
 System składa się z 3 modułów niezależnych od siebie. Mogą one (choć nie
 muszą) być uruchomione i działać na oddzielnych maszynach. Moduły te to:
@@ -128,9 +130,9 @@ dostępności ofert serwera z systemami hotelowymi wystawiającymi te
 oferty w celu stwierdzenia dostępności oferty w imieniu danego hotelu. W
 systemie jest tylko jeden moduł serwerowy.\
 
-# Diagramy PU i User stories <a name="user-stories"></a>
+# Diagramy PU i User stories
 
-## User stories
+## User stories <a name="user-stories"></a>
 
 | ja jako... | chcę... | po to, żeby... | Flaga |
 | --- | --- | --- | --- |
@@ -321,7 +323,7 @@ część z koniecznych w tym celu funkcjonalności została opisana poniżej:
     przez klienta w przypadku gdy oczekiwane usługi nie mogą być przez
     dany hotel świadczone
 
-## Diagramy PU
+## Diagramy PU <a name="pu-diagrams"></a>
 
 ### Aplikacja kliencka
 
@@ -364,10 +366,9 @@ wszystkich dostępnych ofert danego hotelu. Są to funkcje niezbędne do
 prawidłowej wymiany informacji między systemem hotelowym a serwerem, a
 zarazem ich efektywnej pracy.
 
-## Przykładowe przypadki użycia (use cases)
+## Przykładowe przypadki użycia (use cases) <a name="use-cases"></a>
 
 ### Wyszukanie pokoju przez klienta
-
 
  | Nazwa:  | Klient wyszukuje pokój |
  | --- | --- |
