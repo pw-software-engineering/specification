@@ -396,9 +396,7 @@ faktycznej technologii, która została użyta do implementacji tej części
 
 ## Aplikacja Kliencka
 
-::: {.center}
 ![image](checkpoint1/IO%20Klasy-Client_App_Module.png)
-:::
 
 ### ClientManager
 
@@ -492,9 +490,7 @@ Klasa przetrzymująca wszystkie informacje o opinii.
 
 ## Moduł hotelowy
 
-::: {.center}
 ![image](checkpoint1/IO%20Klasy-Hotel_Module.png)
-:::
 
 ### OfferInfo
 
@@ -728,9 +724,7 @@ ServerConnectionOutgoing. Metody:
 
 ## Moduł Serwerowy
 
-::: {.center}
 ![image](checkpoint1/IO%20Klasy-Server_Module.png)
-:::
 
 ### Client
 
