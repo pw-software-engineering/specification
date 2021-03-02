@@ -651,8 +651,7 @@ biznesowym. Metody:
     metody. Administrator hotelu może ofertę dowolnie zdezaktualizować
     lub zaktualizować ponownie, manipulując w ten sposób wachlarzem
     propozycji dla swoich potencjalnych klientów (więcej nt. stanów
-    klasy Offer patrz: [5.2](#offerStateDiagram){reference-type="ref"
-    reference="offerStateDiagram"}).\
+    klasy Offer patrz: [5.2](#offerStateDiagram)
     Zwraca wartość bool określającą, czy operacja się powiodła.
 
 ### HotelManager
@@ -678,8 +677,7 @@ ServerConnectionOutgoing. Metody:
     ofertę dowolnie zdezaktualizować lub zaaktualizować ponownie,
     manipulując w ten sposób wachlarzem propozycji dla swoich
     potencjalnych klientów (więcej nt. stanów klasy Offer patrz:
-    [5.2](#offerStateDiagram){reference-type="ref"
-    reference="offerStateDiagram"}).\
+    [5.2](#offerStateDiagram).
     Zwracają wartość bool określającą, czy operacja się powiodła.
 
 -   CheckReservationAvailability\
@@ -884,8 +882,7 @@ związanymi z ostatnio wysłaną wiadomością. Metody:
 Klasa zawierająca wysokopoziomowe metody dostępu do bazy danych związane
 z określonymi procesami biznesowymi. Agreguje w sobie i udostępnia
 wszelkie aktywne połączenia z hotelami. Posiada również wskazanie na
-**DataManagera** ([4.3.3](#serverModuleDataManager){reference-type="ref"
-reference="serverModuleDataManager"}). W przypadku błędów wykonania
+**DataManagera** ([4.3.3](#serverModuleDataManager)). W przypadku błędów wykonania
 metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
 łapane w celu określenia typu błędu. Metody:
 
@@ -1231,8 +1228,7 @@ oznaczająca konieczność kontaktu z hotelem w celu potwierdzenia
 płatności. Jest to sytuacja szczególna, która może być zależna od
 zewnętrznego dostawcy usług płatności i błędami w tym systemie płatności
 lub brakiem odpowiedniej synchronizacji (ten przypadek szczególny został
-opisany przy ([8.5.3](#payments){reference-type="ref"
-reference="payments"})). Jeśli płatność zostanie potwierdzona przez
+opisany przy ([8.5.3](#payments)). Jeśli płatność zostanie potwierdzona przez
 hotel, jest odsyłana odpowiedź o sukcesie do serwera, w wyniku czego
 tworzony jest wpis o rezerwacji klienckiej po stronie serwera i odsyłana
 odpowiednia odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
@@ -1649,8 +1645,7 @@ Klient może zrezygnować ze swojej rezerwacji w dowolnym momencie. Zaraz
 po otrzymaniu przez serwer takiej prośby, przekazuje ją do hotelu
 niniejszym komunikatem. Wewnątrz wiadomości znajduje się ID rezerwacji,
 której dotyczy. Struktura jest więc identyczna jak w
-([7.4.2](#payment_success){reference-type="ref"
-reference="payment_success"}).
+([7.4.2](#payment_success)).
 
 Oczekiwane odpowiedzi:
 
@@ -1667,16 +1662,14 @@ Oczekiwane odpowiedzi:
 
 Zapytanie o szczegóły konkretnej rezerwacji - na przykład w celu
 przekazania tych informacji klientowi. Struktura wiadomości identyczna
-jak w ([7.4.2](#payment_success){reference-type="ref"
-reference="payment_success"}).
+jak w ([7.4.2](#payment_success)).
 
 Oczekiwane odpowiedzi:
 
 -   `RESERVATION_GET_RESPONSE`\
     Szczegółowe info. dot. rezerwacji. Struktura wiadomości identyczna
     jak w komunikacie `RESERVATION_CREATE `(patrz:
-    [7.4.1](#reservation_info){reference-type="ref"
-    reference="reservation_info"}).
+    [7.4.1](#reservation_info)).
 
 -   `ID_UNKNOWN`\
     Nieznane ID rezerwacji.
