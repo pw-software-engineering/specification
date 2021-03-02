@@ -1,17 +1,15 @@
+<img src="MINI logo long.png" width="100%"></img>
 ---
-author:
-- |
-  Artur Michalski, Ignacy Sujecki, Mateusz Tabor,\
-  Dawid Maksymowski, Damian Wyszołmirski
-title: |
-  ![image](MINI logo long.png){width="\\textwidth"}\
-  System rezerwacji pokoi hotelowych
+# Autorzy:
+Artur Michalski, Ignacy Sujecki, Mateusz Tabor, Dawid Maksymowski, Damian Wyszołmirski
 
-  ------------------------------------------------------------------------
+<br>
+<br>
 
-  \
-  IO PROJEKT - Finalna Specyfikacja
----
+
+# System rezerwacji pokoi hotelowych
+
+<br>
 
 # Wprowadzenie
 
@@ -130,8 +128,41 @@ systemie jest tylko jeden moduł serwerowy.\
 
 ## User stories
 
-::: {.center}
-:::
+| ja jako... | chcę... | po to, żeby... | Flaga |
+| --- | --- | --- | --- |
+| klient | dokonać płatności za rezerwację | potwierdzić rezerwację | MH |
+| klient | zarezerwować pokój |  nie martwić się jego brakiem | MH |
+| klient | wyszukiwać pokoje po kryteriach | znaleźć pokój, który spełnia moje oczekiwania | MH |
+| klient | wyszukiwać hotele po kryteriach | znaleźć hotel, który spełnia moje oczekiwania | MH |
+| klient | móc anulować rezerwację | | SH |
+| klient | móc zostawić opinię z oceną | wyrazić swoją opinię na temat oferty | SH |
+| klient | mieć kontakt z hotelem | móc dopytać o szczegóły oferty | CH |
+| manager hotelu | umieszczać nowe oferty |  | MH |
+| manager hotelu | edytować oferty | zmieniać wolne terminy i pokazać klientowi moją aktualną ofertę | MH |
+| manager hotelu | zdejmować oferty |  | MH |
+| manager hotelu | wprowadzać promocje do swoich ofert | zachęcić klientów do pobytu | CH |
+| manager hotelu | móc zdjąć rezerwację z oferty | anulować rezerwację | CH |
+| manager hotelu | dodawać zdjęcia | uatrakcyjnić ofertę | CH |
+| manager hotelu | mieć kontakt z klientem | poinformować go o statusie rezerwacji | CH |
+| manager hotelu | zakładać konta pracownikom | zautomatyzować przepływ informacji | CH |
+| manager hotelu | grupować pokoje | ułatwić przypisywanie pracownikom zadań | CH |
+| system hotelowy | mieć możliwość wymiany informacji z serwerem | przetworzyć zapytania klientów i dostarczać serwerowi informacji o hotelu | MH |
+| system hotelowy | mieć możliwość edycji kalendarzadostępności pokoi w hotelu | - | MH |
+| system hotelowy | móc rezerwować pokoje | - | SH |
+| system hotelowy | anulować rezerwację pokoju | - | CH |
+| system hotelowy | mieć możliwość kontaktu z klientem | poinformować o ewentualnych zmianach | CH |
+| obsługa hotelowa | móc rezerwować pokoje | klienci mogli rezerwować pokoje na miejscu u recepcjonisty | CH |
+| obsługa hotelowa | anulować rezerwację pokoju na życzenie klienta | - | CH |
+| obsługa hotelowa | wiedzieć kiedy zwalnia się pokój | móc go posprzątać | CH |
+| obsługa hotelowa | mieć przejrzyste podsumowanie zwalniających się pokoi | móc sobie łatwo zorganizować pracę | CH |
+| obsługa hotelowa | wiedzieć ile osób wykupiło wyżywienie | wiedzieć ile przygotować porcji | CH |
+| obsługa hotelowa | wiedzieć ile jest dzieci, dorosłych | animator mógł lepiej dostosowywać treść pokazów, zajęć | WH |
+| serwer | wysyłać zapytania o wolne pokoje | odpowiadać na zapytania klienta | MH |
+| serwer | znać lokalizacje hoteli | pokazywać oferty z miejsc wybranych przez klienta} | MH |
+| serwer | znać opinie hoteli | pokazywać oferty o minimalnym  standardzie wybranym przez klienta | MH |
+| serwer | znać średnie ceny hoteli | pokazywać oferty z zakresu cenowego  wybranego przez klienta | MH |
+| serwer | znać rodzaj dostępnych pokoi hotelu | pokazywać hotele mające w ofercie konkretne pokoje | MH |
+| serwer | znać udogodnienia hoteli | pokazywać oferty z z udogodnieniami  wybranymi przez klienta | MH |
 
 Powyższa tabela przedstawia przewidywane przez nasz zespół historie
 użytkowników naszego systemu. Na jej podstawie można w relatywnie prosty
@@ -290,8 +321,9 @@ część z koniecznych w tym celu funkcjonalności została opisana poniżej:
 
 ### Aplikacja kliencka
 
-![image](checkpoint1/Use cases - klient.png){width="\\linewidth"} W
-obrębie aplikacji klienckiej dowolny klient będzie mógł wyszukać
+<img src="checkpoint1/Use cases - klient.png" width="100%"></img>
+
+W obrębie aplikacji klienckiej dowolny klient będzie mógł wyszukać
 interesujący go hotel lub hotele wysyłając zapytanie z podanymi przez
 niego kryteriami do serwera, zarezerwować interesujący go pokój
 (równocześnie opłacając daną rezerwację) lub zarządzać swoimi
@@ -301,8 +333,9 @@ pobycie.
 
 ### Hotel
 
-![image](checkpoint1/Use cases - hotel.png){width="\\linewidth"} Moduł
-hotelowy wspomaga operowanie danym hotelem jego obsłudze poprzez system
+<img src="checkpoint1/Use cases - hotel.png" width="100%"></img>
+
+Moduł hotelowy wspomaga operowanie danym hotelem jego obsłudze poprzez system
 hotelowy. W obrębie systemu obsługa hotelu ma dostęp do listy obecnie
 wynajętych pokoi i łącznej liczby osób w celu np. wyznaczenia
 odpowiedniej pory posprzątania danych pokoi. Recepcjoniści, oprócz
@@ -315,8 +348,9 @@ promocji), jak również bezpośrednia komunikacja z klientem.
 
 ### Serwer
 
-![image](checkpoint1/Use cases - serwer.png){width="\\linewidth"} W
-module serwera przewidywane są funkcjonalności synchronizacji
+<img src="checkpoint1/Use cases - serwer.png" width="100%"></img>
+
+W module serwera przewidywane są funkcjonalności synchronizacji
 (udostępnienia) danych o lokalizacji i dostępności danego hotelu między
 serwerem a systemem hotelowym, przekazania informacji o rezerwacji
 jakiegoś pokoju (w tym również danych o kliencie, który dany pokój
@@ -329,6 +363,19 @@ zarazem ich efektywnej pracy.
 ## Przykładowe przypadki użycia (use cases)
 
 ### Wyszukanie pokoju przez klienta
+
+
+ | Nazwa:  | Klient wyszukuje pokój |
+ | --- | --- |
+ | Krótki opis:  | Na życzenie klienta do hoteli wysyłane jest zapytanie o pokoje spełniające dane kryteria |
+ | Warunki startowe:  | Klient wybrał hotele i warunki jakie muszą spełniać pokoje |
+ | Warunki kończące:  | Klient widzi listę pokoi spełniających warunki |
+ | Możliwe błędy  | Przerwanie połączenia |
+ | W razie błędu:  | Informacja o błędzie połączenia |
+ | Aktorzy:  | Klient, serwer, system hotelowy |
+ | Zapalnik:  | Klient wysyła prośbę do serwera z podanymi atrybutami filtrowania (region, ocena itp.) |
+ | Standardowy proces:  | (1) Klient wysyła zapytanie<br>(2) Serwer odsyła listę do klienta wraz z dołączonymi do ofert opiniami<br>(3) Klientowi wyświetlona jest lista pokoi |
+ | Proces alternatywny:  | Zerwanie połączenia, może nastąpić w każdym kroku.<br>Klient jest informowany o zaistniałych problemach z połączeniem |
 
 W przypadku wyszukiwania przez klienta interesujących go ofert musi on
 najpierw wybrać hotele oraz parametry pokoi, następnie wysłać zapytanie
@@ -343,6 +390,19 @@ odpowiednia informacja.
 
 ### Dodanie nowej oferty pokoju do systemu przez managera hotelu
 
+
+| Nazwa: | Manager umieszcza nową ofertę |
+| --- | --- |
+| Krótki opis: | Manager umieszcza w bazie hotelowej nową ofertę |
+| Warunki startowe: | Serwer hotelowy działa |
+| Warunki kończące: | Nowa oferta jest w bazie |
+| Możliwe błędy | Brak wymaganego pola |
+| W razie błędu: | Wyświetlić komunikat o błędzie i nie dodawać oferty do bazy |
+| Aktorzy: | Manager i system hotelowy |
+| Zapalnik: | Próba dodania oferty do bazy |
+| Standardowy proces: | (1) Manager stwierdza że chce wprowadzić nową ofertę<br>(2) Manager wprowadza dane do formularza<br>(3) Potwierdza zakończenie<br>(4) Formularz został wypełniony poprawnie<br>(5) System hotelowy zgodnie z formularzem wkleja nową ofertę do bazy danych<br>(6) System hotelowy synchronizuje się z modułem serwerowym co skutkuje pojawieniem się oferty w bazie danych serwera |
+| Proces alternatywny: | (4) Formularz nie został wypełniony poprawnie<br>(5) Manager zostaje poinformowany o błędzie i oferta nie jest dodawana |
+
 W sytuacji, kiedy wymagane jest dodanie nowej oferty pokoju, manager
 hotelu wypełnia odpowiedni formularz z parametrami pokoju. Jeśli któreś
 pole nie zostało wypełnione poprawnie (np. pola wymagane są puste lub
@@ -353,6 +413,18 @@ danych hotelu zostanie zsynchronizowana z serwerem i dane oferty pojawią
 się w bazie danych serwera agregującego.
 
 ### Rezerwacja pokoju przez klienta
+
+| Nazwa: | Rezerwacja pokoju |
+| --- | --- |
+| Krótki opis: | Klient dokonuje rezerwacji w wybranym hotelu i wybranej oferty |
+| Warunki startowe: | Wybrana przez klienta oferta jest dostępna w oparciu o dane serwera |
+| Warunki kończące: | Rezerwacja pokoju przez klienta na wybrany okres |
+| Możliwe błędy | Niedostępność oferty wynikająca z braku synchronizacji między hotelem a serwerem |
+| W razie błędu: | Wyświetlić komunikat o błędzie i zakończyć proces tworzenia rezerwacji<br>Przeprowadznie synchronizacji po stronie serwera z hotelem |
+| Aktorzy: | Klient, serwer, hotel |
+| Zapalnik: | Próba rezerwacji pokoju |
+| Standardowy proces: | (1) Klient wyszukuje oferty spełniającą jego oczekiwania<br>(2) Klient wysyła żądanie do serwera o utworzenie rezerwacji<br>(3) Serwer sprawdza dostępność oferty w wybranym przedziale czasowym w oparciu o lokalne dane<br>(4) Rezerwacja jest przekazywana hotelowi i sprawdzana jest ponownie dostępność oferty<br>(5) Hotel tworzy wpis o rezerwacji, przesyła serwerowi informacji o sukcesie utworzenia rezerwacji<br>(6) Wysyłany jest komunikat do klienta o poprawnym utworzeniu nowej rezerwacji |
+| Proces alternatywny: | (2.5) Rezerwacja nie jest możliwa (serwer stwierdza brak dostępności ofertyw oparciu o lokalne dane)<br>(3) Rezerwacja zostaje anulowana<br>(4) Klient zostaje poinformowany o niepowodzeniu rezerwacji |
 
 Kiedy klient wybrał interesującą go ofertę rezerwacji, wysyła informację
 o próbie rezerwacji pokoju. Jeżeli serwer stwierdzi, że oferta
@@ -396,9 +468,7 @@ faktycznej technologii, która została użyta do implementacji tej części
 
 ## Aplikacja Kliencka
 
-::: {.center}
-![image](checkpoint1/IO Klasy-Client_App_Module.png)
-:::
+<img src="checkpoint1/IO Klasy-Client_App_Module.png" width="100%"></img>
 
 ### ClientManager
 
@@ -492,9 +562,7 @@ Klasa przetrzymująca wszystkie informacje o opinii.
 
 ## Moduł hotelowy
 
-::: {.center}
-![image](checkpoint1/IO Klasy-Hotel_Module.png)
-:::
+<img src="checkpoint1/IO Klasy-Hotel_Module.png"></img>
 
 ### OfferInfo
 
