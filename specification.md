@@ -11,6 +11,10 @@ Artur Michalski, Ignacy Sujecki, Mateusz Tabor, Dawid Maksymowski, Damian Wyszo�
 
 <br>
 
+##### Table of Contents
+[Podział na moduły](#user-stories)
+[test2](#Podział-na-moduły)
+
 # Wprowadzenie
 
 Celem projektu jest stworzenie systemu do rezerwacji pokoi w hotelach.
@@ -124,7 +128,7 @@ dostępności ofert serwera z systemami hotelowymi wystawiającymi te
 oferty w celu stwierdzenia dostępności oferty w imieniu danego hotelu. W
 systemie jest tylko jeden moduł serwerowy.\
 
-# Diagramy PU i User stories {#userStories}
+# Diagramy PU i User stories <a name="user-stories"></a>
 
 ## User stories
 
