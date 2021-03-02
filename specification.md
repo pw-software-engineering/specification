@@ -14,7 +14,7 @@ title: |
 ---
 
 # Wprowadzenie
-* [Key Features](##Glosariusz)
+* [Key Features](#Glosariusz)
 * 
 Celem projektu jest stworzenie systemu do rezerwacji pokoi w hotelach.
 Aplikacja pozwala obsłudze hotelu na udostępnienie oferty w systemie, a
