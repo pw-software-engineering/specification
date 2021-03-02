@@ -11,7 +11,7 @@ Artur Michalski, Ignacy Sujecki, Mateusz Tabor, Dawid Maksymowski, Damian Wyszo�
 
 <br>
 
-#### Spis treści
+
 Table of Contents
 =================
 
@@ -58,8 +58,8 @@ Table of Contents
       * [Moduł Serwerowy](#moduł-serwerowy-1)
          * [Client](#client-1)
          * [ClientConnection](#clientconnection)
-         * [DataManager {#serverModuleDataManager}](#datamanager-servermoduledatamanager)
-         * [HotelInfo {#hotelinfo-1}](#hotelinfo-hotelinfo-1)
+         * [DataManager](#datamanager-1)
+         * [HotelInfo](#hotelinfo-2)
          * [HotelSearchOptions](#hotelsearchoptions-1)
          * [OfferSearchOptions](#offersearchoptions-1)
          * [ReservationInfo](#reservationinfo-2)
@@ -83,7 +83,7 @@ Table of Contents
          * [Edytowanie oferty](#edytowanie-oferty)
          * [Wyszukiwanie oferty](#wyszukiwanie-oferty)
       * [Rezerwacja](#rezerwacja)
-         * [Tworzenie rezerwacji {#reservation_diagram}](#tworzenie-rezerwacji-reservation_diagram)
+         * [Tworzenie rezerwacji](#tworzenie-rezerwacji)
          * [Anulowanie rezerwacji](#anulowanie-rezerwacji)
          * [Tworzenie rezerwacji lokalnie](#tworzenie-rezerwacji-lokalnie)
       * [Opinia](#opinia)
@@ -948,13 +948,13 @@ hotelu wykorzystując metodę `GetHotelConnection` w ramach dalszej
 realizacji określonego procesu biznesowego (np. tworzenie rezerwacji)
 jednocześnie oczekując na odpowiedź od hotelu.
 
-### DataManager {#serverModuleDataManager}
+### DataManager
 
 Klasa będąca interfejsem bazy danych. W serwerze jest tylko jedna
 instancja tej klasy, która jest używana bezpośrednio przez klasę
 ServerManager.
 
-### HotelInfo {#hotelinfo-1}
+### HotelInfo
 
 Klasa trzymająca informacje o hotelach korzystających z serwisu.
 
@@ -1399,7 +1399,7 @@ Podstawą systemu jest możliwość składania rezerwacji przez klientów. W
 poniższej podsekcji zobaczymy jak wygląda z grubsza komunikacja między
 modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 
-### Tworzenie rezerwacji {#reservation_diagram}
+### Tworzenie rezerwacji
 
 <img src="Aktywnosc/IO_Aktywności-Tworzenie rezerwacji.png">
 
@@ -2231,7 +2231,7 @@ Formularz został wypełniony następującymi danymi:
 
 Następuje wymiana wiadomości:
 
--   Hotel $\rightarrow$ Serwer `OFFER_ADD_REQUEST`\
+-   Hotel &#8594; Serwer `OFFER_ADD_REQUEST`\
     Do modułu serwerowego przesłany zostaje zserializowany obiekt
     oferty. Oferta jest walidowana, a następnie dodawana do lokalnej
     bazy danych serwera. Powiedzmy, że oferta zostaje dodana do
@@ -2306,7 +2306,7 @@ Formularz został wypełniony następującymi danymi:
 
 Następuje wymiana wiadomości:
 
--   Hotel $\rightarrow$ Serwer `OFFER_EDIT_REQUEST`\
+-   Hotel &#8594; Serwer `OFFER_EDIT_REQUEST`\
     Do modułu serwerowego przesłany zostaje zserializowany obiekt
     oferty. Oferta jest walidowana, a następnie uaktualniany jest
     stosowny wpis w bazie danych serwera.
@@ -2367,7 +2367,7 @@ Wybrana przez niego oferta ma następujące ID:
 
 Następuje wymiana wiadomości:
 
--   Hotel $\rightarrow$ Serwer `OFFER_DELETE_REQUEST`\
+-   Hotel &#8594; Serwer `OFFER_DELETE_REQUEST`\
     Do modułu serwerowego przesłane zostaje OfferID=3. Ze stosownej
     tabeli usuwany jest wpis zawierający żądane OfferID.
 
@@ -2397,7 +2397,7 @@ ID przesyłana jest odpowiedź `OFFER_DELETE_FAILURE`.
 Klient wyszukuje oferty. Moduły pomiędzy którymi odbywa się komunikacja:
 Client, Serwer. Następuje wymiana wiadomości:
 
--   Client $\rightarrow$ Serwer `/Hotel GET`\
+-   Client &#8594; Serwer `/Hotel GET`\
     Formularz z HotelSearchOptions został wypełniony w następujący
     sposób:
 
@@ -2414,7 +2414,7 @@ Client, Serwer. Następuje wymiana wiadomości:
 
     -   HotelID: 2
 
--   Client $\rightarrow$ Serwer `/Hotel/1 GET`\
+-   Client &#8594; Serwer `/Hotel/1 GET`\
     Klient decyduje się na skorzystanie z usług oferowanych przez hotel
     o ID równym 1.
 
@@ -2422,7 +2422,7 @@ Client, Serwer. Następuje wymiana wiadomości:
     Serwer zwraca informacje o wybranym hotelu wraz z możliwością
     przeglądania jego ofert.
 
--   Client $\rightarrow$ Serwer `/Hotel/1/Offer GET`\
+-   Client &#8594; Serwer `/Hotel/1/Offer GET`\
     Formularz z OfferSearchOptions został wypełniony w następujący
     sposób:
 
@@ -2443,7 +2443,7 @@ Client, Serwer. Następuje wymiana wiadomości:
 
     -   OfferID: 3
 
--   Client $\rightarrow$ Serwer `/Hotel/1/Offer/3 GET`\
+-   Client &#8594; Serwer `/Hotel/1/Offer/3 GET`\
     Klient decyduję się na wybór oferty o ID=3.
 
 -   Client $\leftarrow$ Serwer `HTTP 200`\
@@ -2492,10 +2492,10 @@ to wprowadzana zostaje cofnięta, a wykryta zostaje wprowadzona do
 systemu i operacja kończy się niepowodzeniem. Z punktu widzenia całego
 systemu nie różni się to niczym od przeprowadzenia synchronizacji.
 
-1.  Hotel $\rightarrow$ Serwer `Hotel_SYNC_REQUEST`\
+1.  Hotel &#8594; Serwer `Hotel_SYNC_REQUEST`\
     Rozpoczęcie synchronizacji.
 
-2.  Serwer $\rightarrow$ Hotel `HOTEL_SYNC_RESPONSE_SUCCESS`\
+2.  Serwer &#8594; Hotel `HOTEL_SYNC_RESPONSE_SUCCESS`\
     Poprawnie przeprowadzono synchronizację
 
 W wypadku gdy:
@@ -2514,10 +2514,10 @@ wybiera dla jednej z nich opcję dodania Opinii. Następnie wypełnia
 formularz i przesyła go do serwera. Serwer następnie odsyła info o id
 nadane Opinii. Z punktu widzenia systemu sytuacja wygląda następująco:
 
-1.  Client $\rightarrow$ Serwer `/Reservations GET`\
+1.  Client &#8594; Serwer `/Reservations GET`\
     Pobieranie własnych rezerwacji.
 
-2.  Client $\rightarrow$ Serwer `/Review POST`\
+2.  Client &#8594; Serwer `/Review POST`\
     Klient wysyła formularz i dostaje zwrot z id Opinii.
 
 W wypadku gdy:
@@ -2540,18 +2540,18 @@ rezerwację i stąd mieć możliwość usunięcia Opinii przypisanej do danej
 rezerwacji lub wyświetlić wszystkie swoje Opinie i stąd usunąć jedną
 wybraną. Pierwszy sposób z punktu widzenia systemu wygląda następująco:
 
-1.  Client $\rightarrow$ Serwer `/Reservations GET`\
+1.  Client &#8594; Serwer `/Reservations GET`\
     Pobieranie własnych rezerwacji.
 
-2.  Client $\rightarrow$ Serwer `/Review/{id} DELETE`\
+2.  Client &#8594; Serwer `/Review/{id} DELETE`\
     Klient wysyła prośbę o usunięcie Opinii o danym id.
 
 Drugi natomiast:
 
-1.  Client $\rightarrow$ Serwer `/Review GET`\
+1.  Client &#8594; Serwer `/Review GET`\
     Pobieranie własnych Opinii.
 
-2.  Client $\rightarrow$ Serwer `/Review/{id} DELETE`\
+2.  Client &#8594; Serwer `/Review/{id} DELETE`\
     Klient wysyła prośbę o usunięcie Opinii o danym id.
 
 Operacja zakończona powodzeniem usunie z systemu daną opinię.
@@ -2573,18 +2573,18 @@ rezerwację i stąd mieć możliwość edycji Opinii przypisanej do danej
 rezerwacji lub wyświetlić wszystkie swoje Opinie i stąd edytować jedną
 wybraną. Pierwszy sposób z punktu widzenia systemu wygląda następująco:
 
-1.  Client $\rightarrow$ Serwer `/Reservations GET`\
+1.  Client &#8594; Serwer `/Reservations GET`\
     Pobieranie własnych rezerwacji.
 
-2.  Client $\rightarrow$ Serwer `/Review/{id} PUT`\
+2.  Client &#8594; Serwer `/Review/{id} PUT`\
     Klient wysyła prośbę o nadpisanie Opinii o danym id.
 
 Drugi natomiast:
 
-1.  Client $\rightarrow$ Serwer `/Review GET`\
+1.  Client &#8594; Serwer `/Review GET`\
     Pobieranie własnych Opinii.
 
-2.  Client $\rightarrow$ Serwer `/Review/{id} PUT`\
+2.  Client &#8594; Serwer `/Review/{id} PUT`\
     Klient wysyła prośbę o nadpisanie Opinii o danym id.
 
 Operacja zakończona powodzeniem nadpisze z systemu daną opinię.
@@ -2628,9 +2628,9 @@ finalizuje ją i cieszy się z potwierdzonej rezerwacji.
 -   Tym razem klient wypełnił formularz poprawnie. Nastąpiła wymiana
     wiadomości:
 
-    -   Client $\rightarrow$ Serwer `/Reservations POST`
+    -   Client &#8594; Serwer `/Reservations POST`
 
-    -   Serwer $\rightarrow$ Hotel `RESERVATION_CREATE`
+    -   Serwer &#8594; Hotel `RESERVATION_CREATE`
 
     -   Serwer $\leftarrow$ Hotel `PAYMENT_INFO`\
         Serwer zanotował dane dot. płatności.
@@ -2638,15 +2638,15 @@ finalizuje ją i cieszy się z potwierdzonej rezerwacji.
     -   Client $\leftarrow$ Serwer `HTTP 200`
 
     -   Klient został przekierowany na stronę ze swoimi rezerwacjami.\
-        Client $\rightarrow$ Serwer `/Reservations GET`\
-        Client $\rightarrow$ Serwer
+        Client &#8594; Serwer `/Reservations GET`\
+        Client &#8594; Serwer
         `/Reservations/{HotelID}/{ReservationID} GET` dla każdej z
         uzyskanych rezerwacji.\
-        Client $\rightarrow$ Serwer `/Payments GET`. Klient zauważa
+        Client &#8594; Serwer `/Payments GET`. Klient zauważa
         jedną aktywną płatność, którą od razu realizuje:\
-        Client $\rightarrow$ Serwer `/Payments DELETE`
+        Client &#8594; Serwer `/Payments DELETE`
 
-    -   Serwer $\rightarrow$ Hotel `PAYMENT_SUCCESS`
+    -   Serwer &#8594; Hotel `PAYMENT_SUCCESS`
 
     -   Serwer $\leftarrow$ Hotel `PAYMENT_SUCCESS_RESPONSE_SUCCESS`\
         Serwer usunął dane dot. płatności.
@@ -2683,10 +2683,10 @@ Spośród nich tylko jedną (ostatnią) można anulować.
 -   Anulowanie przyszłej rezerwacji kończy się sukcesem. Wymiana
     komunikatów:
 
-    -   Client $\rightarrow$ Serwer
+    -   Client &#8594; Serwer
         `/Reservations/{HotelID}/{ReservationID} DELETE`
 
-    -   Serwer $\rightarrow$ Hotel `RESERVATION_DELETE`
+    -   Serwer &#8594; Hotel `RESERVATION_DELETE`
 
     -   Serwer $\leftarrow$ Hotel `RESERVATION_DELETE_SUCCESS`
 
@@ -2713,13 +2713,13 @@ rozwiązaniem zaistniałej sytuacji hotelowi (szczegóły takiej sytuacji:
 ([8.5.3](#payments){reference-type="ref" reference="payments"})).
 Nastąpiła wymiana komunikatów:
 
--   Client $\rightarrow$ Serwer `/Payments GET`
+-   Client &#8594; Serwer `/Payments GET`
 
 -   Client $\leftarrow$ Serwer `HTTP 200`
 
--   Client $\rightarrow$ Serwer `/Payments DELETE`
+-   Client &#8594; Serwer `/Payments DELETE`
 
--   Serwer $\rightarrow$ Hotel `PAYMENT_SUCCESS`
+-   Serwer &#8594; Hotel `PAYMENT_SUCCESS`
 
 -   Serwer $\leftarrow$ Hotel `PAYMENT_SUCCESS_RESPONSE_FAILURE`
 
