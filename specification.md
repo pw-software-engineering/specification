@@ -14,7 +14,8 @@ title: |
 ---
 
 # Wprowadzenie
-
+* [Key Features](##Glosariusz)
+* 
 Celem projektu jest stworzenie systemu do rezerwacji pokoi w hotelach.
 Aplikacja pozwala obsłudze hotelu na udostępnienie oferty w systemie, a
 użytkownikowi na zarezerwowanie pokoju z oferty w określonym oknie
@@ -1125,7 +1126,6 @@ operacje:
 Przebieg komunikacji dla każdej z tych operacji prezentujemy poniżej.
 
 ### Dodawanie oferty
-MY PART
 
 <img src="Aktywnosc/IO_Aktywności-Dodawanie oferty.png">
 <img src="Sekwencje/Offer_Add.png">
@@ -1355,42 +1355,44 @@ wiadomościach. W przypadku źle sformatowanej wiadomości nie robimy nic.
 Poniżej zostały przedstawione wszystkie kody operacyjne wraz z ich
 prawdziwymi wartościami.
 
-            kod operacyjny            numer   wysyłany przez
-  ---------------------------------- ------- ----------------
-         HOTEL_LOGIN_REQUEST            1         Hotel
-     HOTEL_LOGIN_RESPONSE_SUCCESS       2         Serwer
-     HOTEL_LOGIN_RESPONSE_FAILURE       3         Serwer
-          HOTEL_SYNC_REQUEST            4         Hotel
-     HOTEL_SYNC_RESPONSE_SUCCESS        5         Serwer
-         SERWER_SYNC_REQUEST            6         Serwer
-     SERWER_SYNC_RESPONSE_SUCCESS       7         Hotel
-          RESERVATION_CREATE            8         Serwer
-           RESERVATION_GET              9         Serwer
-       RESERVATION_GET_RESPONSE        10         Hotel
-          OFFER_UNAVALAIBLE            11         Hotel
-             PAYMENT_INFO              12         Hotel
-           PAYMENT_SUCCESS             13         Serwer
-   PAYMENT_SUCCESS_RESPONSE_SUCCESS    14         Hotel
-   PAYMENT_SUCCESS_RESPONSE_FAILURE    15         Hotel
-              ID_UNKNOWN               16         Hotel
-          RESERVATION_DELETE           17         Serwer
-      RESERVATION_DELETE_SUCCESS       18         Hotel
-      RESERVATION_DELETE_FAILURE       19         Hotel
-          OFFER_ADD_REQUEST            20         Hotel
-          OFFER_ADD_SUCCESS            21         Serwer
-          OFFER_ADD_FAILURE            22         Serwer
-         OFFER_DELETE_REQUEST          23         Hotel
-         OFFER_DELETE_SUCCESS          24         Serwer
-         OFFER_DELETE_FAILURE          25         Serwer
-          OFFER_EDIT_REQUEST           26         Hotel
-          OFFER_EDIT_SUCCESS           27         Serwer
-          OFFER_EDIT_FAILURE           28         Serwer
+|            kod operacyjny          |  numer  | wysyłany przez |
+| :--------------------------------: | :-----: |:--------------:|
+|        HOTEL_LOGIN_REQUEST         |    1    |     Hotel      |
+|    HOTEL_LOGIN_RESPONSE_SUCCESS    |    2    |     Serwer     |
+|    HOTEL_LOGIN_RESPONSE_FAILURE    |    3    |     Serwer     |
+|         HOTEL_SYNC_REQUEST         |    4    |     Hotel      |
+|    HOTEL_SYNC_RESPONSE_SUCCESS     |    5    |     Serwer     |
+|        SERWER_SYNC_REQUEST         |    6    |     Serwer     |
+|    SERWER_SYNC_RESPONSE_SUCCESS    |    7    |     Hotel      |
+|         RESERVATION_CREATE         |    8    |     Serwer     |
+|          RESERVATION_GET           |    9    |     Serwer     |
+|      RESERVATION_GET_RESPONSE      |   10    |     Hotel      |
+|         OFFER_UNAVALAIBLE          |   11    |     Hotel      |
+|            PAYMENT_INFO            |   12    |     Hotel      |
+|          PAYMENT_SUCCESS           |   13    |     Serwer     |
+|  PAYMENT_SUCCESS_RESPONSE_SUCCESS  |   14    |     Hotel      |
+|  PAYMENT_SUCCESS_RESPONSE_FAILURE  |   15    |     Hotel      |
+|             ID_UNKNOWN             |   16    |     Hotel      |
+|         RESERVATION_DELETE         |   17    |     Serwer     |
+|     RESERVATION_DELETE_SUCCESS     |   18    |     Hotel      |
+|     RESERVATION_DELETE_FAILURE     |   19    |     Hotel      |
+|         OFFER_ADD_REQUEST          |   20    |     Hotel      |
+|         OFFER_ADD_SUCCESS          |   21    |     Serwer     |
+|         OFFER_ADD_FAILURE          |   22    |     Serwer     |
+|        OFFER_DELETE_REQUEST        |   23    |     Hotel      |
+|        OFFER_DELETE_SUCCESS        |   24    |     Serwer     |
+|        OFFER_DELETE_FAILURE        |   25    |     Serwer     |
+|         OFFER_EDIT_REQUEST         |   26    |     Hotel      |
+|         OFFER_EDIT_SUCCESS         |   27    |     Serwer     |
+|         OFFER_EDIT_FAILURE         |   28    |     Serwer     |
+  
 
 ## Logowanie i uwierzytelnienie hotelu
 
 ### `HOTEL_LOGIN_REQUEST`
 
 <img src="Hotel login + synchronizacja/hotel_login_request.png">
+
 W celu możliwości zarządzania ofertami hotelowymi i tworzenia rezerwacji
 system hotelowy musi nawiązać trwałe połączenie TCP z serwerem. Po
 nawiązaniu połączenia na znany adres IP i numer portu serwera pierwszym
@@ -1417,6 +1419,7 @@ Do kodów "akceptowalnych" należą:
 ### `HOTEL_LOGIN_RESPONSE_FAILURE`
 
 <img src="Hotel login + synchronizacja/hotel_login_response_failure.png">
+
 Wiadomość wysyłana w przypadku niepowodzenia procesu logowania hotelu do
 serwisu. Zawiera ona obiekt JSON z właściwością "authError" zawierającą
 szczegółowy opis błędu autentykacji.
@@ -1445,6 +1448,7 @@ do niezwłocznego wysłania żądania o synchronizacje danych.
 ### `HOTEL_SYNC_REQUEST`
 
 <img src="Hotel login + synchronizacja/hotel_sync_request.png">
+
 Wiadomość ta jest żądaniem synchronizacji danych dotyczących dostępności
 oferty wysyłanym przez hotel. Żądanie to może się wiązać z anonimową
 rezerwacją lub przeorganizowaniem przyporządkowania pokoi do rezerwacji
@@ -1461,6 +1465,7 @@ Do kodów "akceptowalnych" należą:
 ### `SERVER_SYNC_REQUEST`
 
 <img src="Hotel login + synchronizacja/server_sync_request.png">
+
 Wiadomość ta wiąże się z żądaniem serwera o synchronizację danych z
 hotelem. Może ono wystąpić w mechanizmie periodycznej synchronizacji
 danych w celu zachowania spójności danych w obu modułach, w przypadku
@@ -1483,6 +1488,7 @@ Do kodów "akceptowalnych" należą:
 <img src="Oferta-Hotel-Serwer/Offer_Add_JSON1.png">
 
 <img src="Oferta-Hotel-Serwer/Offer_Add_JSON2.png">
+
 **Dodawanie nowej oferty**\
 Proces dodawania nowej oferty zaczyna się od wypełnienia odpowiedniego
 formularza. Następnie dokonywana jest wstępna walidacja formularza po
@@ -1515,6 +1521,7 @@ oferty i wprowadzenie dokładnych wartości.
 ### `OFFER_ADD_SUCCESS`
 
 <img src="Oferta-Hotel-Serwer/Offer_Add_Success.png">
+
 Po otrzymaniu JSONa z informacjami o ofercie serwer dokonuje ponownej
 walidacji wszystkich parametrów. Jeśli oferta została uzupełniona
 poprawnie serwer dodaje ją do swojej lokalnej bazy danych i odsyła do
@@ -1527,6 +1534,7 @@ pomiędzy numerami identyfikacyjnymi ofert po stronie serwera i hotelu.
 ### `OFFER_ADD_FAILURE`
 
 <img src="Oferta-Hotel-Serwer/Offer_Error.png">
+
 W przypadku błędów w formularzu serwer przesyła kod operacyjny:
 `OFFER_ADD_FAILURE` wraz z JSONem zawierającym jedynie informację na
 czym polegał błąd. Otrzymany JSON powinien być więc zgodny z powyższym
@@ -1540,7 +1548,9 @@ schematem. Przykładowe błędy to między innymi:
 ### `OFFER_DELETE_REQUEST`
 
 **Usuwanie oferty**\
+
 <img src="Oferta-Hotel-Serwer/Offer_DeleteJSON.png">
+
 Manager hotelu wskazuje ofertę przeznaczoną do usunięcia. System
 hotelowy następnie przesyła kod operacyjny `OFFER_DELETE_REQUEST` wraz z
 zserializowanym JSONem zawierającym ID usuwanej oferty.
@@ -1593,6 +1603,7 @@ kodu operacyjnego: `OFFER_EDIT_SUCCESS`.
 ### `OFFER_EDIT_FAILURE`
 
 <img src="Oferta-Hotel-Serwer/Offer_Error.png">
+
 W przypadku błędów w formularzu serwer przesyła kod operacyjny:
 `OFFER_EDIT_FAILURE` wraz z JSONem zawierającym jedynie informację na
 czym polegał błąd.
