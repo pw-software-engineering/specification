@@ -397,7 +397,7 @@ faktycznej technologii, która została użyta do implementacji tej części
 ## Aplikacja Kliencka
 
 ::: {.center}
-![image](checkpoint1/IO Klasy-Client_App_Module.png)
+![image](checkpoint1/IO%20Klasy-Client_App_Module.png)
 :::
 
 ### ClientManager
@@ -493,7 +493,7 @@ Klasa przetrzymująca wszystkie informacje o opinii.
 ## Moduł hotelowy
 
 ::: {.center}
-![image](checkpoint1/IO Klasy-Hotel_Module.png)
+![image](checkpoint1/IO%20Klasy-Hotel_Module.png)
 :::
 
 ### OfferInfo
@@ -729,7 +729,7 @@ ServerConnectionOutgoing. Metody:
 ## Moduł Serwerowy
 
 ::: {.center}
-![image](checkpoint1/IO Klasy-Server_Module.png)
+![image](checkpoint1/IO%20Klasy-Server_Module.png)
 :::
 
 ### Client
@@ -982,9 +982,7 @@ rezerwacje.
 
 ## Oferta pokoju {#offerStateDiagram}
 
-::: {.center}
 ![image](checkpoint1/OfferStateDiagram.png)
-:::
 
 Informacje o ofercie hotelowej jak i jej dostępność są przechowywane
 zarówno na serwerze jak i systemie hotelowym. Po utworzeniu nowej oferty
@@ -1028,9 +1026,7 @@ zarówno po stronie serwera jak i systemu hotelowego.
 
 ## Rezerwacja pokoju
 
-::: {.center}
 ![image](checkpoint1/ReservationStateDiagram.png)
-:::
 
 Rezerwacja pokoju hotelowego tworzona jest przez klienta w oparciu o
 informacje o hotelach i udostępnionych przez nie ofert jak i dostępnych
@@ -1126,10 +1122,8 @@ Przebieg komunikacji dla każdej z tych operacji prezentujemy poniżej.
 
 ### Dodawanie oferty
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Dodawanie oferty.png)
+![image](Aktywnosc/IO_Aktywności-Dodawanie%20oferty.png)
 ![image](Sekwencje/Offer_Add.png){width="\\linewidth"}
-:::
 
 Dodawanie oferty to operacja między Systemem Hotelowym, a Serwerem.
 System Hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
@@ -1145,10 +1139,8 @@ proces się kończy.
 
 ### Usuwanie oferty
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Usuwanie oferty.png)
+![image](Aktywnosc/IO_Aktywności-Usuwanie%20oferty.png)
 ![image](Sekwencje/Offer_Delete.png)
-:::
 
 Usuwanie oferty odbywa się w następujący sposób System hotelowy wysyła
 żądanie, a Serwer odsyła informacje o powodzeniu operacji lub o błędzie.
@@ -1158,10 +1150,8 @@ aktywności.
 
 ### Edytowanie oferty
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Usuwanie oferty.png)
+![image](Aktywnosc/IO_Aktywności-Usuwanie%20oferty.png)
 ![image](Sekwencje/Offer_Edit.png)
-:::
 
 Edycja oferty zaczyna się od wypełnienia formularza zmian przez
 użytkownika Systemu Hotelowego wewnątrz niej. Zmiany są następnie
@@ -1177,10 +1167,8 @@ zarzuca wykonywanie aktywności.
 
 ### Wyszukiwanie oferty
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Wyszukiwanie hoteli i ofert.png)
+![image](Aktywnosc/IO_Aktywności-Wyszukiwanie%20hoteli%20i%20ofert.png)
 ![image](Sekwencje/Offer_Search.png)
-:::
 
 Wyszukiwanie oferty w systemie jest 2 etapowe. Pierwszy etap to
 uzupełnienie danych wyszukiwania hotelu. Wypełniony formularz jest
@@ -1215,13 +1203,9 @@ modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 
 ### Tworzenie rezerwacji {#reservation_diagram}
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Tworzenie rezerwacji.png)
-:::
+![image](Aktywnosc/IO_Aktywności-Tworzenie%20rezerwacji.png)
 
-::: {.center}
 ![image](Sekwencje/Reservation_Create.png)
-:::
 
 Proces tworzenia rezerwacji zaczyna się po wybraniu przez użytkownika
 aplikacji klienckiej hotelu oraz oferty, w ramach której ma być
@@ -1261,10 +1245,8 @@ odpowiednia odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
 
 ### Anulowanie rezerwacji
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Usuwanie rezerwacji.png)
+![image](Aktywnosc/IO_Aktywności-Usuwanie%20rezerwacji.png)
 ![image](Sekwencje/Reservation_Cancel.png){width="\\linewidth"}
-:::
 
 Po wybraniu swojej rezerwacji klient ma możliwość anulowania jej.
 Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do Serwera
@@ -1279,9 +1261,7 @@ wykonywanie aktywności.
 
 ### Tworzenie rezerwacji lokalnie
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Local reservation.png)
-:::
+![image](Aktywnosc/IO_Aktywności-Local%20reservation.png)
 
 Istnieje również możliwość że klient przyjdzie do hotelu bez rezerwacji.
 System hotelowy ma możliwość właśnie na taką ewentualność. System
@@ -1303,10 +1283,8 @@ opini do systemu.
 
 ### Dodawanie opinii
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Dodawanie oceny.png){width="\\linewidth"}
+![image](Aktywnosc/IO_Aktywności-Dodawanie%20oceny.png){width="\\linewidth"}
 ![image](Sekwencje/Opinion_Add.png){width="\\linewidth"}
-:::
 
 Klient może dodać opinie do wybranej przez siebie rezerwacji którą już
 odbył. W tym celu wypełnia formularz w Aplikacji Klienckiej, który jest
@@ -1318,8 +1296,9 @@ powiodła czy nie.
 ## Synchronizacja
 
 ![image](Sekwencje/Synchronization_Server.png.png){width="\\linewidth"}
-![image](Sekwencje/Synchronization_Hotel.png){width="\\linewidth"} W
-dowolnym momencie dane między hotelem a serwerem dotyczące dostępności
+![image](Sekwencje/Synchronization_Hotel.png){width="\\linewidth"}
+
+W dowolnym momencie dane między hotelem a serwerem dotyczące dostępności
 ofert mogą się zdesynchronizować. Może to wynikać np. z błędów
 systemowych/sprzętowych po stronie serwera powodujących utratę danych,
 przeorganizowanie przyporządkowań pokoi do rezerwacji czy utworzenia
