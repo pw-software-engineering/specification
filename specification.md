@@ -11,7 +11,7 @@ Artur Michalski, Ignacy Sujecki, Mateusz Tabor, Dawid Maksymowski, Damian Wyszo�
 
 <br>
 
-#### Table of Contents
+#### Spis treści
 1. [Podział na moduły](#all-modules)
 2. [User stories](#user-stories)
 3. [Diagramy PU](#pu-diagrams)
