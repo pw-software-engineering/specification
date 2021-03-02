@@ -1125,11 +1125,10 @@ operacje:
 Przebieg komunikacji dla każdej z tych operacji prezentujemy poniżej.
 
 ### Dodawanie oferty
+MY PART
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Dodawanie oferty.png)
-![image](Sekwencje/Offer_Add.png){width="\\linewidth"}
-:::
+<img src="Aktywnosc/IO_Aktywności-Dodawanie oferty.png">
+<img src="Sekwencje/Offer_Add.png">
 
 Dodawanie oferty to operacja między Systemem Hotelowym, a Serwerem.
 System Hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
@@ -1145,10 +1144,8 @@ proces się kończy.
 
 ### Usuwanie oferty
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Usuwanie oferty.png)
-![image](Sekwencje/Offer_Delete.png)
-:::
+<img src="Aktywnosc/IO_Aktywności-Usuwanie oferty.png">
+<img src="Sekwencje/Offer_Delete.png">
 
 Usuwanie oferty odbywa się w następujący sposób System hotelowy wysyła
 żądanie, a Serwer odsyła informacje o powodzeniu operacji lub o błędzie.
@@ -1158,10 +1155,8 @@ aktywności.
 
 ### Edytowanie oferty
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Usuwanie oferty.png)
-![image](Sekwencje/Offer_Edit.png)
-:::
+<img src="Aktywnosc/IO_Aktywności-Usuwanie oferty.png">
+<img src="Sekwencje/Offer_Edit.png">
 
 Edycja oferty zaczyna się od wypełnienia formularza zmian przez
 użytkownika Systemu Hotelowego wewnątrz niej. Zmiany są następnie
@@ -1177,10 +1172,8 @@ zarzuca wykonywanie aktywności.
 
 ### Wyszukiwanie oferty
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Wyszukiwanie hoteli i ofert.png)
-![image](Sekwencje/Offer_Search.png)
-:::
+<img src="Aktywnosc/IO_Aktywności-Wyszukiwanie hoteli i ofert.png">
+<img src="Sekwencje/Offer_Search.png">
 
 Wyszukiwanie oferty w systemie jest 2 etapowe. Pierwszy etap to
 uzupełnienie danych wyszukiwania hotelu. Wypełniony formularz jest
@@ -1215,13 +1208,9 @@ modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 
 ### Tworzenie rezerwacji {#reservation_diagram}
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Tworzenie rezerwacji.png)
-:::
+<img src="Aktywnosc/IO_Aktywności-Tworzenie rezerwacji.png">
 
-::: {.center}
-![image](Sekwencje/Reservation_Create.png)
-:::
+<img src="Sekwencje/Reservation_Create.png">
 
 Proces tworzenia rezerwacji zaczyna się po wybraniu przez użytkownika
 aplikacji klienckiej hotelu oraz oferty, w ramach której ma być
@@ -1253,18 +1242,15 @@ oznaczająca konieczność kontaktu z hotelem w celu potwierdzenia
 płatności. Jest to sytuacja szczególna, która może być zależna od
 zewnętrznego dostawcy usług płatności i błędami w tym systemie płatności
 lub brakiem odpowiedniej synchronizacji (ten przypadek szczególny został
-opisany przy ([8.5.3](#payments){reference-type="ref"
-reference="payments"})). Jeśli płatność zostanie potwierdzona przez
+opisany przy ([8.5.3](#payments)). Jeśli płatność zostanie potwierdzona przez
 hotel, jest odsyłana odpowiedź o sukcesie do serwera, w wyniku czego
 tworzony jest wpis o rezerwacji klienckiej po stronie serwera i odsyłana
 odpowiednia odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
 
 ### Anulowanie rezerwacji
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Usuwanie rezerwacji.png)
-![image](Sekwencje/Reservation_Cancel.png){width="\\linewidth"}
-:::
+<img src="Aktywnosc/IO_Aktywności-Usuwanie rezerwacji.png">
+<img src="Sekwencje/Reservation_Cancel.png">
 
 Po wybraniu swojej rezerwacji klient ma możliwość anulowania jej.
 Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do Serwera
@@ -1279,9 +1265,7 @@ wykonywanie aktywności.
 
 ### Tworzenie rezerwacji lokalnie
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Local reservation.png)
-:::
+<img src="Aktywnosc/IO_Aktywności-Local reservation.png">
 
 Istnieje również możliwość że klient przyjdzie do hotelu bez rezerwacji.
 System hotelowy ma możliwość właśnie na taką ewentualność. System
@@ -1303,10 +1287,8 @@ opini do systemu.
 
 ### Dodawanie opinii
 
-::: {.center}
-![image](Aktywnosc/IO_Aktywności-Dodawanie oceny.png){width="\\linewidth"}
-![image](Sekwencje/Opinion_Add.png){width="\\linewidth"}
-:::
+<img src="Aktywnosc/IO_Aktywności-Dodawanie oceny.png">
+<img src="Sekwencje/Opinion_Add.png">
 
 Klient może dodać opinie do wybranej przez siebie rezerwacji którą już
 odbył. W tym celu wypełnia formularz w Aplikacji Klienckiej, który jest
@@ -1317,9 +1299,10 @@ powiodła czy nie.
 
 ## Synchronizacja
 
-![image](Sekwencje/Synchronization_Server.png.png){width="\\linewidth"}
-![image](Sekwencje/Synchronization_Hotel.png){width="\\linewidth"} W
-dowolnym momencie dane między hotelem a serwerem dotyczące dostępności
+<img src="Sekwencje/Synchronization_Server.png.png">
+<img src="Sekwencje/Synchronization_Hotel.png"> 
+
+W dowolnym momencie dane między hotelem a serwerem dotyczące dostępności
 ofert mogą się zdesynchronizować. Może to wynikać np. z błędów
 systemowych/sprzętowych po stronie serwera powodujących utratę danych,
 przeorganizowanie przyporządkowań pokoi do rezerwacji czy utworzenia
@@ -1372,7 +1355,6 @@ wiadomościach. W przypadku źle sformatowanej wiadomości nie robimy nic.
 Poniżej zostały przedstawione wszystkie kody operacyjne wraz z ich
 prawdziwymi wartościami.
 
-::: {.center}
             kod operacyjny            numer   wysyłany przez
   ---------------------------------- ------- ----------------
          HOTEL_LOGIN_REQUEST            1         Hotel
@@ -1403,13 +1385,12 @@ prawdziwymi wartościami.
           OFFER_EDIT_REQUEST           26         Hotel
           OFFER_EDIT_SUCCESS           27         Serwer
           OFFER_EDIT_FAILURE           28         Serwer
-:::
 
 ## Logowanie i uwierzytelnienie hotelu
 
 ### `HOTEL_LOGIN_REQUEST`
 
-![image](Hotel login + synchronizacja/hotel_login_request.png){width="\\linewidth"}
+<img src="Hotel login + synchronizacja/hotel_login_request.png">
 W celu możliwości zarządzania ofertami hotelowymi i tworzenia rezerwacji
 system hotelowy musi nawiązać trwałe połączenie TCP z serwerem. Po
 nawiązaniu połączenia na znany adres IP i numer portu serwera pierwszym
@@ -1435,7 +1416,7 @@ Do kodów "akceptowalnych" należą:
 
 ### `HOTEL_LOGIN_RESPONSE_FAILURE`
 
-![image](Hotel login + synchronizacja/hotel_login_response_failure.png){width="\\linewidth"}
+<img src="Hotel login + synchronizacja/hotel_login_response_failure.png">
 Wiadomość wysyłana w przypadku niepowodzenia procesu logowania hotelu do
 serwisu. Zawiera ona obiekt JSON z właściwością "authError" zawierającą
 szczegółowy opis błędu autentykacji.
@@ -1463,7 +1444,7 @@ do niezwłocznego wysłania żądania o synchronizacje danych.
 
 ### `HOTEL_SYNC_REQUEST`
 
-![image](Hotel login + synchronizacja/hotel_sync_request.png){width="\\linewidth"}
+<img src="Hotel login + synchronizacja/hotel_sync_request.png">
 Wiadomość ta jest żądaniem synchronizacji danych dotyczących dostępności
 oferty wysyłanym przez hotel. Żądanie to może się wiązać z anonimową
 rezerwacją lub przeorganizowaniem przyporządkowania pokoi do rezerwacji
@@ -1479,7 +1460,7 @@ Do kodów "akceptowalnych" należą:
 
 ### `SERVER_SYNC_REQUEST`
 
-![image](Hotel login + synchronizacja/server_sync_request.png){width="\\linewidth"}
+<img src="Hotel login + synchronizacja/server_sync_request.png">
 Wiadomość ta wiąże się z żądaniem serwera o synchronizację danych z
 hotelem. Może ono wystąpić w mechanizmie periodycznej synchronizacji
 danych w celu zachowania spójności danych w obu modułach, w przypadku
@@ -1499,9 +1480,9 @@ Do kodów "akceptowalnych" należą:
 
 ### `OFFER_ADD_REQUEST`
 
-![image](Oferta-Hotel-Serwer/Offer_Add_JSON1.png){width="\\linewidth"}
+<img src="Oferta-Hotel-Serwer/Offer_Add_JSON1.png">
 
-![image](Oferta-Hotel-Serwer/Offer_Add_JSON2.png){width="\\linewidth"}
+<img src="Oferta-Hotel-Serwer/Offer_Add_JSON2.png">
 **Dodawanie nowej oferty**\
 Proces dodawania nowej oferty zaczyna się od wypełnienia odpowiedniego
 formularza. Następnie dokonywana jest wstępna walidacja formularza po
@@ -1533,7 +1514,7 @@ oferty i wprowadzenie dokładnych wartości.
 
 ### `OFFER_ADD_SUCCESS`
 
-![image](Oferta-Hotel-Serwer/Offer_Add_Success.png){width="\\linewidth"}
+<img src="Oferta-Hotel-Serwer/Offer_Add_Success.png">
 Po otrzymaniu JSONa z informacjami o ofercie serwer dokonuje ponownej
 walidacji wszystkich parametrów. Jeśli oferta została uzupełniona
 poprawnie serwer dodaje ją do swojej lokalnej bazy danych i odsyła do
@@ -1545,8 +1526,8 @@ pomiędzy numerami identyfikacyjnymi ofert po stronie serwera i hotelu.
 
 ### `OFFER_ADD_FAILURE`
 
-![image](Oferta-Hotel-Serwer/Offer_Error.png){width="\\linewidth"} W
-przypadku błędów w formularzu serwer przesyła kod operacyjny:
+<img src="Oferta-Hotel-Serwer/Offer_Error.png">
+W przypadku błędów w formularzu serwer przesyła kod operacyjny:
 `OFFER_ADD_FAILURE` wraz z JSONem zawierającym jedynie informację na
 czym polegał błąd. Otrzymany JSON powinien być więc zgodny z powyższym
 schematem. Przykładowe błędy to między innymi:
@@ -1559,7 +1540,7 @@ schematem. Przykładowe błędy to między innymi:
 ### `OFFER_DELETE_REQUEST`
 
 **Usuwanie oferty**\
-![image](Oferta-Hotel-Serwer/Offer_DeleteJSON.png){width="\\linewidth"}
+<img src="Oferta-Hotel-Serwer/Offer_DeleteJSON.png">
 Manager hotelu wskazuje ofertę przeznaczoną do usunięcia. System
 hotelowy następnie przesyła kod operacyjny `OFFER_DELETE_REQUEST` wraz z
 zserializowanym JSONem zawierającym ID usuwanej oferty.
@@ -1573,8 +1554,8 @@ operacyjnego: `OFFER_DELETE_SUCCESS`.
 
 ### `OFFER_DELETE_FAILURE`
 
-![image](Oferta-Hotel-Serwer/Offer_Error.png){width="\\linewidth"} Jeśli
-otrzymany JSON zawiera nieprawidłowe ID, serwer przekona się o tym przy
+<img src="Oferta-Hotel-Serwer/Offer_Error.png">
+Jeśli otrzymany JSON zawiera nieprawidłowe ID, serwer przekona się o tym przy
 próbie znalezienia zadanego rekordu o zadanym ID. System hotelowy
 zostanie poinformowany o zaistniałym błędzie poprzez przesłanie
 następującego kodu operacyjnego: `OFFER_DELETE_FAILURE` wraz ze
@@ -1588,10 +1569,8 @@ otrzymany JSON powinien być więc zgodny z powyższym schematem.
 
 **Edytowanie istniejącej oferty**\
 
-::: {.center}
-![image](Oferta-Hotel-Serwer/Offer_Edit_JSON1.png)
-![image](Oferta-Hotel-Serwer/Offer_Edit_JSON2.png){width="\\linewidth"}
-:::
+<img src="Oferta-Hotel-Serwer/Offer_Edit_JSON1.png">
+<img src="Oferta-Hotel-Serwer/Offer_Edit_JSON2.png">
 
 Manager ma możliwość edycji już istniejącej oferty. W tym celu wybiera
 ofertę i przechodzi do jej edycji poprzez formularz znany mu dobrze z
@@ -1613,8 +1592,8 @@ kodu operacyjnego: `OFFER_EDIT_SUCCESS`.
 
 ### `OFFER_EDIT_FAILURE`
 
-![image](Oferta-Hotel-Serwer/Offer_Error.png){width="\\linewidth"} W
-przypadku błędów w formularzu serwer przesyła kod operacyjny:
+<img src="Oferta-Hotel-Serwer/Offer_Error.png">
+W przypadku błędów w formularzu serwer przesyła kod operacyjny:
 `OFFER_EDIT_FAILURE` wraz z JSONem zawierającym jedynie informację na
 czym polegał błąd.
 
@@ -1629,7 +1608,7 @@ Pola tego obiektu są analogiczne do odpowiadającej mu klasy
 `ReservationInfo`, rozszerzone o `ClientID` klienta powiązanego z
 rezerwacją.
 
-![image](Rezerwacje/ReservationInfoSchema.jpg){width="\\linewidth"}
+<img src="Rezerwacje/ReservationInfoSchema.jpg">
 
 Oczekiwane odpowiedzi:
 
@@ -1647,14 +1626,14 @@ Oczekiwane odpowiedzi:
     Informacje te są potrzebne głównie dla późniejszego wykorzystania
     przez klienta przy płatności (patrz: /payments).
 
-    ![image](Rezerwacje/paymentInfo.jpg){width="\\linewidth"}
+    <img src="Rezerwacje/paymentInfo.jpg">
 
 ### `PAYMENT_SUCCESS`
 
 Komunikat wysyłany do hotelu po otrzymaniu od klienta informacji o
 zakończonym procesie płatności.
 
-![image](Rezerwacje/reservationIDSchema.jpg){width="\\linewidth"}
+<img src="Rezerwacje/reservationIDSchema.jpg">
 
 Oczekiwane odpowiedzi:
 
@@ -1676,8 +1655,7 @@ Klient może zrezygnować ze swojej rezerwacji w dowolnym momencie. Zaraz
 po otrzymaniu przez serwer takiej prośby, przekazuje ją do hotelu
 niniejszym komunikatem. Wewnątrz wiadomości znajduje się ID rezerwacji,
 której dotyczy. Struktura jest więc identyczna jak w
-([7.4.2](#payment_success){reference-type="ref"
-reference="payment_success"}).
+([7.4.2](#payment_success).
 
 Oczekiwane odpowiedzi:
 
@@ -1694,16 +1672,14 @@ Oczekiwane odpowiedzi:
 
 Zapytanie o szczegóły konkretnej rezerwacji - na przykład w celu
 przekazania tych informacji klientowi. Struktura wiadomości identyczna
-jak w ([7.4.2](#payment_success){reference-type="ref"
-reference="payment_success"}).
+jak w ([7.4.2](#payment_success)).
 
 Oczekiwane odpowiedzi:
 
 -   `RESERVATION_GET_RESPONSE`\
     Szczegółowe info. dot. rezerwacji. Struktura wiadomości identyczna
     jak w komunikacie `RESERVATION_CREATE `(patrz:
-    [7.4.1](#reservation_info){reference-type="ref"
-    reference="reservation_info"}).
+    [7.4.1](#reservation_info)).
 
 -   `ID_UNKNOWN`\
     Nieznane ID rezerwacji.
