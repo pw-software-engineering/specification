@@ -49,7 +49,6 @@ Table of Contents
          * [ReservationInfo](#reservationinfo-1)
          * [HotelEmployee](#hotelemployee)
          * [HotelEmployeeSecrets](#hotelemployeesecrets)
-         * [Payments](#payments)
          * [DataManager](#datamanager)
          * [HotelInfo](#hotelinfo-1)
          * [ServerConnectionIncoming](#serverconnectionincoming)
@@ -68,7 +67,6 @@ Table of Contents
          * [Offer](#offer-2)
          * [ReviewInfo](#reviewinfo-1)
          * [ClientReview](#clientreview-1)
-         * [Payments](#payments-1)
          * [HotelConnectionIncoming](#hotelconnectionincoming)
          * [HotelConnectionOutgoing](#hotelconnectionoutgoing)
          * [ServerManager](#servermanager)
@@ -125,7 +123,6 @@ Table of Contents
       * [Zarządzanie rezerwacjami](#zarządzanie-rezerwacjami-1)
          * [/Reservations](#reservations)
          * [/Reservations/{HotelID}/{ReservationID}](#reservationshotelidreservationid)
-         * [/Payments](#payments-2)
       * [Zarządzanie opiniami](#zarządzanie-opiniami)
          * [/Review](#review)
          * [/Review/{id}](#reviewid)
@@ -749,12 +746,6 @@ bezpośrednio przy logowaniu się przez personel do systemu). Ze względów
 bezpieczeństwa informacje o loginach i hasłach pracowników zawarte są w
 osobnej tabeli do której dostęp jest stosownie chroniony.
 
-### Payments
-
-Reprezentuje dane dotyczące rezerwacji, które nie zostały jeszcze
-opłacone. W momencie poprawnego opłacenia rezerwacji usuwane są rekordy
-z tej tabeli.
-
 ### DataManager
 
 Klasa pośrednicząca w wydobywaniu informacji z bazy danych. W tym celu
@@ -997,13 +988,6 @@ opinii bądź przynależności opinii do konkretnego użytkownika.
 ### ClientReview
 
 Zawiera wszystkie informacje o pojedynczej opinii.
-
-### Payments
-
-Zawiera informacje o płatnościach związanych z rezerwacjami, które nie
-zostały jeszcze opłacone. Klient może w dowolnym momencie pobrać
-informacje o nieuiszczonych płatnościach. W momencie udanej opłaty za
-rezerwacje usuwane są odpowiednie rekordy z tej tabeli.
 
 ### HotelConnectionIncoming
 
@@ -1420,25 +1404,10 @@ opasującymi dostępność oferty. W efekcie serwer odsyła użytkownikowi
 informację o nieudanej rezerwacji oraz natychmiastowo wykonuje proces
 związany z synchronizacją danych. W przypadku gdy hotel będzie mógł
 przyporządkować odpowiedni pokój na podany okres czasowy, tworzy on
-lokalny wpis w bazie danych związany z tą rezerwacją oraz wpis dotyczący
-płatności za tą rezerwację, która musi zostać opłacona przez klienta, a
-następnie wysyłana do klienta przez serwer. Klient może anulować
-rezerwację oraz wysłać do serwera odpowiedni komunikat, który następnie
-jest przesyłany do hotelu. Hotel usuwa wówczas utworzony wpis rezerwacji
-i zwraca odpowiednią informację serwerowi, która jest propagowana do
-klienta. Jeśli klient opłaci w czasie daną rezerwację, wysyłany jest
-komunikat do serwera o zakończeniu procesu płatności, który jest
-następnie przekazywany do hotelu. Hotel ponownie sprawdza czy płatność
-związana z konkretnym identyfikatorem płatności została zakończona
-sukcesem. W przypadku niepowodzenia zwracana jest wiadomość do serwera
-oznaczająca konieczność kontaktu z hotelem w celu potwierdzenia
-płatności. Jest to sytuacja szczególna, która może być zależna od
-zewnętrznego dostawcy usług płatności i błędami w tym systemie płatności
-lub brakiem odpowiedniej synchronizacji (ten przypadek szczególny został
-opisany przy ([Payments](#payments)). Jeśli płatność zostanie potwierdzona przez
-hotel, jest odsyłana odpowiedź o sukcesie do serwera, w wyniku czego
-tworzony jest wpis o rezerwacji klienckiej po stronie serwera i odsyłana
-odpowiednia odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
+lokalny wpis w bazie danych związany z tą rezerwacją i jest odsyłana
+odpowiedź o sukcesie do serwera, w wyniku czego tworzony jest wpis
+o rezerwacji klienckiej po stronie serwera i odsyłana odpowiednia
+odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
 
 ### Anulowanie rezerwacji
 
@@ -1561,23 +1530,19 @@ prawdziwymi wartościami.
 |          RESERVATION_GET           |    9    |     Serwer     |
 |      RESERVATION_GET_RESPONSE      |   10    |     Hotel      |
 |         OFFER_UNAVALAIBLE          |   11    |     Hotel      |
-|            PAYMENT_INFO            |   12    |     Hotel      |
-|          PAYMENT_SUCCESS           |   13    |     Serwer     |
-|  PAYMENT_SUCCESS_RESPONSE_SUCCESS  |   14    |     Hotel      |
-|  PAYMENT_SUCCESS_RESPONSE_FAILURE  |   15    |     Hotel      |
-|             ID_UNKNOWN             |   16    |     Hotel      |
-|         RESERVATION_DELETE         |   17    |     Serwer     |
-|     RESERVATION_DELETE_SUCCESS     |   18    |     Hotel      |
-|     RESERVATION_DELETE_FAILURE     |   19    |     Hotel      |
-|         OFFER_ADD_REQUEST          |   20    |     Hotel      |
-|         OFFER_ADD_SUCCESS          |   21    |     Serwer     |
-|         OFFER_ADD_FAILURE          |   22    |     Serwer     |
-|        OFFER_DELETE_REQUEST        |   23    |     Hotel      |
-|        OFFER_DELETE_SUCCESS        |   24    |     Serwer     |
-|        OFFER_DELETE_FAILURE        |   25    |     Serwer     |
-|         OFFER_EDIT_REQUEST         |   26    |     Hotel      |
-|         OFFER_EDIT_SUCCESS         |   27    |     Serwer     |
-|         OFFER_EDIT_FAILURE         |   28    |     Serwer     |
+|             ID_UNKNOWN             |   12    |     Hotel      |
+|         RESERVATION_DELETE         |   13    |     Serwer     |
+|     RESERVATION_DELETE_SUCCESS     |   14    |     Hotel      |
+|     RESERVATION_DELETE_FAILURE     |   15    |     Hotel      |
+|         OFFER_ADD_REQUEST          |   16    |     Hotel      |
+|         OFFER_ADD_SUCCESS          |   17    |     Serwer     |
+|         OFFER_ADD_FAILURE          |   18    |     Serwer     |
+|        OFFER_DELETE_REQUEST        |   19    |     Hotel      |
+|        OFFER_DELETE_SUCCESS        |   20    |     Serwer     |
+|        OFFER_DELETE_FAILURE        |   21    |     Serwer     |
+|         OFFER_EDIT_REQUEST         |   22    |     Hotel      |
+|         OFFER_EDIT_SUCCESS         |   23    |     Serwer     |
+|         OFFER_EDIT_FAILURE         |   24    |     Serwer     |
   
 
 ## Logowanie i uwierzytelnienie hotelu
@@ -1831,27 +1796,6 @@ Oczekiwane odpowiedzi:
     przez klienta przy płatności (patrz: [/payments](#payments)).
 
     <img src="Rezerwacje/paymentInfo.jpg">
-
-### `PAYMENT_SUCCESS`
-
-Komunikat wysyłany do hotelu po otrzymaniu od klienta informacji o
-zakończonym procesie płatności.
-
-<img src="Rezerwacje/reservationIDSchema.jpg">
-
-Oczekiwane odpowiedzi:
-
--   `PAYMENT_SUCCESS_RESPONSE_SUCCES`\
-    Płatność dotarła do hotelu. Hotel w odpowiedzi przesyła obiekt z 2
-    właściwościami: **ID rezerwacji** oraz **ID klienta**. Serwer
-    zapisuje te informacje w swojej bazie.
-
--   `PAYMENT_SUCCESS_RESPONSE_FAILURE`\
-    Płatność nie dotarła do hotelu. Wiadomość zawiera string w opisanym
-    powodem błędu.
-
--   `ID_UNKNOWN`\
-    Nieznane ID rezerwacji
 
 ### `RESERVATION_DELETE`
 
@@ -2110,50 +2054,6 @@ konkretnej rezerwacji `ReservationID` w hotelu `HotelID` bądź ją usunąć.
 
 ![image](Rezerwacje/reservationEndpoint.jpg)
 
-### `/Payments`
-
-Powyżej nie znajdują się jednak *wszystkie* informacje dotyczące
-rekordu. Identyfikatory płatności przypisane do rejestracji są
-przechowywane pod osobnym adresem URI. Serwer przechowuje te informacje
-jedynie przez krótką chwilę, natomiast dłużej są przetrzymywane w Hotelu
-(przynajmniej do zakończenia rezerwacji). W momencie, kiedy serwer
-otrzymuje komunikat `PAYMENT_INFO`, zapisuje te informacje u siebie. Aby
-klient mógł opłacić zamówienie, musi dostać te informacje - w związku z
-tym przy listowaniu rezerwacji należy również się odwołać do
-`/Payments`. Kiedy klient szczęśliwie zakończy opłatę, informuje o tym
-serwer, który informuje hotel, po czym serwer usuwa informację o tej
-płatności. Hotel może przechowywać identyfikator płatności (i tak też
-robi, w razie ewentualnych zwrotów) przez dłuższy czas.\
-Trudna sytuacja może pojawić się w przypadku, kiedy płatność nie
-zostanie potwierdzona przez hotel. Wówczas stan rzeczy jest następujący:
-
--   Hotel stworzył płatność i oznaczył ją jako nieudaną (znacznik bool
-    isError). Przechowuje u siebie dane zarówno o płatności jak i
-    rezerwacji.
-
--   Płatność nie została zakończona, więc serwer nie zapisał sobie tej
-    rezerwacji. Posiada natomiast wpis dot. płatności (z flagą isError),
-    który pozostawił (ponieważ dostał odpowiedź\
-    `PAYMENT_SUCCESS_RESPONSE_FAILURE`).
-
--   Aplikacja kliencka wyświetliła komunikat z sugestią kontaktu z
-    hotelem. Po przeładowaniu interfejsu komunikatu nie ma.
-
-Aby uchronić się przed tym, że użytkownik straci jakiekolwiek informacje
-o tej rezerwacji (oraz pieniądze) -- serwer powinien dla każdej
-płatności oznaczonej flagą `isError`, poprosić hotel o te dane wysyłając
-`RESERVATION_GET`.
-
-![image](Rezerwacje/paymentsGET.jpg)
-
-![image](Rezerwacje/paymentsDELETE.jpg)
-
-**Uwaga!** Dla uproszczenia projektu, aby nie trzeba było wprowadzać
-czwartego modułu zajmującego się płatnościami, proces w systemie jest
-symulowany w bardzo prosty sposób: zawsze się udaje. W aktualnym
-inkremencie rozwoju nie przewidujemy zwracanego błędu 409 metody
-`/Payments DELETE` - poza specjalnie zaaranżowanym przypadkiem testowym.
-
 ## Zarządzanie opiniami
 
 Endpointy poniżej służą użytkownikowi do zarządzania swoimi opiniami na
@@ -2208,8 +2108,7 @@ Scenariusze przedstawiają proponowane testy do przeprowadzania na
 systemie. Podają one na początku dane wejściowe, następnie przebieg
 wykonywania zadania oraz ewentualne scenariusze alternatywne (w razie
 błędów). Scenariusze są przygotowane w ten sposób aby można było łatwo
-przetestować poprawność zaimplementowanego systemu pod kątem komunikacji
-- poniższe scenariusze pokrywają jej całość.
+przetestować poprawność zaimplementowanego systemu pod kątem komunikacji - poniższe scenariusze pokrywają jej całość.
 
 ## Dodawanie nowej oferty
 
@@ -2632,27 +2531,7 @@ finalizuje ją i cieszy się z potwierdzonej rezerwacji.
 
     -   Serwer &#129030; Hotel `RESERVATION_CREATE`
 
-    -   Serwer &#129028; Hotel `PAYMENT_INFO`\
-        Serwer zanotował dane dot. płatności.
-
     -   Client &#129028; Serwer `HTTP 200`
-
-    -   Klient został przekierowany na stronę ze swoimi rezerwacjami.\
-        Client &#129030; Serwer `/Reservations GET`\
-        Client &#129030; Serwer
-        `/Reservations/{HotelID}/{ReservationID} GET` dla każdej z
-        uzyskanych rezerwacji.\
-        Client &#129030; Serwer `/Payments GET`. Klient zauważa
-        jedną aktywną płatność, którą od razu realizuje:\
-        Client &#129030; Serwer `/Payments DELETE`
-
-    -   Serwer &#129030; Hotel `PAYMENT_SUCCESS`
-
-    -   Serwer &#129028; Hotel `PAYMENT_SUCCESS_RESPONSE_SUCCESS`\
-        Serwer usunął dane dot. płatności.
-
-    -   Client &#129028; Serwer `HTTP 200` (odpowiedź do
-        `/Payments DELETE`)
 
 -   Przy podglądzie własnych rezerwacji, klient widzi właśnie dokonaną
     rezerwację pokoju z danymi, które są takie same jak te wprowadzone w
@@ -2699,34 +2578,6 @@ Spośród nich tylko jedną (ostatnią) można anulować.
 -   Jeśli zaszła taka potrzeba, dane (np. te dotyczące (nie)dostępności
     oferty) po stronie serwera zostały zaktualizowane odpowiednio do
     zmian - Serwer oraz hotel pozostają zsynchronizowane.
-
-## Płatność
-
-Po zakończonej płatności za rezerwację, klient przekazuje taką
-informację do systemu. Na potrzeby testów, Hotel na tę wiadomość
-powinien zareagować negatywnie (należy to zmienić w kodzie, np. w
-odpowiednim miejscu `return true;` na `return false;`). W tym momencie
-klient otrzymuje informację o tym, że płatność nie została przyjęta
-poprawnie. Sugeruje się kontakt z hotelem w celu uzgodnienia wykonania
-płatności, np. na miejscu albo zostawia się inicjatywę związaną z
-rozwiązaniem zaistniałej sytuacji hotelowi (szczegóły takiej sytuacji:
-([8.5.3](#payments){reference-type="ref" reference="payments"})).
-Nastąpiła wymiana komunikatów:
-
--   Client &#129030; Serwer `/Payments GET`
-
--   Client &#129028; Serwer `HTTP 200`
-
--   Client &#129030; Serwer `/Payments DELETE`
-
--   Serwer &#129030; Hotel `PAYMENT_SUCCESS`
-
--   Serwer &#129028; Hotel `PAYMENT_SUCCESS_RESPONSE_FAILURE`
-
--   Client &#129028; Serwer `HTTP 409`
-
--   Przy kolejnym wypisaniu rezerwacji widnieje wiadomość o tym, że
-    płatność jest problematyczna.
 
 # Wymagania Technologiczne
 
