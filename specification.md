@@ -106,7 +106,6 @@ Table of Contents
          * [OFFER_EDIT_FAILURE](#offer_edit_failure)
       * [Zarządzanie rezerwacjami](#zarządzanie-rezerwacjami)
          * [RESERVATION_CREATE](#reservation_create)
-         * [PAYMENT_SUCCESS](#payment_success)
          * [RESERVATION_DELETE](#reservation_delete)
          * [RESERVATION_GET](#reservation_get)
    * [Klient-Serwer](#klient-serwer)
@@ -137,7 +136,6 @@ Table of Contents
       * [Edycja Opinii](#edycja-opinii)
       * [Rezerwacja pokoju przez klienta](#rezerwacja-pokoju-przez-klienta-1)
       * [Anulowanie Rezerwacji](#anulowanie-rezerwacji-1)
-      * [Płatność](#płatność)
    * [Wymagania Technologiczne](#wymagania-technologiczne)
       * [Serwer](#serwer-1)
       * [Aplikacja Kliencka](#aplikacja-kliencka-3)
@@ -262,7 +260,6 @@ systemie jest tylko jeden moduł serwerowy.\
 
 | ja jako... | chcę... | po to, żeby... | Flaga |
 | --- | --- | --- | --- |
-| klient | dokonać płatności za rezerwację | potwierdzić rezerwację | MH |
 | klient | zarezerwować pokój |  nie martwić się jego brakiem | MH |
 | klient | wyszukiwać pokoje po kryteriach | znaleźć pokój, który spełnia moje oczekiwania | MH |
 | klient | wyszukiwać hotele po kryteriach | znaleźć hotel, który spełnia moje oczekiwania | MH |
@@ -322,10 +319,6 @@ aplikacją kliencką a wspomnianym klientem. Są to między innymi:
 -   Rezerwacja pokoju - po znalezieniu hotelu jak i oferty spełniającej
     oczekiwania klienta umożliwiamy bezpośrednio z poziomu aplikacji
     dokonanie rezerwacji
-
--   Dokonanie płatności za zarezerwowany pokój - bezpośrednio po
-    dokonaniu rezerwacji klient powinien opłacić swój pobyt. Umożliwiamy
-    realizację tego zadania bezpośrednio z poziomu aplikacji
 
 -   Anulowanie rezerwacji - w przypadku jakichkolwiek trudności po
     stronie klienta uniemożliwiających zrealizowanie pobytu udostępniamy
@@ -564,18 +557,12 @@ błędem i nie jest wykonywana rezerwacja. W przeciwnym przypadku serwer
 przekierowuje prośbę utworzenia rezerwacji do hotelu, gdzie dostępność
 rezerwacji jest ponownie sprawdzana. Jeśli oferta jest dostępna w
 wybranym przedziale czasowym tworzona jest lokalna rezerwacja po stronie
-hotelu i odsyłany jest identyfikator płatności za tą ofertę. Klient musi
-opłacić swoją rezerwację, po czym odsyła do serwera informację o
-zakończonym procesie płatności. Po potwierdzeniu ukończonej płatności
-przez hotel, wpis o rezerwacji jest tworzony na serwerze i zwracana jest
-klientowi informacja o zakończeniu procesu tworzenia rezerwacji. W
-przypadku niepowodzenia płatności (np. pieniądze nie zostały
-zaksięgowane na koncie hotelu) serwer informuje klienta o konieczności
-kontaktu z hotelem w celu wyjaśnienia tej sytuacji. Jeśli natomiast
-hotel stwierdzi brak dostępności oferty wysyłana jest informacja o
-błędzie serwerowi, co świadczy o desynchronizacji danych między hotelem
-i serwerem. Odsyłany jest wówczas klientowi błąd mówiący o braku
-dostępności oferty w wybranym okresie czasowym.
+hotelu i odsyłana jest informacja do serwera. Po stronie serwera tworzony
+jest wpis o rezerwacji klientowi informacja o zakończeniu procesu.
+Jeśli natomiast hotel stwierdzi brak dostępności oferty wysyłana jest
+informacja o błędzie serwerowi, co świadczy o desynchronizacji danych
+między hotelem i serwerem. Odsyłany jest wówczas klientowi błąd mówiący
+o braku dostępności oferty w wybranym okresie czasowym.
 
 # Diagramy Klas
 
@@ -722,8 +709,7 @@ pokoi.
 ### Reservation
 
 Przechowuje informacje dotyczące rezerwacji klienckiej razem z ID pokoju
-oraz ID oferty. Ponadto przechowywany jest identyfikator płatności
-rezerwacji w celu umożliwienia anulowania rezerwacji i zwrotu pieniędzy.
+oraz ID oferty.
 
 ### ReservationInfo
 
@@ -1041,8 +1027,8 @@ związanymi z ostatnio wysłaną wiadomością. Metody:
     Metoda, która tworzy proces związany z utworzeniem nowej rezerwacji.
     Wysyłane jest odpowiednie żądanie do hotelu oraz odkładane jest na
     listę ProcessList ID nowego procesu związanego z utworzeniem nowej
-    rezerwacji. W przypadku sukcesu tworzony jest wpis w tabeli Payments
-    o nowo utworzonej rezerwacji, która nie jest opłacona przez klienta.
+    rezerwacji. W przypadku sukcesu tworzony jest wpis w tabeli
+    ClientReservations o nowo utworzonej rezerwacji.
 
 -   CancelReservation\
     Metoda, która tworzy proces związany z anulowaniem nowej rezerwacji.
@@ -1050,14 +1036,6 @@ związanymi z ostatnio wysłaną wiadomością. Metody:
     listę ProcessList ID nowego procesu związanego z utworzeniem nowej
     rezerwacji. W przypadku sukcesu usuwany jest lokalny wpis o
     rezerwacji klienta.
-
--   ConfirmPayment\
-    Metoda, która tworzy proces związany z potwierdzeniem opłaty
-    rezerwacji. Wysyłane jest odpowiednie żądanie do hotelu oraz
-    odkładane jest na listę ProcessList ID nowego procesu związanego z
-    utworzeniem nowej rezerwacji. W przypadku sukcesu usuwany jest wpis
-    o nieuiszczonej opłacie za rezerwację z tabeli Payments oraz
-    tworzony jest wpis o nowej rezerwacji w tabeli ClientReservations.
 
 -   Synchronize\
     Metoda, która tworzy proces związany z synchronizacją danych
@@ -1108,18 +1086,11 @@ metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
 
 -   TryMakeReservation\
     Metoda próbuje stworzyć rezerwację w systemie.\
-    Zwraca instancję klasy ClientReservation i string reprezentujący
-    identyfikator płatności za nowo utworzoną rezerwację (w przypadku
-    sukcesu).
+    Zwraca instancję klasy ClientReservation w przypadku sukcesu.
 
 -   CancelReservation\
     Metoda usuwa rezerwację z sytemu.\
     Zwraca wartość bool określającą, czy operacja się powiodła.
-
--   ConfirmPayment\
-    Metoda mająca na celu potwierdzenie ukończenia procesu płatności
-    przez klienta wywołując odpowiednią metodę klasy
-    SeverConnectionOutgoing.
 
 -   AddNewClient\
     Dodanie nowo zarejestrowanego użytkownika do systemu.
@@ -1234,31 +1205,10 @@ określony w ramach nowej rezerwacji czas, rezerwacja przechodzi w stan
 błędzie synchronizacji lokalnej bazy danych serwera przetrzymującej
 informacje o dostępności oferty z bazą danych hotelu.\
 W przypadku potwierdzenia dostępności pokoju na podany przez klienta
-okres, oferta przechodzi do stanu \"rezerwacji potwierdzonej przez
-hotel\", podczas którego generowana jest metoda opłacenia rezerwacji
-przez klienta poprzez wywołanie metody `TryMakePayment`. Obiekt
-rezerwacji przechodzi wówczas do stanu \"rezerwacji oczekującej na
-płatność\", podczas której przeprowadzany jest proces płatności i
-walidacja tego procesu. W przypadku niepowodzenia rezerwacja przechodzi
-w stan \"rezerwacji nieopłaconej\". Klient może wówczas ponowić próbę
-płatności za rezerwację co skutkuje ponownym przejściem rezerwacji w
-stan \"rezerwacji oczekującej na płatność\".\
-Możliwa jest również jawna rezygnacja klienta z rezerwacji w przypadku
-gdy rezerwacja jest w stanie \"rezerwacji nieopłaconej\" w skutek czego
-obiekt rezerwacji przechodzi do stanu \"rezerwacji anulowanej przez
-klienta\" i przeprowadzane są odpowiednie akcje anulowania rezerwacji po
-stronie klienta (`CancelReservation`). Po wywołaniu akcji
-`CancelReservation` po stronie serwera obiekt rezerwacji jest niszczony.
-W przypadku braku jawnej decyzji klienta o anulowaniu rezygnacji w
-momencie gdy jest ona w automatycznie anulowana po upływie 1 dnia. Po
-wywołaniu akcji `CancelReservation` obiekt rezerwacji jest niszczony.\
-W przypadku braku decyzji o anulowaniu rezerwacji oraz zakończenia
-procesu płatności z powodzeniem rezerwacja przechodzi w stan
-\"rezerwacji opłaconej\". Po przetworzeniu zapłaty system hotelowy
-tworzy obiekt rezerwacji w bazie danych za pomocą metody
-`CreateReservation` na skutek czego rezerwacja przechodzi do stanu
-\"rezerwacji niezrealizowanej\". W przypadku anulowania rezerwacji przez
-klienta przyznany przez system hotelowy pokój jest zwalniany i ponownie
+okres, system hotelowy tworzy obiekt rezerwacji w bazie danych
+za pomocą metody `CreateReservation` na skutek czego rezerwacja przechodzi
+do stanu \"rezerwacji niezrealizowanej\". W przypadku anulowania rezerwacji
+przez klienta przyznany przez system hotelowy pokój jest zwalniany i ponownie
 uwzględniany w kolejnych żądaniach rezerwacji. Anulowana rezerwacja
 przechodzi wówczas do stanu \"rezerwacji anulowanej przez klienta\".\
 Po upływie czasu rezerwacji obiekt przechodzi w stan \"rezerwacji
@@ -1530,19 +1480,20 @@ prawdziwymi wartościami.
 |          RESERVATION_GET           |    9    |     Serwer     |
 |      RESERVATION_GET_RESPONSE      |   10    |     Hotel      |
 |         OFFER_UNAVALAIBLE          |   11    |     Hotel      |
-|             ID_UNKNOWN             |   12    |     Hotel      |
-|         RESERVATION_DELETE         |   13    |     Serwer     |
-|     RESERVATION_DELETE_SUCCESS     |   14    |     Hotel      |
-|     RESERVATION_DELETE_FAILURE     |   15    |     Hotel      |
-|         OFFER_ADD_REQUEST          |   16    |     Hotel      |
-|         OFFER_ADD_SUCCESS          |   17    |     Serwer     |
-|         OFFER_ADD_FAILURE          |   18    |     Serwer     |
-|        OFFER_DELETE_REQUEST        |   19    |     Hotel      |
-|        OFFER_DELETE_SUCCESS        |   20    |     Serwer     |
-|        OFFER_DELETE_FAILURE        |   21    |     Serwer     |
-|         OFFER_EDIT_REQUEST         |   22    |     Hotel      |
-|         OFFER_EDIT_SUCCESS         |   23    |     Serwer     |
-|         OFFER_EDIT_FAILURE         |   24    |     Serwer     |
+|     RESERVATION_CREATE_SUCCESS     |   12    |     Hotel      |
+|             ID_UNKNOWN             |   13    |     Hotel      |
+|         RESERVATION_DELETE         |   14    |     Serwer     |
+|     RESERVATION_DELETE_SUCCESS     |   15    |     Hotel      |
+|     RESERVATION_DELETE_FAILURE     |   16    |     Hotel      |
+|         OFFER_ADD_REQUEST          |   17    |     Hotel      |
+|         OFFER_ADD_SUCCESS          |   18    |     Serwer     |
+|         OFFER_ADD_FAILURE          |   19    |     Serwer     |
+|        OFFER_DELETE_REQUEST        |   20    |     Hotel      |
+|        OFFER_DELETE_SUCCESS        |   21    |     Serwer     |
+|        OFFER_DELETE_FAILURE        |   22    |     Serwer     |
+|         OFFER_EDIT_REQUEST         |   23    |     Hotel      |
+|         OFFER_EDIT_SUCCESS         |   24    |     Serwer     |
+|         OFFER_EDIT_FAILURE         |   25    |     Serwer     |
   
 
 ## Logowanie i uwierzytelnienie hotelu
@@ -1785,15 +1736,11 @@ Oczekiwane odpowiedzi:
     Oferta jest niedostępna w wybranym okresie wg danych po stronie
     hotelu. Hotel sugeruje, że potrzebna jest synchronizacja.
 
--   `PAYMENT_INFO`\
-    Serwer po otrzymaniu `PAYMENT_INFO` zapisuje otrzymane informacje
-    tymczasowo w lokalnej bazie danych. Oprócz otrzymanych danych serwer
-    przetrzymuje w danym wierszu również informację o ID hotelu, od
-    którego je otrzymał. W ten sposób może jednoznacznie zidentyfikować
-    rezerwację, w ramach której została utworzona dana płatność (innymi
-    słowy, para \[HotelID, ReservationID\] jest tutaj kluczem głównym).
-    Informacje te są potrzebne głównie dla późniejszego wykorzystania
-    przez klienta przy płatności (patrz: [/payments](#payments)).
+-   `RESERVATION_CREATE_SUCCESS`\
+    Rezerwacja została utworzona pomyślnie po stronie hotelu.
+
+-   `RESERVATION_CREATE_FAILURE`\
+    Rezerwacja nie została utworzona pomyślnie.
 
     <img src="Rezerwacje/paymentInfo.jpg">
 
@@ -1802,8 +1749,7 @@ Oczekiwane odpowiedzi:
 Klient może zrezygnować ze swojej rezerwacji w dowolnym momencie. Zaraz
 po otrzymaniu przez serwer takiej prośby, przekazuje ją do hotelu
 niniejszym komunikatem. Wewnątrz wiadomości znajduje się ID rezerwacji,
-której dotyczy. Struktura jest więc identyczna jak w
-([Payment_success](#payment_success).
+której dotyczy.
 
 Oczekiwane odpowiedzi:
 
@@ -1819,8 +1765,7 @@ Oczekiwane odpowiedzi:
 ### `RESERVATION_GET`
 
 Zapytanie o szczegóły konkretnej rezerwacji - na przykład w celu
-przekazania tych informacji klientowi. Struktura wiadomości identyczna
-jak w ([Payment_success](#payment_success)).
+przekazania tych informacji klientowi.
 
 Oczekiwane odpowiedzi:
 
@@ -2514,8 +2459,8 @@ wypełnia formularz:
 
 -   Number of adults: 2
 
-i przesyła go do serwera. Po chwili otrzymuje szczegóły dot. płatności,
-finalizuje ją i cieszy się z potwierdzonej rezerwacji.
+i przesyła go do serwera. Po chwili otrzymuje szczegóły dot. swojej
+potwierdzonej rezerwacji.
 
 -   Klient najpierw popełnia pomyłkę i w polu \"Liczba dzieci\" wpisuje
     20 zamiast 2. Otrzymuje błąd 400. Nie zachodzą żadne zmiany w
