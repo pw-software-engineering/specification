@@ -1130,13 +1130,13 @@ Przebieg komunikacji dla każdej z tych operacji prezentujemy poniżej.
 <img src="Aktywnosc/IO_Aktywności-Dodawanie oferty.png">
 <img src="Sekwencje/Offer_Add.png">
 
-Dodawanie oferty to operacja między Systemem Hotelowym, a Serwerem.
-System Hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
+Dodawanie oferty to operacja między systemem hotelowym, a serwerem.
+System hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
 wszystkimi informacjami o ofercie. Serwer po otrzymaniu żądania waliduje
-otrzymane dane po czym odsyła serwerowi czy operacja się powiodła, wtedy
-odsyła potwierdzenie, czy nastąpił jakiś błąd, wtedy odsyła informacje o
-błędzie. Jeśli system hotelowy nie może wysłać komunikatu ponawia próbę
-po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
+otrzymane dane. W przypadku ich niepoprawności odsyła hotelowi stosowny błąd.
+Po zwalidowaniu, nowa oferta zapisywana jest w lokalnej bazie danych serwera.
+Do hotelu odsyłane jest potwierdzenie. Jeśli system hotelowy nie może otrzyma
+komunikatu ponawia próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
 wykonywanie aktywności. W przypadku otrzymania potwierdzenia System
 Hotelowy kończy operacje dodaniem do swojej bazy danych oferty. W
 przypadku niepowodzenia oferta nie zostaje dodana do bazy danych i
@@ -1155,17 +1155,17 @@ aktywności.
 
 ### Edytowanie oferty
 
-<img src="Aktywnosc/IO_Aktywności-Usuwanie oferty.png">
+<img src="Aktywnosc/IO_Aktywności-Edytowanie oferty.png">
 <img src="Sekwencje/Offer_Edit.png">
 
-Edycja oferty zaczyna się od wypełnienia formularza zmian przez
-użytkownika Systemu Hotelowego wewnątrz niej. Zmiany są następnie
+Edycja oferty zaczyna się od zmodyfikowania przez użytkownika systemu 
+hotelowego formularza już istniejącej w systemie oferty. Zmiany są następnie
 wstępnie walidowane. W przypadku nieudanej walidacji użytkownik jest z
-powrotem odsyłany do formularza. W przypadku udanej walidacji System
-Hotelowy wysyła żądanie wprowadzenia zmian do Serwera który jeszcze raz
+powrotem odsyłany do formularza. W przypadku udanej walidacji system
+hotelowy wysyła żądanie wprowadzenia zmian do serwera który jeszcze raz
 waliduje otrzymane dane. Jeśli to się nie powiedzie odsyła błąd i proces
 się kończy. W przypadku przejścia walidacji pomyślnie system uaktualnia
-dane i odsyła informacje o powodzeniu operacji po czym System Hotelowy
+dane i odsyła informacje o powodzeniu operacji, po czym system hotelowy
 uaktualnia swoje dane. Jeśli system hotelowy nie może wysłać komunikatu
 ponawia próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym
 zarzuca wykonywanie aktywności.
@@ -1194,16 +1194,13 @@ błąd w postaci kodu 400 wraz z informacją o błędnie wypełnionym polu.
 Jeśli formularz został wypełniony poprawnie zwracana jest lista ofert. W
 przypadku gdy lista jest niepusta możemy wybrać jedną z ofert, aby
 poznać jej szczegóły i przejść do dalszej interakcji.\
-Jeśli system hotelowy nie może wysłać komunikatu ponawia próbę po pewnym
-czasie. Powtarza to 5 razy co sekundę, po czym zarzuca wykonywanie
-aktywności.\
 Walidacja formularza i ewentualnie zwracane błędy w postaci kodów 400
 nie zostały naniesione na diagram w celu zachowania jego czytelności.
 
 ## Rezerwacja
 
 Podstawą systemu jest możliwość składania rezerwacji przez klientów. W
-poniższej podsekcji zobaczymy jak wygląda z grubsza komunikacja między
+poniższej podsekcji przyjrzymy się komunikacji między
 modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 
 ### Tworzenie rezerwacji {#reservation_diagram}
@@ -1227,25 +1224,11 @@ opasującymi dostępność oferty. W efekcie serwer odsyła użytkownikowi
 informację o nieudanej rezerwacji oraz natychmiastowo wykonuje proces
 związany z synchronizacją danych. W przypadku gdy hotel będzie mógł
 przyporządkować odpowiedni pokój na podany okres czasowy, tworzy on
-lokalny wpis w bazie danych związany z tą rezerwacją oraz wpis dotyczący
-płatności za tą rezerwację, która musi zostać opłacona przez klienta, a
-następnie wysyłana do klienta przez serwer. Klient może anulować
+lokalny wpis w bazie danych związany z tą rezerwacją. Klient może anulować
 rezerwację oraz wysłać do serwera odpowiedni komunikat, który następnie
 jest przesyłany do hotelu. Hotel usuwa wówczas utworzony wpis rezerwacji
 i zwraca odpowiednią informację serwerowi, która jest propagowana do
-klienta. Jeśli klient opłaci w czasie daną rezerwację, wysyłany jest
-komunikat do serwera o zakończeniu procesu płatności, który jest
-następnie przekazywany do hotelu. Hotel ponownie sprawdza czy płatność
-związana z konkretnym identyfikatorem płatności została zakończona
-sukcesem. W przypadku niepowodzenia zwracana jest wiadomość do serwera
-oznaczająca konieczność kontaktu z hotelem w celu potwierdzenia
-płatności. Jest to sytuacja szczególna, która może być zależna od
-zewnętrznego dostawcy usług płatności i błędami w tym systemie płatności
-lub brakiem odpowiedniej synchronizacji (ten przypadek szczególny został
-opisany przy ([Payments](#payments)). Jeśli płatność zostanie potwierdzona przez
-hotel, jest odsyłana odpowiedź o sukcesie do serwera, w wyniku czego
-tworzony jest wpis o rezerwacji klienckiej po stronie serwera i odsyłana
-odpowiednia odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
+klienta.
 
 ### Anulowanie rezerwacji
 
@@ -1253,13 +1236,13 @@ odpowiednia odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
 <img src="Sekwencje/Reservation_Cancel.png">
 
 Po wybraniu swojej rezerwacji klient ma możliwość anulowania jej.
-Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do Serwera
+Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do serwera
 który przekazuje ją odpowiedniemu hotelowi. Hotel usuwa ze swojej bazy
-danych rezerwacje i przesyła potwierdzenie do Serwera który również
+danych rezerwacje i przesyła potwierdzenie do serwera który również
 usuwa rezerwację z swojej bazy danych i przesyła potwierdzenie do
 klienta. W przypadku wystąpienia błędu na którymkolwiek z tych etapów
 przesyłany jest błąd w stronę klienta i żadne zmiany w bazie danych nie
-są robione. Jeśli któryś z modułów nie może wysłać komunikatu ponawia
+są dokonywane. Jeśli któryś z modułów nie może wysłać komunikatu ponawia
 próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
 wykonywanie aktywności.
 
@@ -1268,19 +1251,19 @@ wykonywanie aktywności.
 <img src="Aktywnosc/IO_Aktywności-Local reservation.png">
 
 Istnieje również możliwość że klient przyjdzie do hotelu bez rezerwacji.
-System hotelowy ma możliwość właśnie na taką ewentualność. System
-hotelowy może zarezerwować pokój w imieniu klienta Po takiej rezerwacji
-nie może zostać strwożona opinia gdyż serwer nie wie o istnieniu
-takowej. Id klienta w bazie danych systemu hotelowego jest IdUser
+system hotelowy ma możliwość właśnie na taką ewentualność. System
+hotelowy może zarezerwować pokój w imieniu klienta. Po takiej rezerwacji
+nie może zostać strworzona opinia gdyż serwer nie wie o istnieniu
+takowej. ID klienta w bazie danych systemu hotelowego jest IDUser
 hotelu. Hotel nie przetrzymuje wtedy żadnych informacji o kliencie, ale
-za to klient nie musi trwożyć nowego konta. System Hotelowy próbuje
-synchronizować się z serwerem i gdy nie ma żadnych przeciwności(czytaj
-np. nie ma rezerwacji które były na serwerze na dany okres, a system
+za to klient nie musi tworzyć nowego konta. System hotelowy próbuje
+synchronizować się z serwerem i gdy nie ma żadnych przeciwności 
+(np. nie ma rezerwacji które były na serwerze na dany okres, a system
 hotelowy o nich nie wiedział) dodaje rezerwację do lokalnej bazy danych.
 
 ## Opinia
 
-W celu umożliwienia oceny danej oferty klienci(użytkownicy aplikacji
+W celu umożliwienia oceny danej oferty klienci (użytkownicy aplikacji
 klienckiej) mają możliwość dodawania swoich opinii do ofert z których
 ostatnio skorzystali. Poniżej przedstawiamy proces dodawania takiej
 opini do systemu.
@@ -1291,10 +1274,10 @@ opini do systemu.
 <img src="Sekwencje/Opinion_Add.png">
 
 Klient może dodać opinie do wybranej przez siebie rezerwacji którą już
-odbył. W tym celu wypełnia formularz w Aplikacji Klienckiej, który jest
+odbył. W tym celu wypełnia formularz w aplikacji klienckiej, który jest
 walidowany (w przypadku niepowodzenie odsyłany jest z powrotem do
 formularza). Po przejściu przez walidację żądanie wysyłane jest do
-Serwera który ponownie je waliduje i odsyła informacje czy operacja się
+serwera który ponownie je waliduje i odsyła informacje czy operacja się
 powiodła czy nie.
 
 ## Synchronizacja
@@ -1315,7 +1298,7 @@ niedostępności ofert odpowiednio wyznaczone przez hotel.
 # Hotel-Serwer <a name="7"></a>
 
 Do przesyłania wiadomości używane są trwałe połączenia TCP. Wynika to z
-faktu, że komunikacja między modułami hotelowymi a modułem serwerowym
+faktu, że komunikacja między modułami hotelowymi, a modułem serwerowym
 może się rozpocząć zarówno po stronie hotelu jak i serwera. Format
 przesyłanych wiadomości jest następujący:
 
@@ -1368,23 +1351,21 @@ prawdziwymi wartościami.
 |          RESERVATION_GET           |    9    |     Serwer     |
 |      RESERVATION_GET_RESPONSE      |   10    |     Hotel      |
 |         OFFER_UNAVALAIBLE          |   11    |     Hotel      |
-|            PAYMENT_INFO            |   12    |     Hotel      |
-|          PAYMENT_SUCCESS           |   13    |     Serwer     |
-|  PAYMENT_SUCCESS_RESPONSE_SUCCESS  |   14    |     Hotel      |
-|  PAYMENT_SUCCESS_RESPONSE_FAILURE  |   15    |     Hotel      |
-|             ID_UNKNOWN             |   16    |     Hotel      |
-|         RESERVATION_DELETE         |   17    |     Serwer     |
-|     RESERVATION_DELETE_SUCCESS     |   18    |     Hotel      |
-|     RESERVATION_DELETE_FAILURE     |   19    |     Hotel      |
-|         OFFER_ADD_REQUEST          |   20    |     Hotel      |
-|         OFFER_ADD_SUCCESS          |   21    |     Serwer     |
-|         OFFER_ADD_FAILURE          |   22    |     Serwer     |
-|        OFFER_DELETE_REQUEST        |   23    |     Hotel      |
-|        OFFER_DELETE_SUCCESS        |   24    |     Serwer     |
-|        OFFER_DELETE_FAILURE        |   25    |     Serwer     |
-|         OFFER_EDIT_REQUEST         |   26    |     Hotel      |
-|         OFFER_EDIT_SUCCESS         |   27    |     Serwer     |
-|         OFFER_EDIT_FAILURE         |   28    |     Serwer     |
+|     RESERVATION_CREATE_SUCCESS     |   12    |     Hotel      |
+|     RESERVATION_CREATE_FAILURE     |   13    |     Hotel      |
+|             ID_UNKNOWN             |   14    |     Hotel      |
+|         RESERVATION_DELETE         |   15    |     Serwer     |
+|     RESERVATION_DELETE_SUCCESS     |   16    |     Hotel      |
+|     RESERVATION_DELETE_FAILURE     |   17    |     Hotel      |
+|         OFFER_ADD_REQUEST          |   18    |     Hotel      |
+|         OFFER_ADD_SUCCESS          |   19    |     Serwer     |
+|         OFFER_ADD_FAILURE          |   20    |     Serwer     |
+|        OFFER_DELETE_REQUEST        |   21    |     Hotel      |
+|        OFFER_DELETE_SUCCESS        |   22    |     Serwer     |
+|        OFFER_DELETE_FAILURE        |   23    |     Serwer     |
+|         OFFER_EDIT_REQUEST         |   24    |     Hotel      |
+|         OFFER_EDIT_SUCCESS         |   25    |     Serwer     |
+|         OFFER_EDIT_FAILURE         |   26    |     Serwer     |
   
 
 ## Logowanie i uwierzytelnienie hotelu
@@ -1489,7 +1470,7 @@ Do kodów "akceptowalnych" należą:
 
 <img src="Oferta-Hotel-Serwer/Offer_Add_JSON2.png">
 
-**Dodawanie nowej oferty**\
+**Dodawanie nowej oferty**
 Proces dodawania nowej oferty zaczyna się od wypełnienia odpowiedniego
 formularza. Następnie dokonywana jest wstępna walidacja formularza po
 stronie systemu hotelowego. Jeżeli nie wykryto żadnych błędów, do
@@ -1547,7 +1528,7 @@ schematem. Przykładowe błędy to między innymi:
 
 ### `OFFER_DELETE_REQUEST`
 
-**Usuwanie oferty**\
+**Usuwanie oferty**
 
 <img src="Oferta-Hotel-Serwer/Offer_DeleteJSON.png">
 
@@ -1577,7 +1558,7 @@ otrzymany JSON powinien być więc zgodny z powyższym schematem.
 
 ### `OFFER_EDIT_REQUEST`
 
-**Edytowanie istniejącej oferty**\
+**Edytowanie istniejącej oferty**
 
 <img src="Oferta-Hotel-Serwer/Offer_Edit_JSON1.png">
 <img src="Oferta-Hotel-Serwer/Offer_Edit_JSON2.png">
@@ -1627,46 +1608,12 @@ Oczekiwane odpowiedzi:
     Oferta jest niedostępna w wybranym okresie wg danych po stronie
     hotelu. Hotel sugeruje, że potrzebna jest synchronizacja.
 
--   `PAYMENT_INFO`\
-    Serwer po otrzymaniu `PAYMENT_INFO` zapisuje otrzymane informacje
-    tymczasowo w lokalnej bazie danych. Oprócz otrzymanych danych serwer
-    przetrzymuje w danym wierszu również informację o ID hotelu, od
-    którego je otrzymał. W ten sposób może jednoznacznie zidentyfikować
-    rezerwację, w ramach której została utworzona dana płatność (innymi
-    słowy, para \[HotelID, ReservationID\] jest tutaj kluczem głównym).
-    Informacje te są potrzebne głównie dla późniejszego wykorzystania
-    przez klienta przy płatności (patrz: [/payments](#payments)).
-
-    <img src="Rezerwacje/paymentInfo.jpg">
-
-### `PAYMENT_SUCCESS`
-
-Komunikat wysyłany do hotelu po otrzymaniu od klienta informacji o
-zakończonym procesie płatności.
-
-<img src="Rezerwacje/reservationIDSchema.jpg">
-
-Oczekiwane odpowiedzi:
-
--   `PAYMENT_SUCCESS_RESPONSE_SUCCES`\
-    Płatność dotarła do hotelu. Hotel w odpowiedzi przesyła obiekt z 2
-    właściwościami: **ID rezerwacji** oraz **ID klienta**. Serwer
-    zapisuje te informacje w swojej bazie.
-
--   `PAYMENT_SUCCESS_RESPONSE_FAILURE`\
-    Płatność nie dotarła do hotelu. Wiadomość zawiera string w opisanym
-    powodem błędu.
-
--   `ID_UNKNOWN`\
-    Nieznane ID rezerwacji
-
 ### `RESERVATION_DELETE`
 
 Klient może zrezygnować ze swojej rezerwacji w dowolnym momencie. Zaraz
 po otrzymaniu przez serwer takiej prośby, przekazuje ją do hotelu
 niniejszym komunikatem. Wewnątrz wiadomości znajduje się ID rezerwacji,
-której dotyczy. Struktura jest więc identyczna jak w
-([Payment_success](#payment_success).
+której dotyczy. 
 
 Oczekiwane odpowiedzi:
 
@@ -1682,8 +1629,7 @@ Oczekiwane odpowiedzi:
 ### `RESERVATION_GET`
 
 Zapytanie o szczegóły konkretnej rezerwacji - na przykład w celu
-przekazania tych informacji klientowi. Struktura wiadomości identyczna
-jak w ([Payment_success](#payment_success)).
+przekazania tych informacji klientowi. 
 
 Oczekiwane odpowiedzi:
 
