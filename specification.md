@@ -1135,10 +1135,10 @@ System hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
 wszystkimi informacjami o ofercie. Serwer po otrzymaniu żądania waliduje
 otrzymane dane. W przypadku ich niepoprawności odsyła hotelowi stosowny błąd.
 Po zwalidowaniu, nowa oferta zapisywana jest w lokalnej bazie danych serwera.
-Do hotelu odsyłane jest potwierdzenie. Jeśli system hotelowy nie może otrzyma
+Do hotelu odsyłane jest potwierdzenie. Jeśli system hotelowy nie może otrzymać
 komunikatu ponawia próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
-wykonywanie aktywności. W przypadku otrzymania potwierdzenia System
-Hotelowy kończy operacje dodaniem do swojej bazy danych oferty. W
+wykonywanie aktywności. W przypadku otrzymania potwierdzenia system
+hotelowy kończy operacje dodaniem do swojej bazy danych oferty. W
 przypadku niepowodzenia oferta nie zostaje dodana do bazy danych i
 proces się kończy.
 
@@ -1147,8 +1147,8 @@ proces się kończy.
 <img src="Aktywnosc/IO_Aktywności-Usuwanie oferty.png">
 <img src="Sekwencje/Offer_Delete.png">
 
-Usuwanie oferty odbywa się w następujący sposób System hotelowy wysyła
-żądanie, a Serwer odsyła informacje o powodzeniu operacji lub o błędzie.
+Usuwanie oferty odbywa się w następujący sposób. System hotelowy wysyła
+żądanie, a serwer odsyła informacje o powodzeniu operacji lub o błędzie.
 Jeśli system hotelowy nie może wysłać komunikatu ponawia próbę po pewnym
 czasie. Powtarza to 5 razy co sekundę, po czym zarzuca wykonywanie
 aktywności.
@@ -1182,13 +1182,13 @@ nieprawidłowości w formularzu do użytkownika zostaje przesłany błąd w
 postaci kodu 400 wraz z informacją o błędnie wypełnionym polu. Jeśli
 formularz został wypełniony poprawnie zwracana jest lista hoteli. W
 przypadku gdy lista jest niepusta możemy wybrać jeden z hoteli, aby
-poznać szczegółowe informacje na jego temat i mieć dostęp do
+poznać szczegółowe informacje na jego temat i uzyskać dostęp do
 udostępnionych przez niego ofert.\
 Drugi etap to wyszukiwanie ofert spośród tych udostępnionych przez
 wybrany we wcześniejszych krokach hotel. Wyszukiwanie to przebiega
 analogicznie do wyszukiwania hoteli. Użytkownik ma możliwość
 ograniczenia listy ofert poprzez wypełnienie danych do wyszukiwania
-ofert. Formularz jest przesyłany do serwera gdzie odbywa się jego
+ofert. Formularz jest przesyłany do serwera, gdzie odbywa się jego
 walidacja. W przypadku nieprawidłowości do użytkownika zostaje przesłany
 błąd w postaci kodu 400 wraz z informacją o błędnie wypełnionym polu.
 Jeśli formularz został wypełniony poprawnie zwracana jest lista ofert. W
@@ -1203,7 +1203,7 @@ Podstawą systemu jest możliwość składania rezerwacji przez klientów. W
 poniższej podsekcji przyjrzymy się komunikacji między
 modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 
-### Tworzenie rezerwacji {#reservation_diagram}
+### Tworzenie rezerwacji
 
 <img src="Aktywnosc/IO_Aktywności-Tworzenie rezerwacji.png">
 
@@ -1236,11 +1236,11 @@ klienta.
 <img src="Sekwencje/Reservation_Cancel.png">
 
 Po wybraniu swojej rezerwacji klient ma możliwość anulowania jej.
-Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do serwera
+Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do serwera,
 który przekazuje ją odpowiedniemu hotelowi. Hotel usuwa ze swojej bazy
-danych rezerwacje i przesyła potwierdzenie do serwera który również
-usuwa rezerwację z swojej bazy danych i przesyła potwierdzenie do
-klienta. W przypadku wystąpienia błędu na którymkolwiek z tych etapów
+danych rezerwacje i przesyła potwierdzenie do serwera, który również
+usuwa rezerwację ze swojej bazy danych i przesyła potwierdzenie do
+klienta. W przypadku wystąpienia błędu na którymkolwiek z tych etapów,
 przesyłany jest błąd w stronę klienta i żadne zmiany w bazie danych nie
 są dokonywane. Jeśli któryś z modułów nie może wysłać komunikatu ponawia
 próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
@@ -1250,10 +1250,10 @@ wykonywanie aktywności.
 
 <img src="Aktywnosc/IO_Aktywności-Local reservation.png">
 
-Istnieje również możliwość że klient przyjdzie do hotelu bez rezerwacji.
-system hotelowy ma możliwość właśnie na taką ewentualność. System
+Istnieje również możliwość, że klient przyjdzie do hotelu bez rezerwacji, 
+chcąc dokonać rezerwacji bezpośrednio na miejscu. System
 hotelowy może zarezerwować pokój w imieniu klienta. Po takiej rezerwacji
-nie może zostać strworzona opinia gdyż serwer nie wie o istnieniu
+nie może zostać strworzona opinia, gdyż serwer nie wie o istnieniu
 takowej. ID klienta w bazie danych systemu hotelowego jest IDUser
 hotelu. Hotel nie przetrzymuje wtedy żadnych informacji o kliencie, ale
 za to klient nie musi tworzyć nowego konta. System hotelowy próbuje
@@ -1275,9 +1275,9 @@ opini do systemu.
 
 Klient może dodać opinie do wybranej przez siebie rezerwacji którą już
 odbył. W tym celu wypełnia formularz w aplikacji klienckiej, który jest
-walidowany (w przypadku niepowodzenie odsyłany jest z powrotem do
-formularza). Po przejściu przez walidację żądanie wysyłane jest do
-serwera który ponownie je waliduje i odsyła informacje czy operacja się
+walidowany (w przypadku niepowodzenie proszony jest o naniesienie poprawek 
+w formularzu). Po przejściu przez walidację żądanie wysyłane jest do
+serwera, który ponownie je waliduje i odsyła informacje czy operacja się
 powiodła czy nie.
 
 ## Synchronizacja
@@ -1415,7 +1415,7 @@ rezerwacji jak i w ramach możliwego mechanizmu periodycznej
 synchronizacji obu modułów. W przypadku gdy zostanie utworzona nowa
 rezerwacja anonimowa (na miejscu w hotelu) bądź system hotelowy
 przeorganizuje dopasowanie pokoi do rezerwacji tworząc lub zamykając tym
-samym "okna" dostępności danej oferty potrzebna jest synchronizacja
+samym "okna" dostępności danej oferty, potrzebna jest synchronizacja
 danych dostępności danej oferty z serwerem. Ponadto, system
 synchronizacji jest częścią procesu anulowania jak i tworzenia
 rezerwacji po stronie serwera. Serwer może w nieoczekiwanym przypadku
@@ -1450,7 +1450,7 @@ hotelem. Może ono wystąpić w mechanizmie periodycznej synchronizacji
 danych w celu zachowania spójności danych w obu modułach, w przypadku
 anulowania rezerwacji lub podczas procesu tworzenia nowej rezerwacji
 klienckiej po otrzymaniu komunikatu `OFFER_UNAVAILABLE` oznaczającego
-niedostępność oferty. Wiadomość ta ma na celu potwierdzenia lub
+niedostępność oferty. Wiadomość ta ma na celu potwierdzenie lub
 aktualizację dostępności danej oferty z hotelem.
 
 Do kodów "akceptowalnych" należą:
@@ -1464,11 +1464,12 @@ Do kodów "akceptowalnych" należą:
 
 ### `OFFER_ADD_REQUEST`
 
+**Dodawanie nowej oferty**
+
 <img src="Oferta-Hotel-Serwer/Offer_Add_JSON1.png">
 
 <img src="Oferta-Hotel-Serwer/Offer_Add_JSON2.png">
 
-**Dodawanie nowej oferty**
 Proces dodawania nowej oferty zaczyna się od wypełnienia odpowiedniego
 formularza. Następnie dokonywana jest wstępna walidacja formularza po
 stronie systemu hotelowego. Jeżeli nie wykryto żadnych błędów, do
@@ -1507,7 +1508,7 @@ poprawnie serwer dodaje ją do swojej lokalnej bazy danych i odsyła do
 hotelu informację o powodzeniu w postaci kodu operacyjnego:
 `OFFER_ADD_SUCCESS` i informacji o ID nowo dodanej oferty. Moduł
 hotelowy następnie dodaję do lokalnej bazy danych ofertę ze wskazanym
-przez serwer OfferID. Takie rozwiązani pozwala na zachowanie spójności
+przez serwer OfferID. Takie rozwiązanie pozwala na zachowanie spójności
 pomiędzy numerami identyfikacyjnymi ofert po stronie serwera i hotelu.
 
 ### `OFFER_ADD_FAILURE`
@@ -1566,7 +1567,7 @@ ofertę i przechodzi do jej edycji poprzez formularz znany mu dobrze z
 dodawania nowej oferty. Po zakończeniu edycji oferta jest ponownie
 walidowana po stronie systemu hotelowego, po czym do serwera zostaje
 przesłany kod operacyjny: `EDIT_OFFER_REQUEST` wraz z zserialiozowanym
-JSONem zawierającym pola które zostały poddane modyfikacji. Schemat
+JSONem zawierającym pola, które zostały poddane modyfikacji. Schemat
 wiadomości jest więc analogiczny do tego dla dodawania nowej oferty.
 Wzbogacony jest jedynie o dodatkowe wymagane pole OfferID pozwalające na
 identyfikację modyfikowanej oferty.
@@ -1605,6 +1606,15 @@ Oczekiwane odpowiedzi:
 -   `OFFER_UNAVAILABLE`\
     Oferta jest niedostępna w wybranym okresie wg danych po stronie
     hotelu. Hotel sugeruje, że potrzebna jest synchronizacja.
+    
+-   `RESERVATION_CREATE_FAILURE`\
+    Rezerwacja nie może zostać dokonana z innego powodu niż niedostępność oferty.
+    
+-   `RESERVATION_CREATE_SUCCESS`\
+    Rezerwacja jest możliwa w wybranym terminie i jest dodawana do lokalnej 
+    bazy danych systemu hotelowego. Serwer po otrzymaniu wiadomości o tym kodzie
+    dodaje rezerwację również do swojej bazy danych i informuje klienta o pomyślnym
+    dokonaniu rezerwacji.
 
 ### `RESERVATION_DELETE`
 
