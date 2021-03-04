@@ -1253,10 +1253,8 @@ Przebieg komunikacji dla każdej z tych operacji prezentujemy poniżej.
 
 ### Dodawanie oferty
 
-
-![image](Aktywnosc/IO_Aktywności-Dodawanie%20oferty.png)
-![image](Sekwencje/Offer_Add.png)
-
+<img src="Aktywnosc/IO_Aktywności-Dodawanie oferty.png">
+<img src="Sekwencje/Offer_Add.png">
 
 Dodawanie oferty to operacja między Systemem Hotelowym, a Serwerem.
 System Hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
@@ -1272,8 +1270,8 @@ proces się kończy.
 
 ### Usuwanie oferty
 
-![image](Aktywnosc/IO_Aktywności-Usuwanie%20oferty.png)
-![image](Sekwencje/Offer_Delete.png)
+<img src="Aktywnosc/IO_Aktywności-Usuwanie oferty.png">
+<img src="Sekwencje/Offer_Delete.png">
 
 Usuwanie oferty odbywa się w następujący sposób System hotelowy wysyła
 żądanie, a Serwer odsyła informacje o powodzeniu operacji lub o błędzie.
@@ -1283,8 +1281,8 @@ aktywności.
 
 ### Edytowanie oferty
 
-![image](Aktywnosc/IO_Aktywności-Usuwanie%20oferty.png)
-![image](Sekwencje/Offer_Edit.png)
+<img src="Aktywnosc/IO_Aktywności-Usuwanie oferty.png">
+<img src="Sekwencje/Offer_Edit.png">
 
 Edycja oferty zaczyna się od wypełnienia formularza zmian przez
 użytkownika Systemu Hotelowego wewnątrz niej. Zmiany są następnie
@@ -1300,8 +1298,8 @@ zarzuca wykonywanie aktywności.
 
 ### Wyszukiwanie oferty
 
-![image](Aktywnosc/IO_Aktywności-Wyszukiwanie%20hoteli%20i%20ofert.png)
-![image](Sekwencje/Offer_Search.png)
+<img src="Aktywnosc/IO_Aktywności-Wyszukiwanie hoteli i ofert.png">
+<img src="Sekwencje/Offer_Search.png">
 
 Wyszukiwanie oferty w systemie jest 2 etapowe. Pierwszy etap to
 uzupełnienie danych wyszukiwania hotelu. Wypełniony formularz jest
@@ -1336,9 +1334,8 @@ modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 
 ### Tworzenie rezerwacji
 
-![image](Aktywnosc/IO_Aktywności-Tworzenie%20rezerwacji.png)
-
-![image](Sekwencje/Reservation_Create.png)
+<img src="Aktywnosc/IO_Aktywności-Tworzenie rezerwacji.png">
+<img src="Sekwencje/Reservation_Create.png">
 
 Proces tworzenia rezerwacji zaczyna się po wybraniu przez użytkownika
 aplikacji klienckiej hotelu oraz oferty, w ramach której ma być
@@ -1355,11 +1352,15 @@ opasującymi dostępność oferty. W efekcie serwer odsyła użytkownikowi
 informację o nieudanej rezerwacji oraz natychmiastowo wykonuje proces
 związany z synchronizacją danych. W przypadku gdy hotel będzie mógł
 przyporządkować odpowiedni pokój na podany okres czasowy, tworzy on
+lokalny wpis w bazie danych związany z tą rezerwacją i jest odsyłana
+odpowiedź o sukcesie do serwera, w wyniku czego tworzony jest wpis
+o rezerwacji klienckiej po stronie serwera i odsyłana odpowiednia
+odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
 
 ### Anulowanie rezerwacji
 
-![image](Aktywnosc/IO_Aktywności-Usuwanie%20rezerwacji.png)
-![image](Sekwencje/Reservation_Cancel.png)
+<img src="Aktywnosc/IO_Aktywności-Usuwanie rezerwacji.png">
+<img src="Sekwencje/Reservation_Cancel.png">
 
 Po wybraniu swojej rezerwacji klient ma możliwość anulowania jej.
 Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do Serwera
@@ -1374,7 +1375,7 @@ wykonywanie aktywności.
 
 ### Tworzenie rezerwacji lokalnie
 
-![image](Aktywnosc/IO_Aktywności-Local%20reservation.png)
+<img src="Aktywnosc/IO_Aktywności-Local reservation.png">
 
 Istnieje również możliwość że klient przyjdzie do hotelu bez rezerwacji.
 System hotelowy ma możliwość właśnie na taką ewentualność. System
@@ -1396,8 +1397,8 @@ opini do systemu.
 
 ### Dodawanie opinii
 
-![image](Aktywnosc/IO_Aktywności-Dodawanie%20oceny.png)
-![image](Sekwencje/Opinion_Add.png)
+<img src="Aktywnosc/IO_Aktywności-Dodawanie oceny.png">
+<img src="Sekwencje/Opinion_Add.png">
 
 Klient może dodać opinie do wybranej przez siebie rezerwacji którą już
 odbył. W tym celu wypełnia formularz w Aplikacji Klienckiej, który jest
@@ -1408,8 +1409,8 @@ powiodła czy nie.
 
 ## Synchronizacja
 
-![image](Sekwencje/Synchronization_Server.png.png)
-![image](Sekwencje/Synchronization_Hotel.png)
+<img src="Sekwencje/Synchronization_Server.png.png">
+<img src="Sekwencje/Synchronization_Hotel.png"> 
 
 W dowolnym momencie dane między hotelem a serwerem dotyczące dostępności
 ofert mogą się zdesynchronizować. Może to wynikać np. z błędów
@@ -1782,29 +1783,16 @@ zamodelowane w RAML.
 
 ## Autentykacja i autoryzacja
 
-Poniżej opisana jest przykładowa implementacja schematu autentykacji dla
-klientów realizowana przez serwer. Część ta jest jedynie przykładem
-realizacji tego procesu – inną możliwością jest użycie zewnętrznych usług
-autentykacyjnych. Wówczas cały proces autentykacji byłby realizowany
-oddzielnie, natomiast serwer przechowywałby jedynie dane klientów bez
-ich sekretów. Wówczas na podstawie zewnętrznego dostawcy tokenów JWT
-(np. Azure B2C) na podstawie claimów zawartych w tym tokenie możliwe
-byłoby przydzielenie własnego niestandardowego tokena (opisanego
-poniżej) identyfikującego klienta z rekordem w bazie danych klienta.\
 Wszystkie endpointy serwera (poza endpointem związanym z logowaniem)
 zabezpieczone są przez schemat autentykacji opierający się na tworzeniu
 tokenów autentykacyjnych dla każdego klienta w momencie gdy dostarczone
 zostaną poprawne dane logowania. W każdym zapytaniu klienta powinien być
 dołączony nagłówek "x-session-token", którego wartością jest otrzymany
 przez klienta token autentykacyjny. Token ten jest zawsze tworzony po
-stronie serwera i odpowiednio szyfrowany w celu uniemożliwienia jego
-modyfikacji bądź podrobienia. Generowany token ma format JSON i jego
+stronie serwera. Generowany token ma format JSON i jego
 przykładowa zawartość jest podana na zdjęciu poniżej. Token
-"clientSessionToken" jest obiektem JSON zawierającym właściwość, której
-wartością jest ciąg znaków będący zaszyfrowanym tokenem JWT, natomiast
-"serverSessionToken" powstaje poprzez rozszyfrowanie przez serwer tego
-ciągu znaków. Każdy token zawiera właściwość "id", której wartość
-jednoznacznie identyfikuje klienta w bazie danych serwera.
+"serverSessionToken" jest obiektem JSON zawierającym właściwość "id",
+której wartość jednoznacznie identyfikuje klienta w bazie danych serwera.
 
 <img src="Client login + authentication/authentication_tokens.png" />
 
@@ -1818,20 +1806,19 @@ tego błędu.
 <br />
 <img src="Client login + authentication/authentication_error.png">
 
-## Logowanie klienta i pobieranie danych o kliencie
+## Rejestracja/logowanie klienta i pobieranie danych o kliencie
 
-Z logowaniem klienta jest związana rejestracja konta. Proces rejestracji
-nie jest przedstawiony w specyfikacji, gdyż może być on zrealizowany w
-dowolny sposób. Przykładową implementacją może być tabela sekretów
-klienta w module serwerowym na podstawie której serwer przeprowadza
-proces autentykacji, bądź proces rejestracji może być częścią usług
-zewnętrznej, w skład której wchodzi proces autentykacji i zarządzanie
-sekretami klientów (np. serwis Azure B2C). Poniżej przedstawiona została
-przykładowa implementacja logowania klientów w przypadku implementacji
+Rejestracja klientów do serwisu odbywa się poprzez bezpośredni kontakt
+z administratorem modułu serwerowego i prośbą utworzenia nowego wpisu w bazie
+danych do tabli przetrzymującej informacje o wszystkich kontach użytkowników.\
+Poniżej przedstawiona została implementacja logowania klientów w przypadku
 procesu autentykacji przeprowadzanej przez serwer w oparciu o lokalną
-tablicę sekretów w bazie danych. Porównywane są wówczas przesłane przez
+tablicę sekretów w bazie danych. Jako login klienta przyjmowany jest jego obecna nazwa
+użytkownika (username). Porównywane są wówczas przesłane przez
 klienta login i hasło z danymi przechowywanymi w takiej tabeli i
-zwracany jest odpowiednio zaszyfrowany token przechowujący ID klienta.\
+zwracany jest odpowiednio token przechowujący ID klienta. Zwracane ID
+klienta odpowiada numerowi rekordu w tabeli bazy danych serwera, w której
+przetrzymywane sa informacje o wszystkich użytkownikach.\
 Do zarządzania danymi związanymi z kontem klienta oraz logowania do
 serwisu służą odpowiednio endpointy: `/Client` oraz `/Client/login`.
 Endpoint `/Client` jest zabezpieczony wyżej zdefiniowanym schematem
@@ -1863,8 +1850,8 @@ służący do logowania się użytkowników do systemu za pomocą ustalonego
 przy rejestracji loginu i hasła. Wysłane przez klienta dane logowania
 jako metoda POST sprawdzane są następnie przez serwer. W przypadku
 sukcesu tworzony jest `"serverSessionToken"` zawierający `"id"` logującego
-się klienta i szyfrowany a następnie zwracany w ciele odpowiedzi HTTP
-serwera. W celu dalszej autentykacji klienta token ten jest dołączany do
+się klienta. W celu dalszej autentykacji klienta token ten (jako
+zserializowany obiekt JSON w plain-text) jest dołączany do
 kolejnych żądań HTTP w nagłówku `"x-session-token"`. W przypadku
 niepowodzenia serwer zwraca odpowiedni kod błędu oraz dokładny opis
 błędu w ciele odpowiedzi HTTP. Powyżej znajdują się szczegółowe opisy
