@@ -1254,8 +1254,10 @@ Przebieg komunikacji dla każdej z tych operacji prezentujemy poniżej.
 
 ### Dodawanie oferty
 
-<img src="Aktywnosc/IO_Aktywności-Dodawanie oferty.png">
-<img src="Sekwencje/Offer_Add.png">
+
+![image](Aktywnosc/IO_Aktywności-Dodawanie%20oferty.png)
+![image](Sekwencje/Offer_Add.png)
+
 
 Dodawanie oferty to operacja między Systemem Hotelowym, a Serwerem.
 System Hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
@@ -1271,8 +1273,8 @@ proces się kończy.
 
 ### Usuwanie oferty
 
-<img src="Aktywnosc/IO_Aktywności-Usuwanie oferty.png">
-<img src="Sekwencje/Offer_Delete.png">
+![image](Aktywnosc/IO_Aktywności-Usuwanie%20oferty.png)
+![image](Sekwencje/Offer_Delete.png)
 
 Usuwanie oferty odbywa się w następujący sposób System hotelowy wysyła
 żądanie, a Serwer odsyła informacje o powodzeniu operacji lub o błędzie.
@@ -1282,8 +1284,8 @@ aktywności.
 
 ### Edytowanie oferty
 
-<img src="Aktywnosc/IO_Aktywności-Usuwanie oferty.png">
-<img src="Sekwencje/Offer_Edit.png">
+![image](Aktywnosc/IO_Aktywności-Usuwanie%20oferty.png)
+![image](Sekwencje/Offer_Edit.png)
 
 Edycja oferty zaczyna się od wypełnienia formularza zmian przez
 użytkownika Systemu Hotelowego wewnątrz niej. Zmiany są następnie
@@ -1299,8 +1301,8 @@ zarzuca wykonywanie aktywności.
 
 ### Wyszukiwanie oferty
 
-<img src="Aktywnosc/IO_Aktywności-Wyszukiwanie hoteli i ofert.png">
-<img src="Sekwencje/Offer_Search.png">
+![image](Aktywnosc/IO_Aktywności-Wyszukiwanie%20hoteli%20i%20ofert.png)
+![image](Sekwencje/Offer_Search.png)
 
 Wyszukiwanie oferty w systemie jest 2 etapowe. Pierwszy etap to
 uzupełnienie danych wyszukiwania hotelu. Wypełniony formularz jest
@@ -1335,9 +1337,9 @@ modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 
 ### Tworzenie rezerwacji
 
-<img src="Aktywnosc/IO_Aktywności-Tworzenie rezerwacji.png">
+![image](Aktywnosc/IO_Aktywności-Tworzenie%20rezerwacji.png)
 
-<img src="Sekwencje/Reservation_Create.png">
+![image](Sekwencje/Reservation_Create.png)
 
 Proces tworzenia rezerwacji zaczyna się po wybraniu przez użytkownika
 aplikacji klienckiej hotelu oraz oferty, w ramach której ma być
@@ -1354,15 +1356,11 @@ opasującymi dostępność oferty. W efekcie serwer odsyła użytkownikowi
 informację o nieudanej rezerwacji oraz natychmiastowo wykonuje proces
 związany z synchronizacją danych. W przypadku gdy hotel będzie mógł
 przyporządkować odpowiedni pokój na podany okres czasowy, tworzy on
-lokalny wpis w bazie danych związany z tą rezerwacją i jest odsyłana
-odpowiedź o sukcesie do serwera, w wyniku czego tworzony jest wpis
-o rezerwacji klienckiej po stronie serwera i odsyłana odpowiednia
-odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
 
 ### Anulowanie rezerwacji
 
-<img src="Aktywnosc/IO_Aktywności-Usuwanie rezerwacji.png">
-<img src="Sekwencje/Reservation_Cancel.png">
+![image](Aktywnosc/IO_Aktywności-Usuwanie%20rezerwacji.png)
+![image](Sekwencje/Reservation_Cancel.png)
 
 Po wybraniu swojej rezerwacji klient ma możliwość anulowania jej.
 Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do Serwera
@@ -1377,7 +1375,7 @@ wykonywanie aktywności.
 
 ### Tworzenie rezerwacji lokalnie
 
-<img src="Aktywnosc/IO_Aktywności-Local reservation.png">
+![image](Aktywnosc/IO_Aktywności-Local%20reservation.png)
 
 Istnieje również możliwość że klient przyjdzie do hotelu bez rezerwacji.
 System hotelowy ma możliwość właśnie na taką ewentualność. System
@@ -1399,8 +1397,8 @@ opini do systemu.
 
 ### Dodawanie opinii
 
-<img src="Aktywnosc/IO_Aktywności-Dodawanie oceny.png">
-<img src="Sekwencje/Opinion_Add.png">
+![image](Aktywnosc/IO_Aktywności-Dodawanie%20oceny.png)
+![image](Sekwencje/Opinion_Add.png)
 
 Klient może dodać opinie do wybranej przez siebie rezerwacji którą już
 odbył. W tym celu wypełnia formularz w Aplikacji Klienckiej, który jest
@@ -1411,8 +1409,8 @@ powiodła czy nie.
 
 ## Synchronizacja
 
-<img src="Sekwencje/Synchronization_Server.png.png">
-<img src="Sekwencje/Synchronization_Hotel.png"> 
+![image](Sekwencje/Synchronization_Server.png.png)
+![image](Sekwencje/Synchronization_Hotel.png)
 
 W dowolnym momencie dane między hotelem a serwerem dotyczące dostępności
 ofert mogą się zdesynchronizować. Może to wynikać np. z błędów
