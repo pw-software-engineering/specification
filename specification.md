@@ -1739,8 +1739,6 @@ Oczekiwane odpowiedzi:
 -   `RESERVATION_CREATE_FAILURE`\
     Rezerwacja nie została utworzona pomyślnie.
 
-    <img src="Rezerwacje/paymentInfo.jpg">
-
 ### `RESERVATION_DELETE`
 
 Klient może zrezygnować ze swojej rezerwacji w dowolnym momencie. Zaraz
