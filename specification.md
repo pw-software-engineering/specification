@@ -859,8 +859,7 @@ ServerConnectionOutgoing. Metody:
     Metody aktualizują dostępność oferty. Administrator hotelu może
     ofertę dowolnie zdezaktualizować lub zaaktualizować ponownie,
     manipulując w ten sposób wachlarzem propozycji dla swoich
-    potencjalnych klientów (więcej nt. stanów klasy Offer patrz:
-    [5.2](#offerStateDiagram).
+    potencjalnych klientów (więcej nt. stanów klasy Offer patrz: offerStateDiagram.
     Zwracają wartość bool określającą, czy operacja się powiodła.
 
 -   CheckReservationAvailability\
