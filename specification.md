@@ -1348,24 +1348,22 @@ prawdziwymi wartościami.
 |        SERWER_SYNC_REQUEST         |    6    |     Serwer     |
 |    SERWER_SYNC_RESPONSE_SUCCESS    |    7    |     Hotel      |
 |         RESERVATION_CREATE         |    8    |     Serwer     |
-|          RESERVATION_GET           |    9    |     Serwer     |
-|      RESERVATION_GET_RESPONSE      |   10    |     Hotel      |
-|         OFFER_UNAVALAIBLE          |   11    |     Hotel      |
-|     RESERVATION_CREATE_SUCCESS     |   12    |     Hotel      |
-|     RESERVATION_CREATE_FAILURE     |   13    |     Hotel      |
-|             ID_UNKNOWN             |   14    |     Hotel      |
-|         RESERVATION_DELETE         |   15    |     Serwer     |
-|     RESERVATION_DELETE_SUCCESS     |   16    |     Hotel      |
-|     RESERVATION_DELETE_FAILURE     |   17    |     Hotel      |
-|         OFFER_ADD_REQUEST          |   18    |     Hotel      |
-|         OFFER_ADD_SUCCESS          |   19    |     Serwer     |
-|         OFFER_ADD_FAILURE          |   20    |     Serwer     |
-|        OFFER_DELETE_REQUEST        |   21    |     Hotel      |
-|        OFFER_DELETE_SUCCESS        |   22    |     Serwer     |
-|        OFFER_DELETE_FAILURE        |   23    |     Serwer     |
-|         OFFER_EDIT_REQUEST         |   24    |     Hotel      |
-|         OFFER_EDIT_SUCCESS         |   25    |     Serwer     |
-|         OFFER_EDIT_FAILURE         |   26    |     Serwer     |
+|         OFFER_UNAVALAIBLE          |    9    |     Hotel      |
+|     RESERVATION_CREATE_SUCCESS     |   10    |     Hotel      |
+|     RESERVATION_CREATE_FAILURE     |   11    |     Hotel      |
+|             ID_UNKNOWN             |   12    |     Hotel      |
+|         RESERVATION_DELETE         |   13    |     Serwer     |
+|     RESERVATION_DELETE_SUCCESS     |   14    |     Hotel      |
+|     RESERVATION_DELETE_FAILURE     |   15    |     Hotel      |
+|         OFFER_ADD_REQUEST          |   16    |     Hotel      |
+|         OFFER_ADD_SUCCESS          |   17    |     Serwer     |
+|         OFFER_ADD_FAILURE          |   18    |     Serwer     |
+|        OFFER_DELETE_REQUEST        |   19    |     Hotel      |
+|        OFFER_DELETE_SUCCESS        |   20    |     Serwer     |
+|        OFFER_DELETE_FAILURE        |   21    |     Serwer     |
+|         OFFER_EDIT_REQUEST         |   22    |     Hotel      |
+|         OFFER_EDIT_SUCCESS         |   23    |     Serwer     |
+|         OFFER_EDIT_FAILURE         |   24    |     Serwer     |
   
 
 ## Logowanie i uwierzytelnienie hotelu
@@ -1622,21 +1620,6 @@ Oczekiwane odpowiedzi:
 
 -   `RESERVATION_DELETE_FAILURE`\
     Usunięcie nie powiodło się.
-
--   `ID_UNKNOWN`\
-    Nieznane ID rezerwacji.
-
-### `RESERVATION_GET`
-
-Zapytanie o szczegóły konkretnej rezerwacji - na przykład w celu
-przekazania tych informacji klientowi. 
-
-Oczekiwane odpowiedzi:
-
--   `RESERVATION_GET_RESPONSE`\
-    Szczegółowe info. dot. rezerwacji. Struktura wiadomości identyczna
-    jak w komunikacie `RESERVATION_CREATE `(patrz:
-    [Reservation_Create](#reservation_create)).
 
 -   `ID_UNKNOWN`\
     Nieznane ID rezerwacji.
