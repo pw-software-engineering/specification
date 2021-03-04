@@ -1,19 +1,144 @@
+<img src="MINI logo long.png" width="100%"></img>
 ---
-author:
-- |
-  Artur Michalski, Ignacy Sujecki, Mateusz Tabor,\
-  Dawid Maksymowski, Damian Wyszołmirski
-title: |
-  ![image](MINI logo long.png){width="\\textwidth"}\
-  System rezerwacji pokoi hotelowych
+# Autorzy:
+Artur Michalski, Ignacy Sujecki, Mateusz Tabor, Dawid Maksymowski, Damian Wyszołmirski
 
-  ------------------------------------------------------------------------
-  \
-  IO PROJEKT - Finalna Specyfikacja
----
-# TOC
-6. [Diagramy aktywności i sekwencji](#6)
-7. [Hotel-Serwer](#7)
+<br>
+<br>
+
+
+# System rezerwacji pokoi hotelowych
+
+<br>
+
+
+Table of Contents
+
+   * [Podział na moduły](#podział-na-moduły)
+      * [Aplikacja Kliencka](#aplikacja-kliencka)
+      * [Moduł Hotelowy](#moduł-hotelowy)
+      * [Moduł Serwerowy](#moduł-serwerowy)
+   * [Diagramy PU i User stories](#diagramy-pu-i-user-stories)
+      * [User stories](#user-stories)
+      * [Diagramy PU](#diagramy-pu)
+         * [Aplikacja kliencka](#aplikacja-kliencka-1)
+         * [Hotel](#hotel)
+         * [Serwer](#serwer)
+      * [Przykładowe przypadki użycia (use cases)](#przykładowe-przypadki-użycia-use-cases)
+         * [Wyszukanie pokoju przez klienta](#wyszukanie-pokoju-przez-klienta)
+         * [Dodanie nowej oferty pokoju do systemu przez managera hotelu](#dodanie-nowej-oferty-pokoju-do-systemu-przez-managera-hotelu)
+         * [Rezerwacja pokoju przez klienta](#rezerwacja-pokoju-przez-klienta)
+   * [Diagramy Klas](#diagramy-klas)
+      * [Aplikacja Kliencka](#aplikacja-kliencka-2)
+         * [ClientManager](#clientmanager)
+         * [HotelInfo](#hotelinfo)
+         * [HotelSearchOptions](#hotelsearchoptions)
+         * [Offer](#offer)
+         * [OfferSearchOptions](#offersearchoptions)
+         * [ReservationInfo](#reservationinfo)
+         * [ClientReservaton](#clientreservaton)
+         * [ReviewInfo](#reviewinfo)
+         * [ClientReview](#clientreview)
+      * [Moduł hotelowy](#moduł-hotelowy-1)
+         * [OfferInfo](#offerinfo)
+         * [Offer](#offer-1)
+         * [Room](#room)
+         * [Client](#client)
+         * [Reservation](#reservation)
+         * [ReservationInfo](#reservationinfo-1)
+         * [HotelEmployee](#hotelemployee)
+         * [HotelEmployeeSecrets](#hotelemployeesecrets)
+         * [DataManager](#datamanager)
+         * [HotelInfo](#hotelinfo-1)
+         * [ServerConnectionIncoming](#serverconnectionincoming)
+         * [ServerConnectionOutgoing](#serverconnectionoutgoing)
+         * [HotelManager](#hotelmanager)
+      * [Moduł Serwerowy](#moduł-serwerowy-1)
+         * [Client](#client-1)
+         * [ClientConnection](#clientconnection)
+         * [DataManager](#datamanager-1)
+         * [HotelInfo](#hotelinfo-2)
+         * [HotelSearchOptions](#hotelsearchoptions-1)
+         * [OfferSearchOptions](#offersearchoptions-1)
+         * [ReservationInfo](#reservationinfo-2)
+         * [ClientReservation](#clientreservation)
+         * [OfferInfo](#offerinfo-1)
+         * [Offer](#offer-2)
+         * [ReviewInfo](#reviewinfo-1)
+         * [ClientReview](#clientreview-1)
+         * [HotelConnectionIncoming](#hotelconnectionincoming)
+         * [HotelConnectionOutgoing](#hotelconnectionoutgoing)
+         * [ServerManager](#servermanager)
+   * [Diagramy stanu](#diagramy-stanu)
+      * [Pokój hotelowy](#pokój-hotelowy)
+      * [Oferta pokoju](#oferta-pokoju)
+      * [Rezerwacja pokoju](#rezerwacja-pokoju)
+   * [Diagramy aktywności i sekwencji](#diagramy-aktywności-i-sekwencji)
+      * [Oferta](#oferta)
+         * [Dodawanie oferty](#dodawanie-oferty)
+         * [Usuwanie oferty](#usuwanie-oferty)
+         * [Edytowanie oferty](#edytowanie-oferty)
+         * [Wyszukiwanie oferty](#wyszukiwanie-oferty)
+      * [Rezerwacja](#rezerwacja)
+         * [Tworzenie rezerwacji](#tworzenie-rezerwacji)
+         * [Anulowanie rezerwacji](#anulowanie-rezerwacji)
+         * [Tworzenie rezerwacji lokalnie](#tworzenie-rezerwacji-lokalnie)
+      * [Opinia](#opinia)
+         * [Dodawanie opinii](#dodawanie-opinii)
+      * [Synchronizacja](#synchronizacja)
+   * [Hotel-Serwer](#hotel-serwer)
+      * [Logowanie i uwierzytelnienie hotelu](#logowanie-i-uwierzytelnienie-hotelu)
+         * [HOTEL_LOGIN_REQUEST](#hotel_login_request)
+         * [HOTEL_LOGIN_RESPONSE_FAILURE](#hotel_login_response_failure)
+      * [Synchronizacja](#synchronizacja-1)
+         * [HOTEL_SYNC_REQUEST](#hotel_sync_request)
+         * [SERVER_SYNC_REQUEST](#server_sync_request)
+      * [Zarządzanie ofertami](#zarządzanie-ofertami)
+         * [OFFER_ADD_REQUEST](#offer_add_request)
+         * [OFFER_ADD_SUCCESS](#offer_add_success)
+         * [OFFER_ADD_FAILURE](#offer_add_failure)
+         * [OFFER_DELETE_REQUEST](#offer_delete_request)
+         * [OFFER_DELETE_SUCCESS](#offer_delete_success)
+         * [OFFER_DELETE_FAILURE](#offer_delete_failure)
+         * [OFFER_EDIT_REQUEST](#offer_edit_request)
+         * [OFFER_EDIT_SUCCESS](#offer_edit_success)
+         * [OFFER_EDIT_FAILURE](#offer_edit_failure)
+      * [Zarządzanie rezerwacjami](#zarządzanie-rezerwacjami)
+         * [RESERVATION_CREATE](#reservation_create)
+         * [RESERVATION_DELETE](#reservation_delete)
+         * [RESERVATION_GET](#reservation_get)
+   * [Klient-Serwer](#klient-serwer)
+      * [Autentykacja i autoryzacja](#autentykacja-i-autoryzacja)
+      * [Logowanie klienta i pobieranie danych o kliencie](#logowanie-klienta-i-pobieranie-danych-o-kliencie)
+         * [/Client](#client-2)
+         * [/Client/login](#clientlogin)
+      * [Wyszukiwanie hoteli](#wyszukiwanie-hoteli)
+         * [/Hotel](#hotel-1)
+         * [/Hotel/{HotelID}](#hotelhotelid)
+      * [Wyszukiwanie ofert](#wyszukiwanie-ofert)
+         * [/Hotel/{HotelID}/Offer](#hotelhotelidoffer)
+         * [/Hotel/{HotelID}/Offer/{OfferID}](#hotelhotelidofferofferid)
+      * [Zarządzanie rezerwacjami](#zarządzanie-rezerwacjami-1)
+         * [/Reservations](#reservations)
+         * [/Reservations/{HotelID}/{ReservationID}](#reservationshotelidreservationid)
+      * [Zarządzanie opiniami](#zarządzanie-opiniami)
+         * [/Review](#review)
+         * [/Review/{id}](#reviewid)
+   * [Scenariusze testowe](#scenariusze-testowe)
+      * [Dodawanie nowej oferty](#dodawanie-nowej-oferty)
+      * [Edycja istniejącej oferty](#edycja-istniejącej-oferty)
+      * [Usuwanie istniejącej oferty](#usuwanie-istniejącej-oferty)
+      * [Wyszukiwanie ofert](#wyszukiwanie-ofert-1)
+      * [Synchronizacja / dodawanie lokalnej Rezerwacji](#synchronizacja--dodawanie-lokalnej-rezerwacji)
+      * [Dodawanie Opinii](#dodawanie-opinii-1)
+      * [Usuwanie Opinii](#usuwanie-opinii)
+      * [Edycja Opinii](#edycja-opinii)
+      * [Rezerwacja pokoju przez klienta](#rezerwacja-pokoju-przez-klienta-1)
+      * [Anulowanie Rezerwacji](#anulowanie-rezerwacji-1)
+   * [Wymagania Technologiczne](#wymagania-technologiczne)
+      * [Serwer](#serwer-1)
+      * [Aplikacja Kliencka](#aplikacja-kliencka-3)
+      * [System hotelowy](#system-hotelowy)
 
 # Wprowadzenie
 Celem projektu jest stworzenie systemu do rezerwacji pokoi w hotelach.
@@ -127,12 +252,44 @@ dostępności ofert serwera z systemami hotelowymi wystawiającymi te
 oferty w celu stwierdzenia dostępności oferty w imieniu danego hotelu. W
 systemie jest tylko jeden moduł serwerowy.\
 
-# Diagramy PU i User stories {#userStories}
+# Diagramy PU i User stories
 
 ## User stories
 
-::: {.center}
-:::
+| ja jako... | chcę... | po to, żeby... | Flaga |
+| --- | --- | --- | --- |
+| klient | zarezerwować pokój |  nie martwić się jego brakiem | MH |
+| klient | wyszukiwać pokoje po kryteriach | znaleźć pokój, który spełnia moje oczekiwania | MH |
+| klient | wyszukiwać hotele po kryteriach | znaleźć hotel, który spełnia moje oczekiwania | MH |
+| klient | móc anulować rezerwację | | SH |
+| klient | móc zostawić opinię z oceną | wyrazić swoją opinię na temat oferty | SH |
+| klient | mieć kontakt z hotelem | móc dopytać o szczegóły oferty | CH |
+| manager hotelu | umieszczać nowe oferty |  | MH |
+| manager hotelu | edytować oferty | zmieniać wolne terminy i pokazać klientowi moją aktualną ofertę | MH |
+| manager hotelu | zdejmować oferty |  | MH |
+| manager hotelu | wprowadzać promocje do swoich ofert | zachęcić klientów do pobytu | CH |
+| manager hotelu | móc zdjąć rezerwację z oferty | anulować rezerwację | CH |
+| manager hotelu | dodawać zdjęcia | uatrakcyjnić ofertę | CH |
+| manager hotelu | mieć kontakt z klientem | poinformować go o statusie rezerwacji | CH |
+| manager hotelu | zakładać konta pracownikom | zautomatyzować przepływ informacji | CH |
+| manager hotelu | grupować pokoje | ułatwić przypisywanie pracownikom zadań | CH |
+| system hotelowy | mieć możliwość wymiany informacji z serwerem | przetworzyć zapytania klientów i dostarczać serwerowi informacji o hotelu | MH |
+| system hotelowy | mieć możliwość edycji kalendarzadostępności pokoi w hotelu | - | MH |
+| system hotelowy | móc rezerwować pokoje | - | SH |
+| system hotelowy | anulować rezerwację pokoju | - | CH |
+| system hotelowy | mieć możliwość kontaktu z klientem | poinformować o ewentualnych zmianach | CH |
+| obsługa hotelowa | móc rezerwować pokoje | klienci mogli rezerwować pokoje na miejscu u recepcjonisty | CH |
+| obsługa hotelowa | anulować rezerwację pokoju na życzenie klienta | - | CH |
+| obsługa hotelowa | wiedzieć kiedy zwalnia się pokój | móc go posprzątać | CH |
+| obsługa hotelowa | mieć przejrzyste podsumowanie zwalniających się pokoi | móc sobie łatwo zorganizować pracę | CH |
+| obsługa hotelowa | wiedzieć ile osób wykupiło wyżywienie | wiedzieć ile przygotować porcji | CH |
+| obsługa hotelowa | wiedzieć ile jest dzieci, dorosłych | animator mógł lepiej dostosowywać treść pokazów, zajęć | WH |
+| serwer | wysyłać zapytania o wolne pokoje | odpowiadać na zapytania klienta | MH |
+| serwer | znać lokalizacje hoteli | pokazywać oferty z miejsc wybranych przez klienta} | MH |
+| serwer | znać opinie hoteli | pokazywać oferty o minimalnym  standardzie wybranym przez klienta | MH |
+| serwer | znać średnie ceny hoteli | pokazywać oferty z zakresu cenowego  wybranego przez klienta | MH |
+| serwer | znać rodzaj dostępnych pokoi hotelu | pokazywać hotele mające w ofercie konkretne pokoje | MH |
+| serwer | znać udogodnienia hoteli | pokazywać oferty z z udogodnieniami  wybranymi przez klienta | MH |
 
 Powyższa tabela przedstawia przewidywane przez nasz zespół historie
 użytkowników naszego systemu. Na jej podstawie można w relatywnie prosty
@@ -160,10 +317,6 @@ aplikacją kliencką a wspomnianym klientem. Są to między innymi:
 -   Rezerwacja pokoju - po znalezieniu hotelu jak i oferty spełniającej
     oczekiwania klienta umożliwiamy bezpośrednio z poziomu aplikacji
     dokonanie rezerwacji
-
--   Dokonanie płatności za zarezerwowany pokój - bezpośrednio po
-    dokonaniu rezerwacji klient powinien opłacić swój pobyt. Umożliwiamy
-    realizację tego zadania bezpośrednio z poziomu aplikacji
 
 -   Anulowanie rezerwacji - w przypadku jakichkolwiek trudności po
     stronie klienta uniemożliwiających zrealizowanie pobytu udostępniamy
@@ -291,8 +444,9 @@ część z koniecznych w tym celu funkcjonalności została opisana poniżej:
 
 ### Aplikacja kliencka
 
-![image](checkpoint1/Use cases - klient.png){width="\\linewidth"} W
-obrębie aplikacji klienckiej dowolny klient będzie mógł wyszukać
+<img src="checkpoint1/Use cases - klient.png" width="100%"></img>
+
+W obrębie aplikacji klienckiej dowolny klient będzie mógł wyszukać
 interesujący go hotel lub hotele wysyłając zapytanie z podanymi przez
 niego kryteriami do serwera, zarezerwować interesujący go pokój
 (równocześnie opłacając daną rezerwację) lub zarządzać swoimi
@@ -302,8 +456,9 @@ pobycie.
 
 ### Hotel
 
-![image](checkpoint1/Use cases - hotel.png){width="\\linewidth"} Moduł
-hotelowy wspomaga operowanie danym hotelem jego obsłudze poprzez system
+<img src="checkpoint1/Use cases - hotel.png" width="100%"></img>
+
+Moduł hotelowy wspomaga operowanie danym hotelem jego obsłudze poprzez system
 hotelowy. W obrębie systemu obsługa hotelu ma dostęp do listy obecnie
 wynajętych pokoi i łącznej liczby osób w celu np. wyznaczenia
 odpowiedniej pory posprzątania danych pokoi. Recepcjoniści, oprócz
@@ -316,8 +471,9 @@ promocji), jak również bezpośrednia komunikacja z klientem.
 
 ### Serwer
 
-![image](checkpoint1/Use cases - serwer.png){width="\\linewidth"} W
-module serwera przewidywane są funkcjonalności synchronizacji
+<img src="checkpoint1/Use cases - serwer.png" width="100%"></img>
+
+W module serwera przewidywane są funkcjonalności synchronizacji
 (udostępnienia) danych o lokalizacji i dostępności danego hotelu między
 serwerem a systemem hotelowym, przekazania informacji o rezerwacji
 jakiegoś pokoju (w tym również danych o kliencie, który dany pokój
@@ -330,6 +486,18 @@ zarazem ich efektywnej pracy.
 ## Przykładowe przypadki użycia (use cases)
 
 ### Wyszukanie pokoju przez klienta
+
+ | Nazwa:  | Klient wyszukuje pokój |
+ | --- | --- |
+ | Krótki opis:  | Na życzenie klienta do hoteli wysyłane jest zapytanie o pokoje spełniające dane kryteria |
+ | Warunki startowe:  | Klient wybrał hotele i warunki jakie muszą spełniać pokoje |
+ | Warunki kończące:  | Klient widzi listę pokoi spełniających warunki |
+ | Możliwe błędy  | Przerwanie połączenia |
+ | W razie błędu:  | Informacja o błędzie połączenia |
+ | Aktorzy:  | Klient, serwer, system hotelowy |
+ | Zapalnik:  | Klient wysyła prośbę do serwera z podanymi atrybutami filtrowania (region, ocena itp.) |
+ | Standardowy proces:  | (1) Klient wysyła zapytanie<br>(2) Serwer odsyła listę do klienta wraz z dołączonymi do ofert opiniami<br>(3) Klientowi wyświetlona jest lista pokoi |
+ | Proces alternatywny:  | Zerwanie połączenia, może nastąpić w każdym kroku.<br>Klient jest informowany o zaistniałych problemach z połączeniem |
 
 W przypadku wyszukiwania przez klienta interesujących go ofert musi on
 najpierw wybrać hotele oraz parametry pokoi, następnie wysłać zapytanie
@@ -344,6 +512,19 @@ odpowiednia informacja.
 
 ### Dodanie nowej oferty pokoju do systemu przez managera hotelu
 
+
+| Nazwa: | Manager umieszcza nową ofertę |
+| --- | --- |
+| Krótki opis: | Manager umieszcza w bazie hotelowej nową ofertę |
+| Warunki startowe: | Serwer hotelowy działa |
+| Warunki kończące: | Nowa oferta jest w bazie |
+| Możliwe błędy | Brak wymaganego pola |
+| W razie błędu: | Wyświetlić komunikat o błędzie i nie dodawać oferty do bazy |
+| Aktorzy: | Manager i system hotelowy |
+| Zapalnik: | Próba dodania oferty do bazy |
+| Standardowy proces: | (1) Manager stwierdza że chce wprowadzić nową ofertę<br>(2) Manager wprowadza dane do formularza<br>(3) Potwierdza zakończenie<br>(4) Formularz został wypełniony poprawnie<br>(5) System hotelowy zgodnie z formularzem wkleja nową ofertę do bazy danych<br>(6) System hotelowy synchronizuje się z modułem serwerowym co skutkuje pojawieniem się oferty w bazie danych serwera |
+| Proces alternatywny: | (4) Formularz nie został wypełniony poprawnie<br>(5) Manager zostaje poinformowany o błędzie i oferta nie jest dodawana |
+
 W sytuacji, kiedy wymagane jest dodanie nowej oferty pokoju, manager
 hotelu wypełnia odpowiedni formularz z parametrami pokoju. Jeśli któreś
 pole nie zostało wypełnione poprawnie (np. pola wymagane są puste lub
@@ -355,6 +536,18 @@ się w bazie danych serwera agregującego.
 
 ### Rezerwacja pokoju przez klienta
 
+| Nazwa: | Rezerwacja pokoju |
+| --- | --- |
+| Krótki opis: | Klient dokonuje rezerwacji w wybranym hotelu i wybranej oferty |
+| Warunki startowe: | Wybrana przez klienta oferta jest dostępna w oparciu o dane serwera |
+| Warunki kończące: | Rezerwacja pokoju przez klienta na wybrany okres |
+| Możliwe błędy | Niedostępność oferty wynikająca z braku synchronizacji między hotelem a serwerem |
+| W razie błędu: | Wyświetlić komunikat o błędzie i zakończyć proces tworzenia rezerwacji<br>Przeprowadznie synchronizacji po stronie serwera z hotelem |
+| Aktorzy: | Klient, serwer, hotel |
+| Zapalnik: | Próba rezerwacji pokoju |
+| Standardowy proces: | (1) Klient wyszukuje oferty spełniającą jego oczekiwania<br>(2) Klient wysyła żądanie do serwera o utworzenie rezerwacji<br>(3) Serwer sprawdza dostępność oferty w wybranym przedziale czasowym w oparciu o lokalne dane<br>(4) Rezerwacja jest przekazywana hotelowi i sprawdzana jest ponownie dostępność oferty<br>(5) Hotel tworzy wpis o rezerwacji, przesyła serwerowi informacji o sukcesie utworzenia rezerwacji<br>(6) Wysyłany jest komunikat do klienta o poprawnym utworzeniu nowej rezerwacji |
+| Proces alternatywny: | (2.5) Rezerwacja nie jest możliwa (serwer stwierdza brak dostępności ofertyw oparciu o lokalne dane)<br>(3) Rezerwacja zostaje anulowana<br>(4) Klient zostaje poinformowany o niepowodzeniu rezerwacji |
+
 Kiedy klient wybrał interesującą go ofertę rezerwacji, wysyła informację
 o próbie rezerwacji pokoju. Jeżeli serwer stwierdzi, że oferta
 rezerwacji pokoju nie jest dostępna, to zwracana jest informacja z
@@ -362,18 +555,12 @@ błędem i nie jest wykonywana rezerwacja. W przeciwnym przypadku serwer
 przekierowuje prośbę utworzenia rezerwacji do hotelu, gdzie dostępność
 rezerwacji jest ponownie sprawdzana. Jeśli oferta jest dostępna w
 wybranym przedziale czasowym tworzona jest lokalna rezerwacja po stronie
-hotelu i odsyłany jest identyfikator płatności za tą ofertę. Klient musi
-opłacić swoją rezerwację, po czym odsyła do serwera informację o
-zakończonym procesie płatności. Po potwierdzeniu ukończonej płatności
-przez hotel, wpis o rezerwacji jest tworzony na serwerze i zwracana jest
-klientowi informacja o zakończeniu procesu tworzenia rezerwacji. W
-przypadku niepowodzenia płatności (np. pieniądze nie zostały
-zaksięgowane na koncie hotelu) serwer informuje klienta o konieczności
-kontaktu z hotelem w celu wyjaśnienia tej sytuacji. Jeśli natomiast
-hotel stwierdzi brak dostępności oferty wysyłana jest informacja o
-błędzie serwerowi, co świadczy o desynchronizacji danych między hotelem
-i serwerem. Odsyłany jest wówczas klientowi błąd mówiący o braku
-dostępności oferty w wybranym okresie czasowym.
+hotelu i odsyłana jest informacja do serwera. Po stronie serwera tworzony
+jest wpis o rezerwacji klientowi informacja o zakończeniu procesu.
+Jeśli natomiast hotel stwierdzi brak dostępności oferty wysyłana jest
+informacja o błędzie serwerowi, co świadczy o desynchronizacji danych
+między hotelem i serwerem. Odsyłany jest wówczas klientowi błąd mówiący
+o braku dostępności oferty w wybranym okresie czasowym.
 
 # Diagramy Klas
 
@@ -397,9 +584,7 @@ faktycznej technologii, która została użyta do implementacji tej części
 
 ## Aplikacja Kliencka
 
-::: {.center}
-![image](checkpoint1/IO Klasy-Client_App_Module.png)
-:::
+![image](checkpoint1/IO%20Klasy-Client_App_Module.png)
 
 ### ClientManager
 
@@ -493,9 +678,7 @@ Klasa przetrzymująca wszystkie informacje o opinii.
 
 ## Moduł hotelowy
 
-::: {.center}
-![image](checkpoint1/IO Klasy-Hotel_Module.png)
-:::
+![image](checkpoint1/IO%20Klasy-Hotel_Module.png)
 
 ### OfferInfo
 
@@ -524,8 +707,7 @@ pokoi.
 ### Reservation
 
 Przechowuje informacje dotyczące rezerwacji klienckiej razem z ID pokoju
-oraz ID oferty. Ponadto przechowywany jest identyfikator płatności
-rezerwacji w celu umożliwienia anulowania rezerwacji i zwrotu pieniędzy.
+oraz ID oferty.
 
 ### ReservationInfo
 
@@ -548,12 +730,6 @@ bezpośrednio przy logowaniu się przez personel do systemu). Ze względów
 bezpieczeństwa informacje o loginach i hasłach pracowników zawarte są w
 osobnej tabeli do której dostęp jest stosownie chroniony.
 
-### Payments
-
-Reprezentuje dane dotyczące rezerwacji, które nie zostały jeszcze
-opłacone. W momencie poprawnego opłacenia rezerwacji usuwane są rekordy
-z tej tabeli.
-
 ### DataManager
 
 Klasa pośrednicząca w wydobywaniu informacji z bazy danych. W tym celu
@@ -563,7 +739,7 @@ języku bazy, np SQL. Ze względu na to, że pobranie danych możliwe jest
 wyłącznie za pośrednictwem tej metody, **DataManager** agreguje obiekty
 wszystkich opisanych wyżej klas.
 
-### HotelInfo {#HotelInfo}
+### HotelInfo
 
 Przechowuje informacje o danym hotelu, takie jak lokalizacja, nazwa czy
 jego opis.
@@ -656,8 +832,7 @@ biznesowym. Metody:
     metody. Administrator hotelu może ofertę dowolnie zdezaktualizować
     lub zaktualizować ponownie, manipulując w ten sposób wachlarzem
     propozycji dla swoich potencjalnych klientów (więcej nt. stanów
-    klasy Offer patrz: [5.2](#offerStateDiagram){reference-type="ref"
-    reference="offerStateDiagram"}).\
+    klasy Offer patrz: (offerStateDiagram)
     Zwraca wartość bool określającą, czy operacja się powiodła.
 
 ### HotelManager
@@ -682,9 +857,7 @@ ServerConnectionOutgoing. Metody:
     Metody aktualizują dostępność oferty. Administrator hotelu może
     ofertę dowolnie zdezaktualizować lub zaaktualizować ponownie,
     manipulując w ten sposób wachlarzem propozycji dla swoich
-    potencjalnych klientów (więcej nt. stanów klasy Offer patrz:
-    [5.2](#offerStateDiagram){reference-type="ref"
-    reference="offerStateDiagram"}).\
+    potencjalnych klientów (więcej nt. stanów klasy Offer patrz: offerStateDiagram.
     Zwracają wartość bool określającą, czy operacja się powiodła.
 
 -   CheckReservationAvailability\
@@ -729,9 +902,7 @@ ServerConnectionOutgoing. Metody:
 
 ## Moduł Serwerowy
 
-::: {.center}
-![image](checkpoint1/IO Klasy-Server_Module.png)
-:::
+![image](checkpoint1/IO%20Klasy-Server_Module.png)
 
 ### Client
 
@@ -751,13 +922,13 @@ hotelu wykorzystując metodę `GetHotelConnection` w ramach dalszej
 realizacji określonego procesu biznesowego (np. tworzenie rezerwacji)
 jednocześnie oczekując na odpowiedź od hotelu.
 
-### DataManager {#serverModuleDataManager}
+### DataManager
 
 Klasa będąca interfejsem bazy danych. W serwerze jest tylko jedna
 instancja tej klasy, która jest używana bezpośrednio przez klasę
 ServerManager.
 
-### HotelInfo {#hotelinfo-1}
+### HotelInfo
 
 Klasa trzymająca informacje o hotelach korzystających z serwisu.
 
@@ -800,13 +971,6 @@ opinii bądź przynależności opinii do konkretnego użytkownika.
 ### ClientReview
 
 Zawiera wszystkie informacje o pojedynczej opinii.
-
-### Payments
-
-Zawiera informacje o płatnościach związanych z rezerwacjami, które nie
-zostały jeszcze opłacone. Klient może w dowolnym momencie pobrać
-informacje o nieuiszczonych płatnościach. W momencie udanej opłaty za
-rezerwacje usuwane są odpowiednie rekordy z tej tabeli.
 
 ### HotelConnectionIncoming
 
@@ -860,8 +1024,8 @@ związanymi z ostatnio wysłaną wiadomością. Metody:
     Metoda, która tworzy proces związany z utworzeniem nowej rezerwacji.
     Wysyłane jest odpowiednie żądanie do hotelu oraz odkładane jest na
     listę ProcessList ID nowego procesu związanego z utworzeniem nowej
-    rezerwacji. W przypadku sukcesu tworzony jest wpis w tabeli Payments
-    o nowo utworzonej rezerwacji, która nie jest opłacona przez klienta.
+    rezerwacji. W przypadku sukcesu tworzony jest wpis w tabeli
+    ClientReservations o nowo utworzonej rezerwacji.
 
 -   CancelReservation\
     Metoda, która tworzy proces związany z anulowaniem nowej rezerwacji.
@@ -869,14 +1033,6 @@ związanymi z ostatnio wysłaną wiadomością. Metody:
     listę ProcessList ID nowego procesu związanego z utworzeniem nowej
     rezerwacji. W przypadku sukcesu usuwany jest lokalny wpis o
     rezerwacji klienta.
-
--   ConfirmPayment\
-    Metoda, która tworzy proces związany z potwierdzeniem opłaty
-    rezerwacji. Wysyłane jest odpowiednie żądanie do hotelu oraz
-    odkładane jest na listę ProcessList ID nowego procesu związanego z
-    utworzeniem nowej rezerwacji. W przypadku sukcesu usuwany jest wpis
-    o nieuiszczonej opłacie za rezerwację z tabeli Payments oraz
-    tworzony jest wpis o nowej rezerwacji w tabeli ClientReservations.
 
 -   Synchronize\
     Metoda, która tworzy proces związany z synchronizacją danych
@@ -891,8 +1047,7 @@ związanymi z ostatnio wysłaną wiadomością. Metody:
 Klasa zawierająca wysokopoziomowe metody dostępu do bazy danych związane
 z określonymi procesami biznesowymi. Agreguje w sobie i udostępnia
 wszelkie aktywne połączenia z hotelami. Posiada również wskazanie na
-**DataManagera** ([4.3.3](#serverModuleDataManager){reference-type="ref"
-reference="serverModuleDataManager"}). W przypadku błędów wykonania
+**DataManagera** (serverModuleDataManager). W przypadku błędów wykonania
 metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
 łapane w celu określenia typu błędu. Metody:
 
@@ -928,18 +1083,11 @@ metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
 
 -   TryMakeReservation\
     Metoda próbuje stworzyć rezerwację w systemie.\
-    Zwraca instancję klasy ClientReservation i string reprezentujący
-    identyfikator płatności za nowo utworzoną rezerwację (w przypadku
-    sukcesu).
+    Zwraca instancję klasy ClientReservation w przypadku sukcesu.
 
 -   CancelReservation\
     Metoda usuwa rezerwację z sytemu.\
     Zwraca wartość bool określającą, czy operacja się powiodła.
-
--   ConfirmPayment\
-    Metoda mająca na celu potwierdzenie ukończenia procesu płatności
-    przez klienta wywołując odpowiednią metodę klasy
-    SeverConnectionOutgoing.
 
 -   AddNewClient\
     Dodanie nowo zarejestrowanego użytkownika do systemu.
@@ -959,8 +1107,8 @@ oraz ich szczegółowe opisy.
 
 ## Pokój hotelowy
 
-![image](checkpoint1/RoomStateDiagram.png){width="\\linewidth"}\
-\
+![image](checkpoint1/RoomStateDiagram.png)
+
 Z każdą ofertą hotelową jest związany co najmniej jeden pokój, którego
 opis jest zawarty w reprezentującej go ofercie. Po utworzeniu nowego
 pokoju i dodaniu go do puli pokoi związanych z daną ofertą, pokój
@@ -981,11 +1129,9 @@ usunięcia z puli pokoi związanych z daną ofertą pod warunkiem, że pokój
 znajduje się w stanie \"wolny\" oraz nie są przewidziane żadne jego
 rezerwacje.
 
-## Oferta pokoju {#offerStateDiagram}
+## Oferta pokoju
 
-::: {.center}
 ![image](checkpoint1/OfferStateDiagram.png)
-:::
 
 Informacje o ofercie hotelowej jak i jej dostępność są przechowywane
 zarówno na serwerze jak i systemie hotelowym. Po utworzeniu nowej oferty
@@ -1029,9 +1175,7 @@ zarówno po stronie serwera jak i systemu hotelowego.
 
 ## Rezerwacja pokoju
 
-::: {.center}
 ![image](checkpoint1/ReservationStateDiagram.png)
-:::
 
 Rezerwacja pokoju hotelowego tworzona jest przez klienta w oparciu o
 informacje o hotelach i udostępnionych przez nie ofert jak i dostępnych
@@ -1058,31 +1202,10 @@ określony w ramach nowej rezerwacji czas, rezerwacja przechodzi w stan
 błędzie synchronizacji lokalnej bazy danych serwera przetrzymującej
 informacje o dostępności oferty z bazą danych hotelu.\
 W przypadku potwierdzenia dostępności pokoju na podany przez klienta
-okres, oferta przechodzi do stanu \"rezerwacji potwierdzonej przez
-hotel\", podczas którego generowana jest metoda opłacenia rezerwacji
-przez klienta poprzez wywołanie metody `TryMakePayment`. Obiekt
-rezerwacji przechodzi wówczas do stanu \"rezerwacji oczekującej na
-płatność\", podczas której przeprowadzany jest proces płatności i
-walidacja tego procesu. W przypadku niepowodzenia rezerwacja przechodzi
-w stan \"rezerwacji nieopłaconej\". Klient może wówczas ponowić próbę
-płatności za rezerwację co skutkuje ponownym przejściem rezerwacji w
-stan \"rezerwacji oczekującej na płatność\".\
-Możliwa jest również jawna rezygnacja klienta z rezerwacji w przypadku
-gdy rezerwacja jest w stanie \"rezerwacji nieopłaconej\" w skutek czego
-obiekt rezerwacji przechodzi do stanu \"rezerwacji anulowanej przez
-klienta\" i przeprowadzane są odpowiednie akcje anulowania rezerwacji po
-stronie klienta (`CancelReservation`). Po wywołaniu akcji
-`CancelReservation` po stronie serwera obiekt rezerwacji jest niszczony.
-W przypadku braku jawnej decyzji klienta o anulowaniu rezygnacji w
-momencie gdy jest ona w automatycznie anulowana po upływie 1 dnia. Po
-wywołaniu akcji `CancelReservation` obiekt rezerwacji jest niszczony.\
-W przypadku braku decyzji o anulowaniu rezerwacji oraz zakończenia
-procesu płatności z powodzeniem rezerwacja przechodzi w stan
-\"rezerwacji opłaconej\". Po przetworzeniu zapłaty system hotelowy
-tworzy obiekt rezerwacji w bazie danych za pomocą metody
-`CreateReservation` na skutek czego rezerwacja przechodzi do stanu
-\"rezerwacji niezrealizowanej\". W przypadku anulowania rezerwacji przez
-klienta przyznany przez system hotelowy pokój jest zwalniany i ponownie
+okres, system hotelowy tworzy obiekt rezerwacji w bazie danych
+za pomocą metody `CreateReservation` na skutek czego rezerwacja przechodzi
+do stanu \"rezerwacji niezrealizowanej\". W przypadku anulowania rezerwacji
+przez klienta przyznany przez system hotelowy pokój jest zwalniany i ponownie
 uwzględniany w kolejnych żądaniach rezerwacji. Anulowana rezerwacja
 przechodzi wówczas do stanu \"rezerwacji anulowanej przez klienta\".\
 Po upływie czasu rezerwacji obiekt przechodzi w stan \"rezerwacji
@@ -1092,7 +1215,7 @@ może wystawić opinię oferty, w ramach zrealizowanej rezerwacji pokoju
 hotelowego. Zapisywana jest wówczas recenzja klienta, natomiast obiekt
 rezerwacji przechodzi wówczas do stanu \"rezerwacji ocenionej\".
 
-# Diagramy aktywności i sekwencji <a name="6"></a>
+# Diagramy aktywności i sekwencji
 
 Poniżej prezentujemy diagramy sekwencji przedstawiające przebieg
 komunikacji pomiędzy modułami przy realizacji najistotniejszych naszym
@@ -1206,7 +1329,6 @@ modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 ### Tworzenie rezerwacji
 
 <img src="Aktywnosc/IO_Aktywności-Tworzenie rezerwacji.png">
-
 <img src="Sekwencje/Reservation_Create.png">
 
 Proces tworzenia rezerwacji zaczyna się po wybraniu przez użytkownika
@@ -1364,7 +1486,6 @@ prawdziwymi wartościami.
 |         OFFER_EDIT_REQUEST         |   22    |     Hotel      |
 |         OFFER_EDIT_SUCCESS         |   23    |     Serwer     |
 |         OFFER_EDIT_FAILURE         |   24    |     Serwer     |
-  
 
 ## Logowanie i uwierzytelnienie hotelu
 
@@ -1638,57 +1759,47 @@ Oczekiwane odpowiedzi:
 
 Komunikacja pomiędzy klientem (modułem aplikacji klienckiej), a serwerem
 odbywa się przy użyciu połączeń HTTP i REST API. Poniżej opisane są
-wszystkie endpoint'y oraz związane z nimi żądania i odpowiedzi HTTP
+wszystkie endpointy oraz związane z nimi żądania i odpowiedzi HTTP
 zamodelowane w RAML.
 
 ## Autentykacja i autoryzacja
 
-Poniżej opisana jest przykładowa implementacja schematu autentykacji dla
-klientów realizowana przez serwer. Część ta jest jedynie przykładem
-realizacjitego procesu - inną możliwością jest użycie zewnętrznych usług
-autentykacyjnych. Wówczas cały proces autentykacji byłby realizowany
-oddzielnie, natomiast serwer przechowywałby jedynie dane klientów bez
-ich sekretów. Wówczas na podstawie zewnętrznego dostawcy token'ów JWT
-(np. Azure B2C) na podstawie claim'ów zawartych w tym tokenie możliwe
-byłoby przydzielenie własnego niestandardowego token'a (opisanego
-poniżej) identyfikującego klienta z rekordem w bazie danych klienta.\
 Wszystkie endpointy serwera (poza endpointem związanym z logowaniem)
 zabezpieczone są przez schemat autentykacji opierający się na tworzeniu
 tokenów autentykacyjnych dla każdego klienta w momencie gdy dostarczone
 zostaną poprawne dane logowania. W każdym zapytaniu klienta powinien być
 dołączony nagłówek "x-session-token", którego wartością jest otrzymany
 przez klienta token autentykacyjny. Token ten jest zawsze tworzony po
-stronie serwera i odpowiednio szyfrowany w celu uniemożliwienia jego
-modyfikacji bądź podrobienia. Generowany token ma format JSON i jego
+stronie serwera. Generowany token ma format JSON i jego
 przykładowa zawartość jest podana na zdjęciu poniżej. Token
-"clientSessionToken" jest obiektem JSON zawierającym właściwość, której
-wartością jest ciąg znaków będący zaszyfrowanym tokenem JWT, natomiast
-"serverSessionToken" powstaje poprzez rozszyfrowanie przez serwer tego
-ciągu znaków. Każdy token zawiera właściwość "id", której wartość
-jednoznacznie identyfikuje klienta w bazie danych serwera.
-![image](Client login + authentication/authentication_tokens.png){width="\\linewidth"}
+"serverSessionToken" jest obiektem JSON zawierającym właściwość "id",
+której wartość jednoznacznie identyfikuje klienta w bazie danych serwera.
+
+<img src="Client login + authentication/authentication_tokens.png" />
+
 Poniżej znajduje się dokładny opis schematu autentykacji w języku RAML
 oraz zwracane kody błędu związane z niepowodzeniem procesu
 uwierzytelnienia klienta. Każda wiadomość związana z błędem zawiera
 dokładny opis zawierający czytelne dla człowieka szczegóły dotyczące
 tego błędu.
-![image](Client login + authentication/authentication_scheme.png){width="\\linewidth"}
-![image](Client login + authentication/authentication_error.png){width="\\linewidth"}
 
-## Logowanie klienta i pobieranie danych o kliencie
+<img src="Client login + authentication/authentication_scheme.png" />
+<br />
+<img src="Client login + authentication/authentication_error.png">
 
-Z logowaniem klienta jest związana rejestracja konta. Proces rejestracji
-nie jest przedstawiony w specyfikacji, gdyż może być on zrealizowany w
-dowolny sposób. Przykładową implementacją może być tabela sekretów
-klienta w module serwerowym na podstawie której serwer przeprowadza
-proces autentykacji, bądź proces rejestracji może być częścią usług
-zewnętrznej, w skład której wchodzi proces autentykacji i zarządzanie
-sekretami klientów (np. serwis Azure B2C). Poniżej przedstawiona została
-przykładowa implementacja logowania klientów w przypadku implementacji
+## Rejestracja/logowanie klienta i pobieranie danych o kliencie
+
+Rejestracja klientów do serwisu odbywa się poprzez bezpośredni kontakt
+z administratorem modułu serwerowego i prośbą utworzenia nowego wpisu w bazie
+danych do tabli przetrzymującej informacje o wszystkich kontach użytkowników.\
+Poniżej przedstawiona została implementacja logowania klientów w przypadku
 procesu autentykacji przeprowadzanej przez serwer w oparciu o lokalną
-tablicę sekretów w bazie danych. Porównywane są wówczas przesłane przez
+tablicę sekretów w bazie danych. Jako login klienta przyjmowany jest jego obecna nazwa
+użytkownika (username). Porównywane są wówczas przesłane przez
 klienta login i hasło z danymi przechowywanymi w takiej tabeli i
-zwracany jest odpowiednio zaszyfrowany token przechowujący ID klienta.\
+zwracany jest odpowiednio token przechowujący ID klienta. Zwracane ID
+klienta odpowiada numerowi rekordu w tabeli bazy danych serwera, w której
+przetrzymywane sa informacje o wszystkich użytkownikach.\
 Do zarządzania danymi związanymi z kontem klienta oraz logowania do
 serwisu służą odpowiednio endpointy: `/Client` oraz `/Client/login`.
 Endpoint `/Client` jest zabezpieczony wyżej zdefiniowanym schematem
@@ -1697,49 +1808,52 @@ przesyłania nagłówka `x-session-token`.
 
 ### `/Client`
 
-![image](Client login + authentication/client_info_type.png){width="\\linewidth"}
-![image](Client login + authentication/client_info.png){width="\\linewidth"}
+<img src="Client login + authentication/client_info_type.png" />
+<br />
+<img src="Client login + authentication/client_info.png">
+
 Endpoint ten definiuje 2 metody HTTP: `GET` oraz `PATCH`. Metoda `GET`
 pobiera informacje o aktualnie zalogowanym użytkowniku, natomiast metoda
 `PATCH` udostępnia możliwość zmiany danych użytkownika takich jak e-mail
 lub nazwa użytkownika. W przypadku niepowodzenia metody `PATCH` wysyłany
-jest obiekt JSON z właściwością \"errorDescription\" opisującą rodzaj
+jest obiekt JSON z właściwością `"errorDescription"` opisującą rodzaj
 błędu.
 
 ### `/Client/login`
 
-![image](Client login + authentication/client_secrets.png){width="\\linewidth"}
-![image](Client login + authentication/client_login.png){width="\\linewidth"}
+<img src="Client login + authentication/client_secrets.png" />
+<br />
+<img src="Client login + authentication/client_login.png" />
+
 Endpoint ten nie jest zabezpieczony przez schemat autentykacji - nie
-jest wymagane dołączanie tokenu do nagłówka "x-session-token". Endpoint
+jest wymagane dołączanie tokenu do nagłówka `"x-session-token"`. Endpoint
 służący do logowania się użytkowników do systemu za pomocą ustalonego
 przy rejestracji loginu i hasła. Wysłane przez klienta dane logowania
 jako metoda POST sprawdzane są następnie przez serwer. W przypadku
-sukcesu tworzony jest "serverSessionToken" zawierający "id" logującego
-się klienta i szyfrowany a następnie zwracany w ciele odpowiedzi HTTP
-serwera. W celu dalszej autentykacji klienta token ten jest dołączany do
-kolejnych żądań HTTP w nagłówku "x-session-token". W przypadku
+sukcesu tworzony jest `"serverSessionToken"` zawierający `"id"` logującego
+się klienta. W celu dalszej autentykacji klienta token ten (jako
+zserializowany obiekt JSON w plain-text) jest dołączany do
+kolejnych żądań HTTP w nagłówku `"x-session-token"`. W przypadku
 niepowodzenia serwer zwraca odpowiedni kod błędu oraz dokładny opis
 błędu w ciele odpowiedzi HTTP. Powyżej znajdują się szczegółowe opisy
 typów danych oraz żądań i odpowiedzi HTTP w języku RAML.
 
 ## Wyszukiwanie hoteli
 
-![image](Oferta+Hotel-Raml/pageable.png){width="\\linewidth"}
+![image](Oferta+Hotel-Raml/pageable.png)
 
 Opisane w tej i kolejnej sekcji endpointy `/Hotel` i
 `/Hotel/{HotelID}/Offer` korzystają z pagingu. Rozwiązanie to zwiększa
 czytelność zwracanych list ograniczając liczbę wyników do ilości
-zdefiniowanej przez parametr: limit. Przeglądanie kolejnych stron odbywa
-się przez modyfikacje parametru: offset.
+zdefiniowanej przez parametr `limit`. Przeglądanie kolejnych stron odbywa
+się przez modyfikacje parametru `offset`.
 
 ### `/Hotel`
 
-::: {.center}
 ![image](Oferta+Hotel-Raml/Hotel_Raml.png)
-:::
 
-![image](Oferta+Hotel-Raml/HotelInfoPreview_Raml.png){width="\\linewidth"}
+![image](Oferta+Hotel-Raml/HotelInfoPreview_Raml.png)
+
 Endpoint służy do przeglądania hoteli współpracujących z systemem.
 Dostęp jest stosownie chroniony przez customSecurityToken. W celu
 zwiększenia przejrzystości zastosowano paging ograniczający ilość
@@ -1758,9 +1872,11 @@ stosownym opisem.
 
 ### `/Hotel/{HotelID}`
 
-![image](Oferta+Hotel-Raml/HotelID_Raml.png){width="\\linewidth"}
-![image](Oferta+Hotel-Raml/HotelInfo_Raml.png){width="\\linewidth"} Po
-wybraniu z listy konkretnego hotelu mamy dostęp do większej ilości
+![image](Oferta+Hotel-Raml/HotelID_Raml.png)
+
+![image](Oferta+Hotel-Raml/HotelInfo_Raml.png)
+
+Po wybraniu z listy konkretnego hotelu mamy dostęp do większej ilości
 informacji w ramach przygotowanego przez hotel opisu. O powodzeniu
 jesteśmy również informowani przez kod 200. Uzyskujemy także dostęp do
 dalszych działań związanych z wybranym przez nas hotelem. W przypadku
@@ -1771,8 +1887,10 @@ przez kod 404 i stosowny komentarz.
 
 ### `/Hotel/{HotelID}/Offer`
 
-![image](Oferta+Hotel-Raml/Offer_e_Raml.png){width="\\linewidth"}
-![image](Oferta+Hotel-Raml/OfferPreview_Raml.png){width="\\linewidth"}
+![image](Oferta+Hotel-Raml/Offer_e_Raml.png)
+
+![image](Oferta+Hotel-Raml/OfferPreview_Raml.png)
+
 Zadaniem tego endpointu jest prezentacja ofert należących do wybranego
 przez użytkownika we wcześniejszych krokach hotelu. Analogicznie jak w
 przypadku opisanego wyżej endpointu `/Hotel` w celu podniesienia
@@ -1789,11 +1907,9 @@ komentarzem.
 
 ### `/Hotel/{HotelID}/Offer/{OfferID}`
 
-![image](Oferta+Hotel-Raml/OfferID_Raml.png){width="\\linewidth"}
+![image](Oferta+Hotel-Raml/OfferID_Raml.png)
 
-::: {.center}
 ![image](Oferta+Hotel-Raml/Offer_Raml.png)
-:::
 
 Po wybraniu z listy konkretnej oferty możemy poznać jej szczegóły takie
 jak opis, zdjęcia czy opinie innych użytkowników aplikacji, którzy
@@ -1806,12 +1922,11 @@ ze stosownym komentarzem.
 ## Zarządzanie rezerwacjami
 
 Ze szczególną uwagą warto przyjrzeć się komunikatom wymienianym pod
-adresem `/Reservations/` oraz `/Payments/`. Ze względu na to, że
+adresem `/Reservations/`. Ze względu na to, że
 potencjalna strona z listą rezerwacji użytkownika stanowi jego \"centrum
 dowodzenia wszechświatem\" i za jej pośrednictwem user wykonuje wiele
 akcji, warto dobrze zrozumieć wymianę komunikatów odbywającą się w tym
-miejscu. Pewne nieoczywiste rozwiązania zastosowane są m.in. przy
-płatnościach.
+miejscu.
 
 ### `/Reservations`
 
@@ -1820,12 +1935,13 @@ ewentualnymi przypisanymi do nich opiniami. `HotelID` i `ReservationID`
 reprezentują wspólnie jedną rezerwację. Są niejako złożonym kluczem
 głównym dla rezerwacji. Jeżeli dana rezerwacja nie posiada wystawionej
 opinii, właściwość `ReviewID` nie jest zawarta w przesłanych danych
-(patrz przykład).
+(patrz przykład przy `/Reservations`]).
 
-![image](Rezerwacje/reservationType.jpg){width="\\linewidth"}
+![image](Rezerwacje/reservationType.jpg)
 
-![image](Rezerwacje/reservationsGET.jpg){width="\\linewidth"} Należy
-zauważyć, że nie jest to pełna lista informacji gotowa do wyświetlenia,
+![image](Rezerwacje/reservationsGET.jpg)
+
+Należy zauważyć, że nie jest to pełna lista informacji gotowa do wyświetlenia,
 a raczej lista powiązanych ze sobą ID. Aby otrzymać taką listę, należy
 odwołać się do adresu `/Reservations/{HotelID}/{ReservationID}`
 reprezentującego konkretną rezerwację - należy to wykonać dla *każdej*
@@ -1835,7 +1951,7 @@ Przesłanie prośby o dodanie nowej rezerwacji odbywa się przez metodę
 `POST`. Wysyła się obiekt `ReservationInfo` zawierający wszystkie
 niezbędne informacje.
 
-![image](Rezerwacje/reservationInfoType.jpg){width="\\linewidth"}
+![image](Rezerwacje/reservationInfoType.jpg)
 
 ![image](Rezerwacje/reservationsPOST.jpg)
 
@@ -1844,55 +1960,7 @@ niezbędne informacje.
 Pod tym endpointem można znaleźć szczegółowe informacje dotyczące
 konkretnej rezerwacji `ReservationID` w hotelu `HotelID` bądź ją usunąć.
 
-![image](Rezerwacje/reservationEndpoint.jpg){width="\\linewidth"}
-
-### `/Payments` {#payments}
-
-Powyżej nie znajdują się jednak *wszystkie* informacje dotyczące
-rekordu. Identyfikatory płatności przypisane do rejestracji są
-przechowywane pod osobnym adresem URI. Serwer przechowuje te informacje
-jedynie przez krótką chwilę, natomiast dłużej są przetrzymywane w Hotelu
-(przynajmniej do zakończenia rezerwacji). W momencie, kiedy serwer
-otrzymuje komunikat `PAYMENT_INFO` (patrz
-([7.4.1](#reservation_info){reference-type="ref"
-reference="reservation_info"}) oraz spójrz na
-([6.2.1](#reservation_diagram){reference-type="ref"
-reference="reservation_diagram"})), zapisuje te informacje u siebie. Aby
-klient mógł opłacić zamówienie, musi dostać te informacje - w związku z
-tym przy listowaniu rezerwacji należy również się odwołać do
-`/Payments`. Kiedy klient szczęśliwie zakończy opłatę, informuje o tym
-serwer, który informuje hotel, po czym serwer usuwa informację o tej
-płatności. Hotel może przechowywać identyfikator płatności (i tak też
-robi, w razie ewentualnych zwrotów) przez dłuższy czas.\
-Trudna sytuacja może pojawić się w przypadku, kiedy płatność nie
-zostanie potwierdzona przez hotel. Wówczas stan rzeczy jest następujący:
-
--   Hotel stworzył płatność i oznaczył ją jako nieudaną (znacznik bool
-    isError). Przechowuje u siebie dane zarówno o płatności jak i
-    rezerwacji.
-
--   Płatność nie została zakończona, więc serwer nie zapisał sobie tej
-    rezerwacji. Posiada natomiast wpis dot. płatności (z flagą isError),
-    który pozostawił (ponieważ dostał odpowiedź\
-    `PAYMENT_SUCCESS_RESPONSE_FAILURE`).
-
--   Aplikacja kliencka wyświetliła komunikat z sugestią kontaktu z
-    hotelem. Po przeładowaniu interfejsu komunikatu nie ma.
-
-Aby uchronić się przed tym, że użytkownik straci jakiekolwiek informacje
-o tej rezerwacji (oraz pieniądze) -- serwer powinien dla każdej
-płatności oznaczonej flagą `isError`, poprosić hotel o te dane wysyłając
-`RESERVATION_GET`.
-
-![image](Rezerwacje/paymentsGET.jpg){width="\\linewidth"}
-
-![image](Rezerwacje/paymentsDELETE.jpg)
-
-**Uwaga!** Dla uproszczenia projektu, aby nie trzeba było wprowadzać
-czwartego modułu zajmującego się płatnościami, proces w systemie jest
-symulowany w bardzo prosty sposób: zawsze się udaje. W aktualnym
-inkremencie rozwoju nie przewidujemy zwracanego błędu 409 metody
-`/Payments DELETE` - poza specjalnie zaaranżowanym przypadkiem testowym.
+![image](Rezerwacje/reservationEndpoint.jpg)
 
 ## Zarządzanie opiniami
 
@@ -1900,9 +1968,9 @@ Endpointy poniżej służą użytkownikowi do zarządzania swoimi opiniami na
 temat rezerwacji które odbył. Oba są zabezpieczone w sposób
 przedstawiony na początku tego rozdziału.
 
-::: {.center}
-![image](Review+id/return_id.png) ![image](Review+id/review.png)
-:::
+![image](Review+id/return_id.png)
+
+![image](Review+id/review.png)
 
 Powyżej widzimy szczegółowy opis typów używanych przez opisane poniżej
 Endpointy w języku RAML. typ review służy do przesyłani informacji o
@@ -1911,8 +1979,9 @@ id_return służy do przesyłania id świeżo dodanej opinii do klienta.
 
 ### `/Review`
 
-![image](Review+id/post.png){width="\\linewidth"}
-![image](Review+id/get[].png){width="\\linewidth"}
+![image](Review+id/post.png)
+
+![image](Review+id/get[].png)
 
 Endpoint służy do pobierania wszystkich Opinii klienta oraz dodawaniu
 nowych. Metoda POST nie znajduje się w `/Review/{id}`, gdyż nie znamy
@@ -1923,11 +1992,13 @@ po logowani Klienta w celu pobrania jego opinii.
 
 ### `/Review/{id}`
 
-::: {.center}
-![image](Review+id/get.png){width="\\linewidth"}
-![image](Review+id/put.png){width="\\linewidth"}
-![image](Review+id/delete.png){width="\\linewidth"}
-:::
+
+![image](Review+id/get.png)
+
+![image](Review+id/put.png)
+
+![image](Review+id/delete.png)
+
 
 Endpoint służy do zarządzania pojedynczą Opinią.
 
@@ -1938,14 +2009,14 @@ ona dane w Serwerze danymi przesłanymi z Aplikacji Klienckiej.
 
 Metoda DELETE natomiast usuwa z systemu Opinię o danym id.
 
+
 # Scenariusze testowe
 
 Scenariusze przedstawiają proponowane testy do przeprowadzania na
 systemie. Podają one na początku dane wejściowe, następnie przebieg
 wykonywania zadania oraz ewentualne scenariusze alternatywne (w razie
 błędów). Scenariusze są przygotowane w ten sposób aby można było łatwo
-przetestować poprawność zaimplementowanego systemu pod kątem komunikacji
-- poniższe scenariusze pokrywają jej całość.
+przetestować poprawność zaimplementowanego systemu pod kątem komunikacji - poniższe scenariusze pokrywają jej całość.
 
 ## Dodawanie nowej oferty
 
@@ -1967,7 +2038,7 @@ Formularz został wypełniony następującymi danymi:
 
 Następuje wymiana wiadomości:
 
--   Hotel $\rightarrow$ Serwer `OFFER_ADD_REQUEST`\
+-   Hotel &#129030; Serwer `OFFER_ADD_REQUEST`\
     Do modułu serwerowego przesłany zostaje zserializowany obiekt
     oferty. Oferta jest walidowana, a następnie dodawana do lokalnej
     bazy danych serwera. Powiedzmy, że oferta zostaje dodana do
@@ -1975,7 +2046,7 @@ Następuje wymiana wiadomości:
 
     -   OfferID: 3
 
--   Hotel $\leftarrow$ Serwer `OFFER_ADD_SUCCESS`\
+-   Hotel &#129028; Serwer `OFFER_ADD_SUCCESS`\
     W odpowiedzi odsyłany jest OfferID pod jakim oferta została dodana.
     Moduł hotelowy następnie dodaje ofertę pod tym samym ID do swojej
     lokalnej bazy danych.
@@ -2042,12 +2113,12 @@ Formularz został wypełniony następującymi danymi:
 
 Następuje wymiana wiadomości:
 
--   Hotel $\rightarrow$ Serwer `OFFER_EDIT_REQUEST`\
+-   Hotel &#129030; Serwer `OFFER_EDIT_REQUEST`\
     Do modułu serwerowego przesłany zostaje zserializowany obiekt
     oferty. Oferta jest walidowana, a następnie uaktualniany jest
     stosowny wpis w bazie danych serwera.
 
--   Hotel $\leftarrow$ Serwer `OFFER_EDIT_SUCCESS`\
+-   Hotel &#129028; Serwer `OFFER_EDIT_SUCCESS`\
     Po otrzymaniu potwierdzenia moduł hotelowy uaktualnia wpis z daną
     ofertą w swojej lokalnej bazie danych
 
@@ -2103,11 +2174,11 @@ Wybrana przez niego oferta ma następujące ID:
 
 Następuje wymiana wiadomości:
 
--   Hotel $\rightarrow$ Serwer `OFFER_DELETE_REQUEST`\
+-   Hotel &#129030; Serwer `OFFER_DELETE_REQUEST`\
     Do modułu serwerowego przesłane zostaje OfferID=3. Ze stosownej
     tabeli usuwany jest wpis zawierający żądane OfferID.
 
--   Hotel $\leftarrow$ Serwer `OFFER_DELETE_SUCCESS`\
+-   Hotel &#129028; Serwer `OFFER_DELETE_SUCCESS`\
     Po otrzymaniu potwierdzenia moduł hotelowy również usuwa stosowny
     wpis ze swojej lokalnej bazy danych.
 
@@ -2133,7 +2204,7 @@ ID przesyłana jest odpowiedź `OFFER_DELETE_FAILURE`.
 Klient wyszukuje oferty. Moduły pomiędzy którymi odbywa się komunikacja:
 Client, Serwer. Następuje wymiana wiadomości:
 
--   Client $\rightarrow$ Serwer `/Hotel GET`\
+-   Client &#129030; Serwer `/Hotel GET`\
     Formularz z HotelSearchOptions został wypełniony w następujący
     sposób:
 
@@ -2143,22 +2214,22 @@ Client, Serwer. Następuje wymiana wiadomości:
 
     -   radius: 0.5
 
--   Client $\leftarrow$ Serwer `HTTP 200`\
+-   Client &#129028; Serwer `HTTP 200`\
     W wyniku wyszukiwania zostały zwrócone hotele o następujących ID:
 
     -   HotelID: 1
 
     -   HotelID: 2
 
--   Client $\rightarrow$ Serwer `/Hotel/1 GET`\
+-   Client &#129030; Serwer `/Hotel/1 GET`\
     Klient decyduje się na skorzystanie z usług oferowanych przez hotel
     o ID równym 1.
 
--   Client $\leftarrow$ Serwer `HTTP 200`\
+-   Client &#129028; Serwer `HTTP 200`\
     Serwer zwraca informacje o wybranym hotelu wraz z możliwością
     przeglądania jego ofert.
 
--   Client $\rightarrow$ Serwer `/Hotel/1/Offer GET`\
+-   Client &#129030; Serwer `/Hotel/1/Offer GET`\
     Formularz z OfferSearchOptions został wypełniony w następujący
     sposób:
 
@@ -2172,17 +2243,17 @@ Client, Serwer. Następuje wymiana wiadomości:
 
     -   CostMax: 70
 
--   Client $\leftarrow$ Serwer `HTTP 200`\
+-   Client &#129028; Serwer `HTTP 200`\
     W wyniku wyszukiwania zostały zwrócone oferty o następujących ID:
 
     -   OfferID: 1
 
     -   OfferID: 3
 
--   Client $\rightarrow$ Serwer `/Hotel/1/Offer/3 GET`\
+-   Client &#129030; Serwer `/Hotel/1/Offer/3 GET`\
     Klient decyduję się na wybór oferty o ID=3.
 
--   Client $\leftarrow$ Serwer `HTTP 200`\
+-   Client &#129028; Serwer `HTTP 200`\
     Serwer zwraca informacje o wybranej ofercie.
 
 Operacja zakończona powodzeniem powinna kolejno zwracać klientowi
@@ -2228,10 +2299,10 @@ to wprowadzana zostaje cofnięta, a wykryta zostaje wprowadzona do
 systemu i operacja kończy się niepowodzeniem. Z punktu widzenia całego
 systemu nie różni się to niczym od przeprowadzenia synchronizacji.
 
-1.  Hotel $\rightarrow$ Serwer `Hotel_SYNC_REQUEST`\
+1.  Hotel &#129030; Serwer `Hotel_SYNC_REQUEST`\
     Rozpoczęcie synchronizacji.
 
-2.  Serwer $\rightarrow$ Hotel `HOTEL_SYNC_RESPONSE_SUCCESS`\
+2.  Serwer &#129030; Hotel `HOTEL_SYNC_RESPONSE_SUCCESS`\
     Poprawnie przeprowadzono synchronizację
 
 W wypadku gdy:
@@ -2250,10 +2321,10 @@ wybiera dla jednej z nich opcję dodania Opinii. Następnie wypełnia
 formularz i przesyła go do serwera. Serwer następnie odsyła info o id
 nadane Opinii. Z punktu widzenia systemu sytuacja wygląda następująco:
 
-1.  Client $\rightarrow$ Serwer `/Reservations GET`\
+1.  Client &#129030; Serwer `/Reservations GET`\
     Pobieranie własnych rezerwacji.
 
-2.  Client $\rightarrow$ Serwer `/Review POST`\
+2.  Client &#129030; Serwer `/Review POST`\
     Klient wysyła formularz i dostaje zwrot z id Opinii.
 
 W wypadku gdy:
@@ -2276,18 +2347,18 @@ rezerwację i stąd mieć możliwość usunięcia Opinii przypisanej do danej
 rezerwacji lub wyświetlić wszystkie swoje Opinie i stąd usunąć jedną
 wybraną. Pierwszy sposób z punktu widzenia systemu wygląda następująco:
 
-1.  Client $\rightarrow$ Serwer `/Reservations GET`\
+1.  Client &#129030; Serwer `/Reservations GET`\
     Pobieranie własnych rezerwacji.
 
-2.  Client $\rightarrow$ Serwer `/Review/{id} DELETE`\
+2.  Client &#129030; Serwer `/Review/{id} DELETE`\
     Klient wysyła prośbę o usunięcie Opinii o danym id.
 
 Drugi natomiast:
 
-1.  Client $\rightarrow$ Serwer `/Review GET`\
+1.  Client &#129030; Serwer `/Review GET`\
     Pobieranie własnych Opinii.
 
-2.  Client $\rightarrow$ Serwer `/Review/{id} DELETE`\
+2.  Client &#129030; Serwer `/Review/{id} DELETE`\
     Klient wysyła prośbę o usunięcie Opinii o danym id.
 
 Operacja zakończona powodzeniem usunie z systemu daną opinię.
@@ -2309,18 +2380,18 @@ rezerwację i stąd mieć możliwość edycji Opinii przypisanej do danej
 rezerwacji lub wyświetlić wszystkie swoje Opinie i stąd edytować jedną
 wybraną. Pierwszy sposób z punktu widzenia systemu wygląda następująco:
 
-1.  Client $\rightarrow$ Serwer `/Reservations GET`\
+1.  Client &#129030; Serwer `/Reservations GET`\
     Pobieranie własnych rezerwacji.
 
-2.  Client $\rightarrow$ Serwer `/Review/{id} PUT`\
+2.  Client &#129030; Serwer `/Review/{id} PUT`\
     Klient wysyła prośbę o nadpisanie Opinii o danym id.
 
 Drugi natomiast:
 
-1.  Client $\rightarrow$ Serwer `/Review GET`\
+1.  Client &#129030; Serwer `/Review GET`\
     Pobieranie własnych Opinii.
 
-2.  Client $\rightarrow$ Serwer `/Review/{id} PUT`\
+2.  Client &#129030; Serwer `/Review/{id} PUT`\
     Klient wysyła prośbę o nadpisanie Opinii o danym id.
 
 Operacja zakończona powodzeniem nadpisze z systemu daną opinię.
@@ -2351,8 +2422,8 @@ wypełnia formularz:
 
 -   Number of adults: 2
 
-i przesyła go do serwera. Po chwili otrzymuje szczegóły dot. płatności,
-finalizuje ją i cieszy się z potwierdzonej rezerwacji.
+i przesyła go do serwera. Po chwili otrzymuje szczegóły dot. swojej
+potwierdzonej rezerwacji.
 
 -   Klient najpierw popełnia pomyłkę i w polu \"Liczba dzieci\" wpisuje
     20 zamiast 2. Otrzymuje błąd 400. Nie zachodzą żadne zmiany w
@@ -2364,31 +2435,11 @@ finalizuje ją i cieszy się z potwierdzonej rezerwacji.
 -   Tym razem klient wypełnił formularz poprawnie. Nastąpiła wymiana
     wiadomości:
 
-    -   Client $\rightarrow$ Serwer `/Reservations POST`
+    -   Client &#129030; Serwer `/Reservations POST`
 
-    -   Serwer $\rightarrow$ Hotel `RESERVATION_CREATE`
+    -   Serwer &#129030; Hotel `RESERVATION_CREATE`
 
-    -   Serwer $\leftarrow$ Hotel `PAYMENT_INFO`\
-        Serwer zanotował dane dot. płatności.
-
-    -   Client $\leftarrow$ Serwer `HTTP 200`
-
-    -   Klient został przekierowany na stronę ze swoimi rezerwacjami.\
-        Client $\rightarrow$ Serwer `/Reservations GET`\
-        Client $\rightarrow$ Serwer
-        `/Reservations/{HotelID}/{ReservationID} GET` dla każdej z
-        uzyskanych rezerwacji.\
-        Client $\rightarrow$ Serwer `/Payments GET`. Klient zauważa
-        jedną aktywną płatność, którą od razu realizuje:\
-        Client $\rightarrow$ Serwer `/Payments DELETE`
-
-    -   Serwer $\rightarrow$ Hotel `PAYMENT_SUCCESS`
-
-    -   Serwer $\leftarrow$ Hotel `PAYMENT_SUCCESS_RESPONSE_SUCCESS`\
-        Serwer usunął dane dot. płatności.
-
-    -   Client $\leftarrow$ Serwer `HTTP 200` (odpowiedź do
-        `/Payments DELETE`)
+    -   Client &#129028; Serwer `HTTP 200`
 
 -   Przy podglądzie własnych rezerwacji, klient widzi właśnie dokonaną
     rezerwację pokoju z danymi, które są takie same jak te wprowadzone w
@@ -2419,14 +2470,14 @@ Spośród nich tylko jedną (ostatnią) można anulować.
 -   Anulowanie przyszłej rezerwacji kończy się sukcesem. Wymiana
     komunikatów:
 
-    -   Client $\rightarrow$ Serwer
+    -   Client &#129030; Serwer
         `/Reservations/{HotelID}/{ReservationID} DELETE`
 
-    -   Serwer $\rightarrow$ Hotel `RESERVATION_DELETE`
+    -   Serwer &#129030; Hotel `RESERVATION_DELETE`
 
-    -   Serwer $\leftarrow$ Hotel `RESERVATION_DELETE_SUCCESS`
+    -   Serwer &#129028; Hotel `RESERVATION_DELETE_SUCCESS`
 
-    -   Client $\leftarrow$ Serwer `HTTP 200`
+    -   Client &#129028; Serwer `HTTP 200`
 
 -   Lista rezerwacji klienta zostaje zaktualizowana.
 
@@ -2435,34 +2486,6 @@ Spośród nich tylko jedną (ostatnią) można anulować.
 -   Jeśli zaszła taka potrzeba, dane (np. te dotyczące (nie)dostępności
     oferty) po stronie serwera zostały zaktualizowane odpowiednio do
     zmian - Serwer oraz hotel pozostają zsynchronizowane.
-
-## Płatność
-
-Po zakończonej płatności za rezerwację, klient przekazuje taką
-informację do systemu. Na potrzeby testów, Hotel na tę wiadomość
-powinien zareagować negatywnie (należy to zmienić w kodzie, np. w
-odpowiednim miejscu `return true;` na `return false;`). W tym momencie
-klient otrzymuje informację o tym, że płatność nie została przyjęta
-poprawnie. Sugeruje się kontakt z hotelem w celu uzgodnienia wykonania
-płatności, np. na miejscu albo zostawia się inicjatywę związaną z
-rozwiązaniem zaistniałej sytuacji hotelowi (szczegóły takiej sytuacji:
-([8.5.3](#payments){reference-type="ref" reference="payments"})).
-Nastąpiła wymiana komunikatów:
-
--   Client $\rightarrow$ Serwer `/Payments GET`
-
--   Client $\leftarrow$ Serwer `HTTP 200`
-
--   Client $\rightarrow$ Serwer `/Payments DELETE`
-
--   Serwer $\rightarrow$ Hotel `PAYMENT_SUCCESS`
-
--   Serwer $\leftarrow$ Hotel `PAYMENT_SUCCESS_RESPONSE_FAILURE`
-
--   Client $\leftarrow$ Serwer `HTTP 409`
-
--   Przy kolejnym wypisaniu rezerwacji widnieje wiadomość o tym, że
-    płatność jest problematyczna.
 
 # Wymagania Technologiczne
 
