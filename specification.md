@@ -69,7 +69,11 @@ Table of Contents
          * [ClientReview](#clientreview-1)
          * [HotelConnectionIncoming](#hotelconnectionincoming)
          * [HotelConnectionOutgoing](#hotelconnectionoutgoing)
-         * [ServerManager](#servermanager)
+		 * [ReservationService](#reservationservice)
+		 * [ReviewService](#reviewservice)
+		 * [OfferService](#offerservice)
+		 * [ClientService](#clientservice)
+		 * [HotelService](#hotelservice)
    * [Diagramy stanu](#diagramy-stanu)
       * [Pokój hotelowy](#pokój-hotelowy)
       * [Oferta pokoju](#oferta-pokoju)
@@ -717,21 +721,6 @@ Przechowuje szczegóły dotyczące pojedynczej, potwierdzonej rezerwacji,
 czyli daty od kiedy do kiedy ma ona trwać, oraz liczbę gości w jej
 ramach.
 
-### HotelEmployee
-
-Reprezentuje członka personelu hotelowego, który posiada dostęp do
-części danych w systemie. Zakres dostępu oraz ograniczenia zdefiniowane
-są przez pole **Permissions**, które zawiera zbiór zdefiniowanych przez
-managera stałych typu enum.
-
-### HotelEmployeeSecrets
-
-Reprezentuje dane stanowiące podstawę do autentykacji pracownika
-hotelowego (dane z tabeli zawierającej obiekty tego typu są używane
-bezpośrednio przy logowaniu się przez personel do systemu). Ze względów
-bezpieczeństwa informacje o loginach i hasłach pracowników zawarte są w
-osobnej tabeli do której dostęp jest stosownie chroniony.
-
 ### DataManager
 
 Klasa pośrednicząca w wydobywaniu informacji z bazy danych. W tym celu
@@ -1044,36 +1033,14 @@ związanymi z ostatnio wysłaną wiadomością. Metody:
     aktualizowane są dane o dostępności określonej oferty za pomocą
     metody UpdateOfferUnavailability klasy ServerManager.
 
-### ServerManager
+### ReservationService
 
-Klasa zawierająca wysokopoziomowe metody dostępu do bazy danych związane
-z określonymi procesami biznesowymi. Agreguje w sobie i udostępnia
+Klasa związana z wysokopoziomowymi metodami związanymi z zażądzaniem
+rezerwacjami. Agreguje w sobie i udostępnia
 wszelkie aktywne połączenia z hotelami. Posiada również wskazanie na
 **DataManagera** (serverModuleDataManager). W przypadku błędów wykonania
 metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
 łapane w celu określenia typu błędu. Metody:
-
--   CreateReview, UpdateReview, RemoveReview\
-    Metody odpowiedzialne za manipulowanie opiniami znajdującymi się w
-    bazie danych.\
-    Zwracają wartość bool określającą, czy operacja się powiodła.
-
--   GetReviews\
-    Zwraca wszystkie opinie przypisane do podanej w argumencie oferty.
-
--   AddOffer, EditOffer, DeleteOffer\
-    Metody odpowiedzialne za manipulowanie ofertami znajdującymi się w
-    bazie danych.\
-    Zwracają wartość bool określającą, czy operacja się powiodła.
-
--   GetOffers\
-    Zwraca wszystkie oferty spełniające podane w argumencie typu
-    OfferSearchOptions kryteria w odniesieniu do hotelu określonego
-    identyfikatorem przekazanym jako argument metody.
-
--   GetHotels\
-    Zwraca wszystkie hotele spełniające podane w argumencie typu
-    HotelSearchOptions kryteria.
 
 -   GetAllClientReservations\
     Zwraca wszystkie rezerwacje klienta podanego w argumencie.
@@ -1091,15 +1058,71 @@ metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
     Metoda usuwa rezerwację z sytemu.\
     Zwraca wartość bool określającą, czy operacja się powiodła.
 
+### ReviewService
+
+Klasa związana z wysokopoziomowymi metodami związanymi z zażądzaniem
+opiniami klientów. Posiada również wskazanie na**DataManagera**
+(serverModuleDataManager). W przypadku błędów wykonania
+metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
+łapane w celu określenia typu błędu. Metody:
+
+-   CreateReview, UpdateReview, RemoveReview\
+    Metody odpowiedzialne za manipulowanie opiniami znajdującymi się w
+    bazie danych.\
+    Zwracają wartość bool określającą, czy operacja się powiodła.
+
+-   GetReviews\
+    Zwraca wszystkie opinie przypisane do podanej w argumencie oferty.
+
+
+### OfferService
+
+Klasa związana z wysokopoziomowymi metodami związanymi z zażądzaniem
+ofertami wystawanymi przez hotele. Agreguje w sobie i udostępnia
+wszelkie aktywne połączenia z hotelami. Posiada również wskazanie na
+**DataManagera** (serverModuleDataManager). W przypadku błędów wykonania
+metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
+łapane w celu określenia typu błędu. Metody:
+
+-   AddOffer, EditOffer, DeleteOffer\
+    Metody odpowiedzialne za manipulowanie ofertami znajdującymi się w
+    bazie danych.\
+    Zwracają wartość bool określającą, czy operacja się powiodła.
+
+-   GetOffers\
+    Zwraca wszystkie oferty spełniające podane w argumencie typu
+    OfferSearchOptions kryteria w odniesieniu do hotelu określonego
+    identyfikatorem przekazanym jako argument metody.
+
+-   GetHotels\
+    Zwraca wszystkie hotele spełniające podane w argumencie typu
+    HotelSearchOptions kryteria.
+
+-   UpdateOfferUnavailability\
+    Aktualizuje dane związane z przedziałami czasowymi niedostępności
+    oferty w oparciu o nowo otrzymane dane z procesu synchronizacji.
+
+### ClientService
+
+Klasa będąca interfejsem dla admina. Pozwala na twożenie i usuwanie
+klientów z bazy danych. Metody:
+
 -   AddNewClient\
     Dodanie nowo zarejestrowanego użytkownika do systemu.
 
 -   RemoveClient\
     Usunięcie z systemu użytkownika, który się wyrejestrował.
 
--   UpdateOfferUnavailability\
-    Aktualizuje dane związane z przedziałami czasowymi niedostępności
-    oferty w oparciu o nowo otrzymane dane z procesu synchronizacji.
+### HotelService
+
+Klasa będąca interfejsem dla admina. Pozwala na twożenie i usuwanie
+hoteli z bazy danych. Metody:
+
+-   AddNewHotel\
+    Dodanie nowo hotelu do systemu.
+
+-   RemoveHotel\
+    Usunięcie z systemu hotelu.
 
 # Diagramy stanu
 
