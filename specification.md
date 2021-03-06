@@ -46,8 +46,6 @@ Table of Contents
          * [Client](#client)
          * [Reservation](#reservation)
          * [ReservationInfo](#reservationinfo-1)
-         * [HotelEmployee](#hotelemployee)
-         * [HotelEmployeeSecrets](#hotelemployeesecrets)
          * [DataManager](#datamanager)
          * [HotelInfo](#hotelinfo-1)
          * [ServerConnectionIncoming](#serverconnectionincoming)
@@ -874,12 +872,6 @@ ServerConnectionOutgoing. Metody:
     jest dostępna dla członków personelu, sprawdza uprawnienia do
     wykonania tej akcji.\
     Zwraca wartość bool określającą, czy operacja się powiodła.
-
--   GetEmployee\
-    Zwraca członka personelu na podstawie podanych danych logowania.
-    Dane logowania są porównywane z zawartością tabeli
-    HotelEmployeeSecrets.\
-    W razie nieudanego logowania zwraca null.
 
 -   ValidateOffer Metoda, która ma na celu sprawdzenie czy utworzona,
     bądź zmodyfikowana oferta jest zgodna z wewnętrznymi regułami
