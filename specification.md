@@ -569,15 +569,15 @@ o braku dostępności oferty w wybranym okresie czasowym.
 We wszystkich trzech modułach Systemu zdecydowaliśmy się zastosować
 rozdział części odpowiadającej za połączenie między modułami (klasy
 nazwane `*Connection`) od części odpowiadającej za wysokopoziomowe akcje
-(czyli metody zawarte w klasach `*Manager`). Dzięki takiemu krokowi
+(czyli metody zawarte w klasach `*Manager` lub `*Service`). Dzięki takiemu krokowi
 rozdzielamy obsługę błędów związanych z połączeniem od walidacji
 formularzy i błędów związanych z poprawnością wprowadzonych danych.
 Klasa `*Connection` pracuje na danych, które są poprawne. W
-odpowiedzialności klasy `*Manager` znajduje się dbanie o poprawną
+odpowiedzialności klasy `*Manager` lub `*Service` znajduje się dbanie o poprawną
 komunikację -- w związku z tym również wywoływanie odpowiednich metod
 klasy `*Connection`.\
-Ponadto w modułach serwerowym oraz hotelowym -- które dysponują swoimi
-lokalnymi bazami danych -- wyróżniono klasę `DataManager`, będącą
+Ponadto w module serwerowm -- który dysponuje swoją
+bazą danych -- wyróżniono klasę `DataManager`, będącą
 **wyłącznym** pośrednikiem w pobieraniu informacji z tej bazy. Z tego
 względu `DataManager` został oznaczony na diagramie jako klasa silnie
 agregująca obiekty tych typów, które może zwrócić -- niezależnie od
