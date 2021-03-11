@@ -1,1 +1,183 @@
+title: Hotel API
+baseUri: http://hotelservices.com/api-hotel/
+version: 1.0
 
+uses:
+  assets: assets.lib.raml
+
+/offer/{offerID}/rooms:
+  displayName: Rooms
+  get:
+    is: [ assets.paging ]
+    description: Lists all rooms related to an active hotel offer
+    queryParameters:
+      roomNumber:
+        required: false
+        type: string
+        description: Optional filter on room number that is applied after the query has finished
+        example: 13A
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "Rooms":
+                [
+                  {
+                    "RoomID": 5,
+                    "HotelRoomNumber": "13A"
+                  },
+                  {
+                    "RoomID": 7,
+                    "HotelRoomNumber": "16"
+                  }
+                ]
+              }
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "error": "Offer does not belong to this hotel/Invalid room number"
+              }
+              
+              
+/offers/{offerID}:
+  get:
+    description: Gets information related to a specific offer with ID equal to offerID
+    responses:
+      200:
+        body:
+          application/json:
+            type: |
+              {
+                isActive: boolean,
+                costPerChild: double,
+                costPerAdult: double,
+                maxGuests: int,
+                description: string,
+                pictures: File[]
+              }
+      400:
+        body:
+          application/json:
+            description: An error containing message describing the type of error
+            example: |
+              {
+                "error": "Room with ID equal to roomID parameter does not exist"
+              }
+
+# Usuwa powiązanie między ofertą i pokojem z tabeli OfferHotelRooms - w ramach oferty o id offerID kolejne rezerwacje nie będą związane z danym pokojem
+/offer/{offerID}/rooms/{roomID}:
+  delete:
+    description: Próbuje usunąć pokój z oferty
+    responses:
+        200:
+          description: poprawnie i usuwanie
+        400:
+          example: |
+            {
+              "error": "nieistniejąca oferta/pokój"
+            }
+
+# Usuwa permamentnie wpis a tabeli HotelRoom o pokoju o id roomID.
+/rooms/{roomID}:
+  delete:
+    description: Próbuje usunąć pokój z systemu
+    responses:
+        200:
+          description: poprawnie i usuwanie
+        400:
+          description: w pokoju są jakieś rezerwacje i nie można go usunąć lub nie istnieje taki pokój
+          example: |
+            {
+              "error": "w pokoju są jakieś rezerwacje i nie można go usunąć"
+            }
+
+/reservations:
+  get:
+    description: fetches current (and future) reservations made by clients and information regarding these clients
+    queryParameters:
+      currentOnly:
+        required: false
+        type: boolean
+        description: get reservations that are currently underway or all reservations (including ones that begin in the future)
+      roomID:
+        required: false
+        type: int
+        description: get reservations connected with room with ID equal to roomID parameter
+    responses:
+      200:
+        body:
+          application/json:
+            description: Returns an array of objects containing reservation and client information related to a hotel room reservation.  
+            type: |
+              [
+                {
+                  Reservation:
+                  {
+                    ReservationID: int,
+                    HotelRoomNumber: string,
+                    OfferID: int,
+                    FromTime: date,
+                    ToTime: date,
+                    ChildrenCount: int,
+                    AdultsCount: int
+                  }
+                  Client: 
+                  {
+                    ID: int,
+                    Name: string,
+                    Surname: string
+                  }
+                }
+              ]
+      400:
+        body:
+          application/json:
+            description: An error containing message describing the type of error
+            example: |
+              {
+                "error": "Room with ID equal to roomID parameter does not exist"
+              }
+              
+uses:
+  assets: assets.lib.raml
+
+/offers/rooms:
+  displayName: Offers
+  get:
+    is: [ assets.paging ]
+    description: Lists all active offers and rooms related to them
+    queryParameters:
+      roomNumber:
+        required: false
+        type: string
+        description: Optional filter on room number that is applied after the query has finished
+        example: 13A
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
+                {
+                  "OfferID": [ 5, 7, 14 ],
+                  "RoomID": 5,
+                  "HotelRoomNumber": "13A"
+                },
+                {
+                  "OfferID": [ 4, 6 ],
+                  "RoomID": 7,
+                  "HotelRoomNumber": "16"
+                }
+              ]
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "error": "Room number is invalid or does not exist"
+              }
+      
