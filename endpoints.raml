@@ -41,8 +41,23 @@ uses:
               {
                 "error": "Offer does not belong to this hotel/Invalid room number"
               }
-              
-              
+  post:
+    description: Add a room associated with an active hotel offer.
+    body:
+      application/json:
+        type: object
+        properties:
+          RoomID: integer
+        example: |
+          {
+            "RoomID": 21
+          }
+    responses:
+      200:
+        description: Room added successfully.
+      404:
+        description: Room or offer with given ID doesn't exist / is deleted.
+
 /offers/{offerID}:
   get:
     description: Gets information related to a specific offer with ID equal to offerID
@@ -81,7 +96,32 @@ uses:
               "error": "nieistniejąca oferta/pokój"
             }
 
-# Usuwa permamentnie wpis a tabeli HotelRoom o pokoju o id roomID.
+/rooms:
+  post:
+    description: Add a room not associated with any offer.
+    body:
+      application/json:
+        type: object
+        properties:
+          HotelRoomNumber: string
+        example: |
+          {
+            "HotelRoomNumber": "12F"
+          }
+    responses:
+      200:
+        description: Room added successfully.
+        body:
+          application/json:
+            type: object
+            properties:
+              RoomID: integer
+            example: |
+              {
+                "RoomID": 14
+              }
+
+# Usuwa permamentnie wpis z tabeli HotelRoom o pokoju o id roomID.
 /rooms/{roomID}:
   delete:
     description: Próbuje usunąć pokój z systemu
