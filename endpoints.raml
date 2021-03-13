@@ -2,27 +2,18 @@ title: Hotel API
 baseUri: http://hotelservices.com/api-hotel/
 version: 1.0
 
-uses:
-  assets: assets.lib.raml
-
 traits:
   pageable:
   # used to apply paging. Example:
   # get:
   #   is: [pageable]
       queryParameters:
-        offset:
-          description: Skip over a number of elements by specifying an offset value for the query
+        page:
+          description: Number of page to show results
           type: integer
           required: false
           example: 20
           default: 0
-        limit:
-          description: Limit the number of elements on the response
-          type: integer
-          required: false
-          example: 80
-          default: 10
 
 types:
   Offer:
@@ -47,12 +38,19 @@ types:
         type: file
     Rooms:
       type: array
+      required: false
       items:
         type: string
-        
-        
+   
+     
+#--------------------------------------------------------------------------------------------------------
+#-----------------------------------------------OFFERS---------------------------------------------------
+#--------------------------------------------------------------------------------------------------------
 /offers:
   description: Lista ofert znajdujących się w systemie.
+  
+  #HERE ADD GET - pobieranie listy wszystkich ofert
+  
   post:
     description: Dodanie nowej oferty.
     body:
@@ -69,41 +67,7 @@ types:
           }
     responses:
       200:
-  /rooms:
-    displayName: Offers
-    get:
-      is: [ assets.paging ]
-      description: Lists all active offers and rooms related to them
-      queryParameters:
-        roomNumber:
-          required: false
-          type: string
-          description: Optional filter on room number that is applied after the query has finished
-          example: 13A
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                [
-                  {
-                    "OfferID": [ 5, 7, 14 ],
-                    "RoomID": 5,
-                    "HotelRoomNumber": "13A"
-                  },
-                  {
-                    "OfferID": [ 4, 6 ],
-                    "RoomID": 7,
-                    "HotelRoomNumber": "16"
-                  }
-                ]
-        400:
-          body:
-            application/json:
-              example: |
-                {
-                  "error": "Room number is invalid or does not exist"
-                }
+      #optional - return offerID
   /{offerID}:
     get:
       description: Gets information related to a specific offer with ID equal to offerID
@@ -163,7 +127,6 @@ types:
     /rooms:
       displayName: Rooms
       get:
-        is: [ assets.paging ]
         description: Lists all rooms related to an active hotel offer
         queryParameters:
           roomNumber:
@@ -175,26 +138,26 @@ types:
           200:
             body:
               application/json:
-                example: |
-                  {
-                    "Rooms":
-                    [
-                      {
-                        "RoomID": 5,
-                        "HotelRoomNumber": "13A"
-                      },
-                      {
-                        "RoomID": 7,
-                        "HotelRoomNumber": "16"
-                      }
-                    ]
-                  }
+                example: |       
+                  [
+                    {
+                      "RoomID": 5,
+                      "HotelRoomNumber": "13A"
+                    },
+                    {
+                      "RoomID": 7,
+                      "HotelRoomNumber": "16"
+                    }
+                  ]
           400:
             body:
               application/json:
                 example: |
                   {
                     "error": "Offer does not belong to this hotel/Invalid room number"
+                    
+      #HERE ADD POST - dodawanie pokoju do oferty
+      
       /{roomID}:
         delete:       
           description: Usuwa powiązanie między ofertą i pokojem z tabeli OfferHotelRooms
@@ -206,32 +169,71 @@ types:
                   {
                     "error": "nieistniejąca oferta/pokój"
                   }
-
-# Usuwa permamentnie wpis w tabeli HotelRoom o pokoju ze wskazanym roomID.
-/rooms/{roomID}:
-  delete:
-   #Usuwanie polega na sprawdzeniu czy w systemie są jeszcze nie zrealizowane rezerwacje w ramach tego pokoju. 
-   #Przenosimy rezerwacje do innych pokoi zebranych w ramach tej samej oferty (ZAWSZE). 
-   #Jeśli rezerwacji nie da się przenieść do innych pokoi w ramach tej samej oferty - zwracamy błąd 409 i nie podejmujemy żadnych działań.
-   #Jeśli rezerwacje da się przenieść lub nie ma żadnych rezerwacji - we wszystkich rezerwacjach (tabela z rezerwacjami), które wskazują na rozpatrywany pokój
-   #zmieniamy pokój na NULL (należy rozwiązać problem ze spójnością referencyjną) i usuwamy pokój (tabela HotelRoom).
-    descritpion: Serwer usuwa pokój o wskazanym ID.
+                  
+#--------------------------------------------------------------------------------------------------------
+#-----------------------------------------------ROOMS----------------------------------------------------
+#--------------------------------------------------------------------------------------------------------
+/rooms:
+  get:
+    is: [pageable]
+    description: Lists all rooms 
+    queryParameters:
+      roomNumber:
+        required: false
+        type: string
+        description: Optional filter on room number that is applied after the query has finished
+        example: 13A
     responses:
       200:
+        body:
+          application/json:
+            example: |
+              [
+                {
+                  "RoomID": 5,
+                  "HotelRoomNumber": "13A"
+                },
+                {
+                  "RoomID": 7,
+                  "HotelRoomNumber": "16"
+                }
+              ]
       400:
-        description: Pokój o wskazanym ID nie został odnaleziony.
         body:
           application/json:
             example: |
-              { "message": "Room not found or you are not the owner" }
-      409:
-        description: Pokój nie jest możliwy do usunięcia.
-        body:
-          application/json:
-            example: |
-              { "message": "There are still pending reservations for this room that cannot be moved" }
+              {
+                "error": "Room number is invalid or does not exist"
+              }
+  
+  #HERE ADD POST - dodanie pokoju do systemu (tabela HotelRoom)
+  
+  /{roomID}:
+    delete:
+     #Usuwanie polega na sprawdzeniu czy w systemie są jeszcze nie zrealizowane rezerwacje w ramach tego pokoju. 
+     #Przenosimy rezerwacje do innych pokoi zebranych w ramach tej samej oferty (ZAWSZE). 
+     #Jeśli rezerwacji nie da się przenieść do innych pokoi w ramach tej samej oferty - zwracamy błąd 409 i nie podejmujemy żadnych działań.
+     #Jeśli rezerwacje da się przenieść lub nie ma żadnych rezerwacji - we wszystkich rezerwacjach (tabela z rezerwacjami), które wskazują na rozpatrywany pokój
+     #zmieniamy pokój na NULL (należy rozwiązać problem ze spójnością referencyjną) i usuwamy pokój (tabela HotelRoom).
+      descritpion: Serwer usuwa pokój o wskazanym ID. (Usuwany jest wpis w tabeli HotelRoom)
+      responses:
+        200:
+        400:
+          description: Pokój o wskazanym ID nie został odnaleziony.
+          body:
+            application/json:
+              example: |
+                { "message": "Room not found or you are not the owner" }
+        409:
+          description: Pokój nie jest możliwy do usunięcia.
+          body:
+            application/json:
+              example: |
+                { "message": "There are still pending reservations for this room that cannot be moved" }
 
-
+#--------------------------------------------------------------------------------------------------------
+#--------------------------------------------RESERVATIONS------------------------------------------------
+#--------------------------------------------------------------------------------------------------------
 /reservations:
   get:
     description: fetches current (and future) reservations made by clients and information regarding these clients
@@ -264,7 +266,7 @@ types:
                   }
                   Client: 
                   {
-                    ID: int,
+                    ClientID: int,                    
                     Name: string,
                     Surname: string
                   }
@@ -279,6 +281,3 @@ types:
                 "error": "Room with ID equal to roomID parameter does not exist"
               }
               
-uses:
-  assets: assets.lib.raml
-
