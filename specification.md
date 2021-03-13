@@ -13,7 +13,6 @@ Artur Michalski, Ignacy Sujecki, Mateusz Tabor, Dawid Maksymowski, Damian Wyszo�
 
 
 Table of Contents
-=================
 
    * [Podział na moduły](#podział-na-moduły)
       * [Aplikacja Kliencka](#aplikacja-kliencka)
@@ -47,8 +46,6 @@ Table of Contents
          * [Client](#client)
          * [Reservation](#reservation)
          * [ReservationInfo](#reservationinfo-1)
-         * [HotelEmployee](#hotelemployee)
-         * [HotelEmployeeSecrets](#hotelemployeesecrets)
          * [DataManager](#datamanager)
          * [HotelInfo](#hotelinfo-1)
          * [ServerConnectionIncoming](#serverconnectionincoming)
@@ -69,7 +66,11 @@ Table of Contents
          * [ClientReview](#clientreview-1)
          * [HotelConnectionIncoming](#hotelconnectionincoming)
          * [HotelConnectionOutgoing](#hotelconnectionoutgoing)
-         * [ServerManager](#servermanager)
+		 * [ReservationService](#reservationservice)
+		 * [ReviewService](#reviewservice)
+		 * [OfferService](#offerservice)
+		 * [ClientService](#clientservice)
+		 * [HotelService](#hotelservice)
    * [Diagramy stanu](#diagramy-stanu)
       * [Pokój hotelowy](#pokój-hotelowy)
       * [Oferta pokoju](#oferta-pokoju)
@@ -142,7 +143,6 @@ Table of Contents
       * [System hotelowy](#system-hotelowy)
 
 # Wprowadzenie
-
 Celem projektu jest stworzenie systemu do rezerwacji pokoi w hotelach.
 Aplikacja pozwala obsłudze hotelu na udostępnienie oferty w systemie, a
 użytkownikowi na zarezerwowanie pokoju z oferty w określonym oknie
@@ -569,15 +569,15 @@ o braku dostępności oferty w wybranym okresie czasowym.
 We wszystkich trzech modułach Systemu zdecydowaliśmy się zastosować
 rozdział części odpowiadającej za połączenie między modułami (klasy
 nazwane `*Connection`) od części odpowiadającej za wysokopoziomowe akcje
-(czyli metody zawarte w klasach `*Manager`). Dzięki takiemu krokowi
+(czyli metody zawarte w klasach `*Manager` lub `*Service`). Dzięki takiemu krokowi
 rozdzielamy obsługę błędów związanych z połączeniem od walidacji
 formularzy i błędów związanych z poprawnością wprowadzonych danych.
 Klasa `*Connection` pracuje na danych, które są poprawne. W
-odpowiedzialności klasy `*Manager` znajduje się dbanie o poprawną
+odpowiedzialności klasy `*Manager` lub `*Service` znajduje się dbanie o poprawną
 komunikację -- w związku z tym również wywoływanie odpowiednich metod
 klasy `*Connection`.\
-Ponadto w modułach serwerowym oraz hotelowym -- które dysponują swoimi
-lokalnymi bazami danych -- wyróżniono klasę `DataManager`, będącą
+Ponadto w module serwerowm -- który dysponuje swoją
+bazą danych -- wyróżniono klasę `DataManager`, będącą
 **wyłącznym** pośrednikiem w pobieraniu informacji z tej bazy. Z tego
 względu `DataManager` został oznaczony na diagramie jako klasa silnie
 agregująca obiekty tych typów, które może zwrócić -- niezależnie od
@@ -717,21 +717,6 @@ Przechowuje szczegóły dotyczące pojedynczej, potwierdzonej rezerwacji,
 czyli daty od kiedy do kiedy ma ona trwać, oraz liczbę gości w jej
 ramach.
 
-### HotelEmployee
-
-Reprezentuje członka personelu hotelowego, który posiada dostęp do
-części danych w systemie. Zakres dostępu oraz ograniczenia zdefiniowane
-są przez pole **Permissions**, które zawiera zbiór zdefiniowanych przez
-managera stałych typu enum.
-
-### HotelEmployeeSecrets
-
-Reprezentuje dane stanowiące podstawę do autentykacji pracownika
-hotelowego (dane z tabeli zawierającej obiekty tego typu są używane
-bezpośrednio przy logowaniu się przez personel do systemu). Ze względów
-bezpieczeństwa informacje o loginach i hasłach pracowników zawarte są w
-osobnej tabeli do której dostęp jest stosownie chroniony.
-
 ### DataManager
 
 Klasa pośrednicząca w wydobywaniu informacji z bazy danych. W tym celu
@@ -859,8 +844,7 @@ ServerConnectionOutgoing. Metody:
     Metody aktualizują dostępność oferty. Administrator hotelu może
     ofertę dowolnie zdezaktualizować lub zaaktualizować ponownie,
     manipulując w ten sposób wachlarzem propozycji dla swoich
-    potencjalnych klientów (więcej nt. stanów klasy Offer patrz:
-    [5.2](#offerStateDiagram).
+    potencjalnych klientów (więcej nt. stanów klasy Offer patrz: offerStateDiagram.
     Zwracają wartość bool określającą, czy operacja się powiodła.
 
 -   CheckReservationAvailability\
@@ -888,12 +872,6 @@ ServerConnectionOutgoing. Metody:
     jest dostępna dla członków personelu, sprawdza uprawnienia do
     wykonania tej akcji.\
     Zwraca wartość bool określającą, czy operacja się powiodła.
-
--   GetEmployee\
-    Zwraca członka personelu na podstawie podanych danych logowania.
-    Dane logowania są porównywane z zawartością tabeli
-    HotelEmployeeSecrets.\
-    W razie nieudanego logowania zwraca null.
 
 -   ValidateOffer Metoda, która ma na celu sprawdzenie czy utworzona,
     bądź zmodyfikowana oferta jest zgodna z wewnętrznymi regułami
@@ -1045,36 +1023,14 @@ związanymi z ostatnio wysłaną wiadomością. Metody:
     aktualizowane są dane o dostępności określonej oferty za pomocą
     metody UpdateOfferUnavailability klasy ServerManager.
 
-### ServerManager
+### ReservationService
 
-Klasa zawierająca wysokopoziomowe metody dostępu do bazy danych związane
-z określonymi procesami biznesowymi. Agreguje w sobie i udostępnia
+Klasa związana z wysokopoziomowymi metodami związanymi z zażądzaniem
+rezerwacjami. Agreguje w sobie i udostępnia
 wszelkie aktywne połączenia z hotelami. Posiada również wskazanie na
 **DataManagera** (serverModuleDataManager). W przypadku błędów wykonania
 metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
 łapane w celu określenia typu błędu. Metody:
-
--   CreateReview, UpdateReview, RemoveReview\
-    Metody odpowiedzialne za manipulowanie opiniami znajdującymi się w
-    bazie danych.\
-    Zwracają wartość bool określającą, czy operacja się powiodła.
-
--   GetReviews\
-    Zwraca wszystkie opinie przypisane do podanej w argumencie oferty.
-
--   AddOffer, EditOffer, DeleteOffer\
-    Metody odpowiedzialne za manipulowanie ofertami znajdującymi się w
-    bazie danych.\
-    Zwracają wartość bool określającą, czy operacja się powiodła.
-
--   GetOffers\
-    Zwraca wszystkie oferty spełniające podane w argumencie typu
-    OfferSearchOptions kryteria w odniesieniu do hotelu określonego
-    identyfikatorem przekazanym jako argument metody.
-
--   GetHotels\
-    Zwraca wszystkie hotele spełniające podane w argumencie typu
-    HotelSearchOptions kryteria.
 
 -   GetAllClientReservations\
     Zwraca wszystkie rezerwacje klienta podanego w argumencie.
@@ -1092,15 +1048,71 @@ metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
     Metoda usuwa rezerwację z sytemu.\
     Zwraca wartość bool określającą, czy operacja się powiodła.
 
+### ReviewService
+
+Klasa związana z wysokopoziomowymi metodami związanymi z zażądzaniem
+opiniami klientów. Posiada również wskazanie na**DataManagera**
+(serverModuleDataManager). W przypadku błędów wykonania
+metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
+łapane w celu określenia typu błędu. Metody:
+
+-   CreateReview, UpdateReview, RemoveReview\
+    Metody odpowiedzialne za manipulowanie opiniami znajdującymi się w
+    bazie danych.\
+    Zwracają wartość bool określającą, czy operacja się powiodła.
+
+-   GetReviews\
+    Zwraca wszystkie opinie przypisane do podanej w argumencie oferty.
+
+
+### OfferService
+
+Klasa związana z wysokopoziomowymi metodami związanymi z zażądzaniem
+ofertami wystawanymi przez hotele. Agreguje w sobie i udostępnia
+wszelkie aktywne połączenia z hotelami. Posiada również wskazanie na
+**DataManagera** (serverModuleDataManager). W przypadku błędów wykonania
+metod zwracane mogą być błędy lub wyrzucane wyjątki, które powinny być
+łapane w celu określenia typu błędu. Metody:
+
+-   AddOffer, EditOffer, DeleteOffer\
+    Metody odpowiedzialne za manipulowanie ofertami znajdującymi się w
+    bazie danych.\
+    Zwracają wartość bool określającą, czy operacja się powiodła.
+
+-   GetOffers\
+    Zwraca wszystkie oferty spełniające podane w argumencie typu
+    OfferSearchOptions kryteria w odniesieniu do hotelu określonego
+    identyfikatorem przekazanym jako argument metody.
+
+-   GetHotels\
+    Zwraca wszystkie hotele spełniające podane w argumencie typu
+    HotelSearchOptions kryteria.
+
+-   UpdateOfferUnavailability\
+    Aktualizuje dane związane z przedziałami czasowymi niedostępności
+    oferty w oparciu o nowo otrzymane dane z procesu synchronizacji.
+
+### ClientService
+
+Klasa będąca interfejsem dla admina. Pozwala na twożenie i usuwanie
+klientów z bazy danych. Metody:
+
 -   AddNewClient\
     Dodanie nowo zarejestrowanego użytkownika do systemu.
 
 -   RemoveClient\
     Usunięcie z systemu użytkownika, który się wyrejestrował.
 
--   UpdateOfferUnavailability\
-    Aktualizuje dane związane z przedziałami czasowymi niedostępności
-    oferty w oparciu o nowo otrzymane dane z procesu synchronizacji.
+### HotelService
+
+Klasa będąca interfejsem dla admina. Pozwala na twożenie i usuwanie
+hoteli z bazy danych. Metody:
+
+-   AddNewHotel\
+    Dodanie nowo hotelu do systemu.
+
+-   RemoveHotel\
+    Usunięcie z systemu hotelu.
 
 # Diagramy stanu
 
@@ -1218,7 +1230,6 @@ może wystawić opinię oferty, w ramach zrealizowanej rezerwacji pokoju
 hotelowego. Zapisywana jest wówczas recenzja klienta, natomiast obiekt
 rezerwacji przechodzi wówczas do stanu \"rezerwacji ocenionej\".
 
-
 # Diagramy aktywności i sekwencji
 
 Poniżej prezentujemy diagramy sekwencji przedstawiające przebieg
@@ -1257,15 +1268,15 @@ Przebieg komunikacji dla każdej z tych operacji prezentujemy poniżej.
 <img src="Aktywnosc/IO_Aktywności-Dodawanie oferty.png">
 <img src="Sekwencje/Offer_Add.png">
 
-Dodawanie oferty to operacja między Systemem Hotelowym, a Serwerem.
-System Hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
+Dodawanie oferty to operacja między systemem hotelowym, a serwerem.
+System hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
 wszystkimi informacjami o ofercie. Serwer po otrzymaniu żądania waliduje
-otrzymane dane po czym odsyła serwerowi czy operacja się powiodła, wtedy
-odsyła potwierdzenie, czy nastąpił jakiś błąd, wtedy odsyła informacje o
-błędzie. Jeśli system hotelowy nie może wysłać komunikatu ponawia próbę
-po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
-wykonywanie aktywności. W przypadku otrzymania potwierdzenia System
-Hotelowy kończy operacje dodaniem do swojej bazy danych oferty. W
+otrzymane dane. W przypadku ich niepoprawności odsyła hotelowi stosowny błąd.
+Po zwalidowaniu, nowa oferta zapisywana jest w lokalnej bazie danych serwera.
+Do hotelu odsyłane jest potwierdzenie. Jeśli system hotelowy nie może otrzymać
+komunikatu ponawia próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
+wykonywanie aktywności. W przypadku otrzymania potwierdzenia system
+hotelowy kończy operacje dodaniem do swojej bazy danych oferty. W
 przypadku niepowodzenia oferta nie zostaje dodana do bazy danych i
 proces się kończy.
 
@@ -1274,25 +1285,25 @@ proces się kończy.
 <img src="Aktywnosc/IO_Aktywności-Usuwanie oferty.png">
 <img src="Sekwencje/Offer_Delete.png">
 
-Usuwanie oferty odbywa się w następujący sposób System hotelowy wysyła
-żądanie, a Serwer odsyła informacje o powodzeniu operacji lub o błędzie.
+Usuwanie oferty odbywa się w następujący sposób. System hotelowy wysyła
+żądanie, a serwer odsyła informacje o powodzeniu operacji lub o błędzie.
 Jeśli system hotelowy nie może wysłać komunikatu ponawia próbę po pewnym
 czasie. Powtarza to 5 razy co sekundę, po czym zarzuca wykonywanie
 aktywności.
 
 ### Edytowanie oferty
 
-<img src="Aktywnosc/IO_Aktywności-Usuwanie oferty.png">
+<img src="Aktywnosc/IO_Aktywności-Edytowanie oferty.png">
 <img src="Sekwencje/Offer_Edit.png">
 
-Edycja oferty zaczyna się od wypełnienia formularza zmian przez
-użytkownika Systemu Hotelowego wewnątrz niej. Zmiany są następnie
+Edycja oferty zaczyna się od zmodyfikowania przez użytkownika systemu 
+hotelowego formularza już istniejącej w systemie oferty. Zmiany są następnie
 wstępnie walidowane. W przypadku nieudanej walidacji użytkownik jest z
-powrotem odsyłany do formularza. W przypadku udanej walidacji System
-Hotelowy wysyła żądanie wprowadzenia zmian do Serwera który jeszcze raz
+powrotem odsyłany do formularza. W przypadku udanej walidacji system
+hotelowy wysyła żądanie wprowadzenia zmian do serwera który jeszcze raz
 waliduje otrzymane dane. Jeśli to się nie powiedzie odsyła błąd i proces
 się kończy. W przypadku przejścia walidacji pomyślnie system uaktualnia
-dane i odsyła informacje o powodzeniu operacji po czym System Hotelowy
+dane i odsyła informacje o powodzeniu operacji, po czym system hotelowy
 uaktualnia swoje dane. Jeśli system hotelowy nie może wysłać komunikatu
 ponawia próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym
 zarzuca wykonywanie aktywności.
@@ -1309,34 +1320,30 @@ nieprawidłowości w formularzu do użytkownika zostaje przesłany błąd w
 postaci kodu 400 wraz z informacją o błędnie wypełnionym polu. Jeśli
 formularz został wypełniony poprawnie zwracana jest lista hoteli. W
 przypadku gdy lista jest niepusta możemy wybrać jeden z hoteli, aby
-poznać szczegółowe informacje na jego temat i mieć dostęp do
+poznać szczegółowe informacje na jego temat i uzyskać dostęp do
 udostępnionych przez niego ofert.\
 Drugi etap to wyszukiwanie ofert spośród tych udostępnionych przez
 wybrany we wcześniejszych krokach hotel. Wyszukiwanie to przebiega
 analogicznie do wyszukiwania hoteli. Użytkownik ma możliwość
 ograniczenia listy ofert poprzez wypełnienie danych do wyszukiwania
-ofert. Formularz jest przesyłany do serwera gdzie odbywa się jego
+ofert. Formularz jest przesyłany do serwera, gdzie odbywa się jego
 walidacja. W przypadku nieprawidłowości do użytkownika zostaje przesłany
 błąd w postaci kodu 400 wraz z informacją o błędnie wypełnionym polu.
 Jeśli formularz został wypełniony poprawnie zwracana jest lista ofert. W
 przypadku gdy lista jest niepusta możemy wybrać jedną z ofert, aby
 poznać jej szczegóły i przejść do dalszej interakcji.\
-Jeśli system hotelowy nie może wysłać komunikatu ponawia próbę po pewnym
-czasie. Powtarza to 5 razy co sekundę, po czym zarzuca wykonywanie
-aktywności.\
 Walidacja formularza i ewentualnie zwracane błędy w postaci kodów 400
 nie zostały naniesione na diagram w celu zachowania jego czytelności.
 
 ## Rezerwacja
 
 Podstawą systemu jest możliwość składania rezerwacji przez klientów. W
-poniższej podsekcji zobaczymy jak wygląda z grubsza komunikacja między
+poniższej podsekcji przyjrzymy się komunikacji między
 modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 
 ### Tworzenie rezerwacji
 
 <img src="Aktywnosc/IO_Aktywności-Tworzenie rezerwacji.png">
-
 <img src="Sekwencje/Reservation_Create.png">
 
 Proces tworzenia rezerwacji zaczyna się po wybraniu przez użytkownika
@@ -1354,10 +1361,11 @@ opasującymi dostępność oferty. W efekcie serwer odsyła użytkownikowi
 informację o nieudanej rezerwacji oraz natychmiastowo wykonuje proces
 związany z synchronizacją danych. W przypadku gdy hotel będzie mógł
 przyporządkować odpowiedni pokój na podany okres czasowy, tworzy on
-lokalny wpis w bazie danych związany z tą rezerwacją i jest odsyłana
-odpowiedź o sukcesie do serwera, w wyniku czego tworzony jest wpis
-o rezerwacji klienckiej po stronie serwera i odsyłana odpowiednia
-odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
+lokalny wpis w bazie danych związany z tą rezerwacją. Klient może anulować
+rezerwację oraz wysłać do serwera odpowiedni komunikat, który następnie
+jest przesyłany do hotelu. Hotel usuwa wówczas utworzony wpis rezerwacji
+i zwraca odpowiednią informację serwerowi, która jest propagowana do
+klienta.
 
 ### Anulowanie rezerwacji
 
@@ -1365,13 +1373,13 @@ odpowiedź stanowiąca o sukcesie całego procesu rezerwacji.
 <img src="Sekwencje/Reservation_Cancel.png">
 
 Po wybraniu swojej rezerwacji klient ma możliwość anulowania jej.
-Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do Serwera
+Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do serwera,
 który przekazuje ją odpowiedniemu hotelowi. Hotel usuwa ze swojej bazy
-danych rezerwacje i przesyła potwierdzenie do Serwera który również
-usuwa rezerwację z swojej bazy danych i przesyła potwierdzenie do
-klienta. W przypadku wystąpienia błędu na którymkolwiek z tych etapów
+danych rezerwacje i przesyła potwierdzenie do serwera, który również
+usuwa rezerwację ze swojej bazy danych i przesyła potwierdzenie do
+klienta. W przypadku wystąpienia błędu na którymkolwiek z tych etapów,
 przesyłany jest błąd w stronę klienta i żadne zmiany w bazie danych nie
-są robione. Jeśli któryś z modułów nie może wysłać komunikatu ponawia
+są dokonywane. Jeśli któryś z modułów nie może wysłać komunikatu ponawia
 próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
 wykonywanie aktywności.
 
@@ -1379,20 +1387,20 @@ wykonywanie aktywności.
 
 <img src="Aktywnosc/IO_Aktywności-Local reservation.png">
 
-Istnieje również możliwość że klient przyjdzie do hotelu bez rezerwacji.
-System hotelowy ma możliwość właśnie na taką ewentualność. System
-hotelowy może zarezerwować pokój w imieniu klienta Po takiej rezerwacji
-nie może zostać strwożona opinia gdyż serwer nie wie o istnieniu
-takowej. Id klienta w bazie danych systemu hotelowego jest IdUser
+Istnieje również możliwość, że klient przyjdzie do hotelu bez rezerwacji, 
+chcąc dokonać rezerwacji bezpośrednio na miejscu. System
+hotelowy może zarezerwować pokój w imieniu klienta. Po takiej rezerwacji
+nie może zostać strworzona opinia, gdyż serwer nie wie o istnieniu
+takowej. ID klienta w bazie danych systemu hotelowego jest IDUser
 hotelu. Hotel nie przetrzymuje wtedy żadnych informacji o kliencie, ale
-za to klient nie musi trwożyć nowego konta. System Hotelowy próbuje
-synchronizować się z serwerem i gdy nie ma żadnych przeciwności(czytaj
-np. nie ma rezerwacji które były na serwerze na dany okres, a system
+za to klient nie musi tworzyć nowego konta. System hotelowy próbuje
+synchronizować się z serwerem i gdy nie ma żadnych przeciwności 
+(np. nie ma rezerwacji które były na serwerze na dany okres, a system
 hotelowy o nich nie wiedział) dodaje rezerwację do lokalnej bazy danych.
 
 ## Opinia
 
-W celu umożliwienia oceny danej oferty klienci(użytkownicy aplikacji
+W celu umożliwienia oceny danej oferty klienci (użytkownicy aplikacji
 klienckiej) mają możliwość dodawania swoich opinii do ofert z których
 ostatnio skorzystali. Poniżej przedstawiamy proces dodawania takiej
 opini do systemu.
@@ -1403,10 +1411,10 @@ opini do systemu.
 <img src="Sekwencje/Opinion_Add.png">
 
 Klient może dodać opinie do wybranej przez siebie rezerwacji którą już
-odbył. W tym celu wypełnia formularz w Aplikacji Klienckiej, który jest
-walidowany (w przypadku niepowodzenie odsyłany jest z powrotem do
-formularza). Po przejściu przez walidację żądanie wysyłane jest do
-Serwera który ponownie je waliduje i odsyła informacje czy operacja się
+odbył. W tym celu wypełnia formularz w aplikacji klienckiej, który jest
+walidowany (w przypadku niepowodzenie proszony jest o naniesienie poprawek 
+w formularzu). Po przejściu przez walidację żądanie wysyłane jest do
+serwera, który ponownie je waliduje i odsyła informacje czy operacja się
 powiodła czy nie.
 
 ## Synchronizacja
@@ -1424,7 +1432,7 @@ procedurę synchronizacji danych w odniesieniu do konkretnej oferty
 hotelowej. Przesyłane są wówczas dane zawierające przedziały czasowe
 niedostępności ofert odpowiednio wyznaczone przez hotel.
 
-# Hotel-Serwer
+# Hotel-Serwer <a name="7"></a>
 
 ## Zarządzanie ofertami i pokojami
 

@@ -1,0 +1,252 @@
+/client/reservations:
+  get:
+    description: Get list of all reservations made by the client
+    responses:
+      200:
+        body:
+          application/json:
+            description: List of reservation information and offerID relating to the reservation and preview information related to the hotel
+            type: |
+              [
+                {
+                  "hotelInfoPreview": {
+                    "hotelID": int,
+                    "hotelName": string,
+                    "country": string,
+                    "city": string
+                  },
+                  "offerReservations": {
+                    "reservationsInfo": [
+                      {
+                        "reservationID": int,
+                        "from": datetime,
+                        "to": datetime,
+                        "numberOfChildren": int,
+                        "numberOfAdults": int
+                      }
+                    ],
+                    "offerID": int,
+                    "offerReviewID": int? (optional - not present if there is no client review for an offer),
+                  }
+                }
+              ]
+
+/hotels/{hotelID}/offers/{offerID}/reservations:
+  post:
+    description: Create new reservation
+    body:
+      application/json:
+        type: |
+          {
+            "from": datetime,
+            "to": datetime,
+            "numberOfChildren": int,
+            "numberOfAdults": int
+          }
+    responses:
+      200:
+      400:
+        body:
+          application/json:
+            description: Cannot create a reservation if the offer is inactive or deleted or is unavailable during chosen time interval
+            example: |
+              {
+                "error": "Offer is not available - please refresh information related to the offer availability"
+              }
+      404:
+        description: Resource not found: e.g. there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or hotel/offer does not exist
+
+/hotels/{hotelID}/offers/{offerID}/reservations/{reservationID}:
+  delete:
+    description: Cancel exisiting reservation provided that it hasn't started
+    responses:
+      200:
+      400:
+        body:
+          application/json:
+            description: Reservations cannot be deleted unless they haven't begun
+            example: |
+              {
+                "error": "Reservation is currently underway or already completed"
+              }
+      401:
+        description: Cannot delete reservation becuase of no ownership of a reservation with ID equal to reservationID query parameter
+      404:
+        description: Reservation with ID equal to reservationID query parameter doesn't exist
+
+/hotels:
+  get:
+    description: Returns list of hotels according to filter values
+    is: [pageable]
+    queryParameters:
+      description: search based on prefix match (case-insensitive)
+      country:
+        type: string
+        required: false
+      city:
+        type: string
+        required: false
+      hotelName:
+        type: string
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            description: Array of objects containing preview information related to hotels
+            type: |
+              [
+                {
+                  "hotelID": int,
+                  "hotelName": string,
+                  "country": string,
+                  "city": string,
+                  "previewPicture": file
+                }
+              ]
+
+/hotels/{hotelID}:
+  get:
+    description: Gets detailed information about a hotel
+    responses:
+      200:
+        body:
+          application/json:
+            type: |
+              {
+                "hotelName": string,
+                "hotelDescription": string,
+                "country": string,
+                "city": string,
+                "hotelPictures": file[]
+              }
+      404:
+        description: Hotel with ID equal to hotelID parameter does not exist
+
+
+/hotels/{hotelID}/offers:
+  get:
+    description: Returns list of offers according to filter values
+    is:  [pageable]
+    queryParameters:
+      fromTime:
+        displayName: From
+        type: date-only
+        required: false
+        example: 2021-05-23
+      toTime:
+        displayName: To
+        type: date-only
+        required: false
+        example: 2021-06-01
+      minGuests:
+        type: integer
+        required: false
+        minimum: 1
+        example: 3
+      costMax:
+        type: integer
+        required: false
+        minimum: 0
+        example: 100
+      costMin:
+        type: integer
+        required: false
+        minimum: 0
+        example: 50
+    responses:
+     200:
+      body:
+        application/json:
+          type: |
+            {
+              "offerID": int,
+              "offerTitle": string,
+              "offerPreviewPicture": file,
+              "maxGuests": int,
+              "costPerChild": double,
+              "costPerAdult": double,
+            }
+      404:
+        description: Hotel with ID equal to hotelID parameter does not exist
+
+/hotels/{hotelID}/offers/{offerID}:
+  get:
+    description: Returns detailed information about an offer
+    responses:
+     200:
+      body:
+        application/json:
+          type: |
+            {
+              "offerTitle": string,
+              "offerDescription": string
+              "offerPictures": file[],
+              "maxGuests": int,
+              "costPerChild": double,
+              "costPerAdult": double,
+              "availabilityTimeIntervals": (datetime, datetime)[]
+              "isActive": boolean,
+              "isDeleted": boolean,
+            }
+      404:
+        description: Resource not found: e.g. there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or hotel/offer does not exist
+
+/hotels/{hotelID}/offers/{offerID}/reviews:
+  get:
+    description: Returns all reviews related to an offer
+    responses:
+      200:
+        body:
+          application/json:
+            description: An arry of objects containing information related to offer reviews
+            type: |
+              [
+                {
+                  "reviewID": int,
+                  "content": string,
+                  "rating": int,
+                  "creationDate": datetime,
+                  "reviewerUsername": string
+                }
+              ]
+      404:
+        description: Resource not found: e.g. there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or hotel/offer does not exist
+  post:
+    description: Creates a new review related to an offer
+    body:
+      application/json:
+        type: |
+          {
+            "content": string,
+            "rating": int,
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            description: Returns an ID corresponding to a newly created review
+            type: |
+              {
+                "reviewID": int
+              }
+      400:
+        body:
+          application/json:
+            description: Invalid format of the JSON obejct containing data related to a new review
+            example: |
+              {
+                error: "[content] property is required and must be a non-empty string"
+              }
+      404:
+        description: Resource not found: e.g. there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or hotel/offer does not exist
+
+/hotels/{hotelID}/offers/{offerID}/reviews/{reviewID}:
+  delete:
+    description: Deletes a client review related to an offer
+    responses:
+      200:
+      401:
+        description: Error related to an attempt of review deletion without it's ownership
+      404:
+        description: Resource not found: there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or target review does not exist/is not related to the offer

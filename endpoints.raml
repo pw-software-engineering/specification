@@ -221,3 +221,33 @@ uses:
                 "error": "Room number is invalid or does not exist"
               }
       
+/offers/{offerID}/rooms:
+  get:
+    description: Get information related to hotel rooms within an offer whose ID is equal to offerID parameter
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
+                {
+                  "roomID": 5,
+                  "hotelRoomNumber": "13A"
+                },
+                {
+                  "roomID": 7,
+                  "hotelRoomNumber": "18"
+                },
+                {
+                  "roomID": 9,
+                  "hotelRoomNumber": "121"
+                },
+              ]
+      400:
+        body:
+          application/json:
+            description: Error containing an error message describing the type of error
+            example: |
+              {
+                "error": "Offer with ID equal to offerID parameter does not ext or you are not it's owner"
+              }

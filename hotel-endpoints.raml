@@ -1,0 +1,353 @@
+title: Hotel API
+baseUri: http://hotelservices.com/api-hotel/
+version: 1.0
+
+traits:
+  pageable:
+  # used to apply paging. Example:
+  # get:
+  #   is: [pageable]
+      queryParameters:
+        pageNumber:
+          description: Number of page to show results
+          type: integer
+          required: false
+          example: 20
+          default: 1
+        pageSize:
+          description: Number of show results
+          type: integer
+          required: false
+          example: 20
+          default: 10
+
+types:
+  offer:
+  type: object
+  properties:
+    offerTitle:
+      type: string
+    costPerChild:
+      type: number
+      multipleOf: 0.01
+      required: true
+    costPerAdult:
+      type: number
+      multipleOf: 0.01
+      required: true
+    maxGuests:
+      type: integer
+      required: true
+    description:
+      type: string
+    offerPreviewPicture:
+      type: file
+    pictures:
+      type: array
+      items:
+        type: file
+    rooms:
+      type: array
+      required: false
+      items:
+        type: string
+   
+     
+#--------------------------------------------------------------------------------------------------------
+#-----------------------------------------------OFFERS---------------------------------------------------
+#--------------------------------------------------------------------------------------------------------
+/offers:
+  description: List of offers present in the system
+  
+  #HERE ADD GET - pobieranie listy wszystkich ofert
+  
+  post:
+    description: Add new offer
+    body:
+      application/json:
+        type: offer
+        example: |
+        {
+          "offerTitle": "Awesome offer",
+          "costPerChild": 50,
+          "costPerAdult": 80,
+          "maxGuests": 5,
+          "description": "Apartment overlooking the sea",          
+          "pictures": [],
+          "rooms": ["12A”, "14B”]
+        }
+    responses:
+      200:
+      #optional - return offerID
+  /{offerID}:
+    get:
+      description: Gets information related to a specific offer with ID equal to offerID
+      responses:
+        200:
+          body:
+            application/json:
+              type: |
+                {
+                  "isActive": boolean,
+                  "costPerChild": double,
+                  "costPerAdult": double,
+                  "maxGuests": int,
+                  "description": string,
+                  "pictures": file[]
+                }
+        401:
+          description: Offer does not belong to this hotel
+        404:
+          description: Offer not found
+    delete:
+      #Usuwanie polega na sprawdzeniu czy w systemie są jeszcze nie zrealizowane rezerwacje w ramach tej oferty. 
+      #Jeśli tak - zwracamy błąd 409 i nie podejmujemy żadnych działań
+      #Jeśli nie - "odpinamy" pokoje od oferty (tabela OfferHotelRooms) i oznaczamy ofertę jako usuniętą (znacznik isDeleted w tabeli Offer)  
+      descritpion: Server marks the offer as deleted.
+      responses:
+        200:
+        401:
+          description: Offer does not belong to this hotel
+        404:
+          description: Offer not found
+        409:
+          description: Unable to delete offer
+          body:
+            application/json:
+              example: |
+                { "error": "There are still pending reservations for this offer" }
+    patch:
+      descritpion: Server modifies offer.
+      body:
+        application/json:
+          { 
+            "isActive": boolean,
+            "offerTitle": string,
+            "offerPreviewPicture": file,
+            "description": string,
+            "offerPictures": file[]
+          }
+      responses:
+        200:
+        401:
+          description: Offer does not belong to this hotel
+        404:
+          description: Not found
+    /rooms:
+      get:
+        description: Lists all rooms related to the hotel offer
+        queryParameters:
+          roomNumber:
+            required: false
+            type: string
+            description: Optional filter on room number that is applied after the query has finished
+            example: 13A
+        responses:
+          200:
+            body:
+              application/json:
+                example: |       
+                  [
+                    {
+                      "roomID": 5,
+                      "hotelRoomNumber": "13A"
+                    },
+                    {
+                      "roomID": 7,
+                      "hotelRoomNumber": "16"
+                    }
+                  ]
+          401:
+            description: Offer does not belong to this hotel     
+          404:
+            description: Offer not found   
+      post:
+        description: Add a room associated with hotel offer.
+        body:
+          application/json:
+            type: object
+            properties:
+              roomID: integer
+            example: |
+              {
+                "roomID": 21
+              }
+        responses:
+          200:
+          401:
+            description: Offer does not belong to this hotel 
+          404:
+            description: Offer not found
+      
+      /{roomID}:
+        delete:       
+          description: Removes room from the offer
+          responses:
+            200:
+            401:
+              description: Offer or room does not belong to this hotel   
+            404:
+              description: Offer or room not found
+                  
+#--------------------------------------------------------------------------------------------------------
+#-----------------------------------------------ROOMS----------------------------------------------------
+#--------------------------------------------------------------------------------------------------------
+/rooms:
+  get:
+    is: [pageable]
+    description: Lists all rooms 
+    queryParameters:
+      roomNumber:
+        required: false
+        type: string
+        description: Optional filter on room number that is applied after the query has finished
+        example: 13A
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
+                {
+                  "roomID": 5,
+                  "hotelRoomNumber": "13A"
+                },
+                {
+                  "roomID": 7,
+                  "hotelRoomNumber": "16"
+                }
+              ]
+      400:
+        body:
+          application/json:
+          description: An error containing message describing the type of error
+            example: |
+              {
+                "error": "Room number not found"
+              }
+  post:
+    description: Add a room not associated with any offer. (HotelRoom table)
+    body:
+      application/json:
+        type: object
+        properties:
+          hotelRoomNumber: string
+        example: |
+          {
+            "hotelRoomNumber": "12F"
+          }
+    responses:
+      200:
+        description: Room added successfully.
+        body:
+          application/json:
+            type: object
+            properties:
+              roomID: integer
+            example: |
+              {
+                "roomID": 14
+              } 
+  /{roomID}:
+    delete:
+     #Usuwanie polega na sprawdzeniu czy w systemie są jeszcze nie zrealizowane rezerwacje w ramach tego pokoju. 
+     #Przenosimy rezerwacje do innych pokoi zebranych w ramach tej samej oferty (ZAWSZE). 
+     #Jeśli rezerwacji nie da się przenieść do innych pokoi w ramach tej samej oferty - zwracamy błąd 409 i nie podejmujemy żadnych działań.
+     #Jeśli rezerwacje da się przenieść lub nie ma żadnych rezerwacji - we wszystkich rezerwacjach (tabela z rezerwacjami), które wskazują na rozpatrywany pokój
+     #zmieniamy pokój na NULL (należy rozwiązać problem ze spójnością referencyjną) i usuwamy pokój (tabela HotelRoom).
+      descritpion: Serwer usuwa pokój o wskazanym ID. (Usuwany jest wpis w tabeli HotelRoom)
+      responses:
+        200:
+        401:
+          description: Room does not belong to this hotel
+        404:
+          description: Room not found
+        409:          
+          body:
+            application/json:
+              description: Unable to delete room
+              example: |
+                {
+                  "error": "There are still pending reservations for this room that cannot be moved"
+                }
+
+#--------------------------------------------------------------------------------------------------------
+#--------------------------------------------RESERVATIONS------------------------------------------------
+#--------------------------------------------------------------------------------------------------------
+/reservations:
+  get:
+    description: fetches current (and future) reservations made by clients and information regarding these clients
+    queryParameters:
+      currentOnly:
+        required: false
+        type: boolean
+        description: get reservations that are currently underway or all reservations (including ones that begin in the future)
+      roomID:
+        required: false
+        type: int
+        description: get reservations connected with room with ID equal to roomID parameter
+    responses:
+      200:
+        body:
+          application/json:
+            description: Returns an array of objects containing reservation and client information related to a hotel room reservation.  
+            type: |
+              [
+                {
+                  reservation:
+                  {
+                    reservationID: int,
+                    hotelRoomNumber: string,
+                    offerID: int,
+                    fromTime: date,
+                    toTime: date,
+                    childrenCount: int,
+                    adultsCount: int
+                  }
+                  client: 
+                  {
+                    clientID: int,                    
+                    name: string,
+                    surname: string
+                  }
+                }
+              ]
+      400:
+        body:
+          application/json:
+            description: An error containing message describing the type of error
+            example: |
+              {
+                "error": "Room with ID equal to roomID parameter does not exist"
+              }
+#--------------------------------------------------------------------------------------------------------
+#-------------------------------------------HotelInfo----------------------------------------------------
+#--------------------------------------------------------------------------------------------------------
+\hotelInfo:
+  get:
+    description: Show info about hotel
+    responses:
+      200:
+        body:
+          application/json:
+            type: |
+              {
+                "country": string, 
+                "city": string,
+                "hotelPreviewPicture": file,
+                "hotelName": string,
+                "hotelDesc": string,
+                "hotelPictures": file[]  
+              }
+  patch:
+    description: Update info about hotel  
+     body:
+        application/json:
+          { 
+            "hotelDesc": string,
+            "hotelPreviewPicture": file,
+            "hotelPictures": file[],
+            "hotelName": string
+          }
+      responses:
+        200:
