@@ -37,6 +37,7 @@ types:
       required: true
     maxGuests:
       type: integer
+      minimum: 1
       required: true
     description:
       type: string
@@ -67,15 +68,15 @@ types:
       application/json:
         type: offer
         example: |
-        {
-          "offerTitle": "Awesome offer",
-          "costPerChild": 50,
-          "costPerAdult": 80,
-          "maxGuests": 5,
-          "description": "Apartment overlooking the sea",          
-          "pictures": [],
-          "rooms": ["12A”, "14B”]
-        }
+          {
+            "offerTitle": "Awesome offer",
+            "costPerChild": 50,
+            "costPerAdult": 80,
+            "maxGuests": 5,
+            "description": "Apartment overlooking the sea",
+            "pictures": [],
+            "rooms": ["12A”, "14B”]
+          }
     responses:
       200:
       #optional - return offerID
@@ -255,7 +256,7 @@ types:
      #Jeśli rezerwacji nie da się przenieść do innych pokoi w ramach tej samej oferty - zwracamy błąd 409 i nie podejmujemy żadnych działań.
      #Jeśli rezerwacje da się przenieść lub nie ma żadnych rezerwacji - we wszystkich rezerwacjach (tabela z rezerwacjami), które wskazują na rozpatrywany pokój
      #zmieniamy pokój na NULL (należy rozwiązać problem ze spójnością referencyjną) i usuwamy pokój (tabela HotelRoom).
-      descritpion: Serwer usuwa pokój o wskazanym ID. (Usuwany jest wpis w tabeli HotelRoom)
+      descritpion: Deletes room with given ID. (entry in HotelRoom table is deleted)
       responses:
         200:
         401:
@@ -323,7 +324,7 @@ types:
 #--------------------------------------------------------------------------------------------------------
 #-------------------------------------------HotelInfo----------------------------------------------------
 #--------------------------------------------------------------------------------------------------------
-\hotelInfo:
+/hotelInfo:
   get:
     description: Show info about hotel
     responses:
