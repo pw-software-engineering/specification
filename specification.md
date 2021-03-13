@@ -1624,6 +1624,86 @@ do niego przypisanych.
 
 ### `/rooms`
 
+**Dodawanie pokojów**
+
+```yaml
+/rooms:
+    post:
+    ...
+```
+
+Dodany do systemu pokój nie jest powiązany z żadną ofertą. Numer pokoju
+powinien być unikalny w zakresie hotelu. Zwracane ID jest unikalne w zakresie
+całego systemu.
+
+**Lista wszystkich pokojów**
+
+```yaml
+/rooms:
+    get:
+        queryParameters:
+            roomNumber:
+            ...
+```
+
+Lista zawiera wszystkie pokoje znajdujące się w hotelu.
+
+Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.
+Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
+o numerze `roomNumber` – w ten sposób uzyskujemy ID jednego pokoju.
+Jeżeli pokój o takim numerze nie istnieje w hotelu, zwracana jest pusta lista.
+
+**Usuwanie pokoju**
+
+```yaml
+/rooms:
+    /{roomID}:
+        delete:
+        ...
+```
+
+Usuwanie polega na sprawdzeniu, czy w systemie są jeszcze niezrealizowane rezerwacje w ramach tego pokoju.
+Jeśli tylko to możliwe, przenosimy rezerwacje do innych pokoi zebranych w ramach tej samej oferty.
+Jeśli nie jest to możliwe – zwracamy błąd 409 i nie podejmujemy żadnych działań.
+Jeśli rezerwacje da się przenieść lub nie ma żadnych rezerwacji – we wszystkich rezerwacjach (tabela z rezerwacjami), które wskazują na rozpatrywany pokój
+zmieniamy pokój na NULL (należy rozwiązać problem ze spójnością referencyjną) i usuwamy pokój (tabela HotelRoom).
+<!-- na NULL?? -->
+
+## Zarządzanie rezerwacjami
+
+**Lista rezerwacji**
+
+```yaml
+/reservations:
+    get:
+    ...
+```
+
+Hotel może pobrać listę wszystkich rezerwacji (w trakcie i oczekujące na realizację).
+Wraz z każdą rezerwacją zwracane są dane klienta, który ją złożył.
+
+## Dane hotelu
+
+**Pobieranie danych**
+
+```yaml
+/hotelInfo:
+    get:
+    ...
+```
+
+Endpoint służący do pobrania danych o hotelu znajdujących się na serwerze.
+
+**Uaktualnianie danych**
+
+```yaml
+/hotelInfo:
+    patch:
+    ...
+```
+
+Endpoint służący do aktualizacji danych reprezentatywnych hotelu.
+
 # Klient-Serwer
 
 Komunikacja pomiędzy klientem (modułem aplikacji klienckiej), a serwerem
