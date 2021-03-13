@@ -1426,7 +1426,7 @@ niedostępności ofert odpowiednio wyznaczone przez hotel.
 
 # Hotel-Serwer
 
-## Zarządzanie ofertami
+## Zarządzanie ofertami i pokojami
 
 ### `/offers`
 
@@ -1525,77 +1525,104 @@ która jest niektywna (patrz: aktywacja/dezaktywacja oferty) <!-- dodać odnośn
 oraz w systemie nie znajdują się żadne niezrealizowane w jej ramach rezerwacje.
 Innymi słowy, aby oferta została usunięta, należy ją najpierw dezaktywować, a
 następnie poczekać, aż wszystkie rezerwacje do niej przypisane zostaną
-zrealizowane.
+zrealizowane. Zmiana znacznika jest nieodwracalna, oferty raz usuniętej
+nie można przywrócić.
 
 W efekcie tej operacji oferta nie jest uwzględniana w wyszukiwaniach
 realizowanych przez klienta. Hotel natomiast ma do niej dostęp za pośrednictwem
 metody `/offers GET` (wówczas warto przy wyświetlaniu taką ofertę wyróżnić
 odpowiednim znacznikiem, np "archived").
-Oferty nie powinny być fizycznie usuwane z systemu ze względu na zawarte do nich referencje np. w opiniach i rezerwacjach. Jeśli wystąpi taka konieczność, należy
+Oferty nie powinny być fizycznie usuwane z systemu ze względu na zawarte do nich
+referencje np. w opiniach i rezerwacjach. Jeśli wystąpi taka konieczność, należy
 robić to ręcznie i ostrożnie.
 
-Próba usunięcia oferty aktywnej lub takiej, która posiada niezrealizowane rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienione.
+Próba usunięcia oferty aktywnej lub takiej, która posiada niezrealizowane
+rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienione.
 
-## Zarządzanie rezerwacjami
+### `/offers/{offerID}/rooms`
 
-### `RESERVATION_CREATE`
+**Lista pokojów z ofertami**
 
-Komunikat przesyła szczegółowe informacje dot. rezerwacji. Serwer wysyła
-tę wiadomość natychmiast po prośbie klienta stworzenia tejże rezerwacji.
+```yaml
+/offers:
+    /rooms:
+        get:
+            queryParameters:
+                roomNumber:
+```
 
-Pola tego obiektu są analogiczne do odpowiadającej mu klasy
-`ReservationInfo`, rozszerzone o `ClientID` klienta powiązanego z
-rezerwacją.
+Enpoint zwraca listę wszystkich pokoi w hotelu wraz z listą ofert, do
+których jest przypisany.
 
-<img src="Rezerwacje/ReservationInfoSchema.jpg">
+Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.
+Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
+o numerze `roomNumber`. Jeżeli pokój o takim numerze nie istnieje, zwracana
+jest pusta lista.
+<!-- pusta lista czy kod błędu? tak samo niżej. -->
 
-Oczekiwane odpowiedzi:
+**Lista pokojów przypisanych do oferty**
 
--   `OFFER_UNAVAILABLE`\
-    Oferta jest niedostępna w wybranym okresie wg danych po stronie
-    hotelu. Hotel sugeruje, że potrzebna jest synchronizacja.
+<!-- po co tutaj param roomNumber? to serio jest potrzebne? -->
+```yaml
+/offers:
+    /{offerID}:
+        /rooms:
+            get:
+                queryParameters:
+                    roomNumber:
+                    ...
+```
 
--   `RESERVATION_CREATE_SUCCESS`\
-    Rezerwacja została utworzona pomyślnie po stronie hotelu.
+Endpoint umożliwia uzyskanie listy wszystkich pokojów przypisanych do
+oferty o danym ID.
 
--   `RESERVATION_CREATE_FAILURE`\
-    Rezerwacja nie została utworzona pomyślnie.
+Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.
+Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
+o numerze `roomNumber`. Jeżeli pokój o takim numerze nie jest powiązany
+z ofertą, zwracana jest pusta lista.
 
-    <img src="Rezerwacje/paymentInfo.jpg">
+**Dodawanie pokojów do oferty**
 
-### `RESERVATION_DELETE`
+```yaml
+/offers:
+    /{offerID}:
+        /rooms:
+            post:
+            ...
+```
+<!-- czy do aktywnej oferty można dodawać pokoje? -->
+Do nieusuniętej oferty można dodać pokój, przekazując jego ID. Pokój musi już
+istnieć w systemie; należy go dodać odwołując się do `/rooms POST`. Jeden
+pokój można powiązać z wieloma ofertami.
 
-Klient może zrezygnować ze swojej rezerwacji w dowolnym momencie. Zaraz
-po otrzymaniu przez serwer takiej prośby, przekazuje ją do hotelu
-niniejszym komunikatem. Wewnątrz wiadomości znajduje się ID rezerwacji,
-której dotyczy.
+**Usuwanie pokojów z oferty**
 
-Oczekiwane odpowiedzi:
+```yaml
+/offers:
+    /{offerID}:
+        /rooms:
+            /{roomID}:
+                delete:
+                ...
+```
 
--   `RESERVATION_DELETE_SUCCESS`\
-    Usunięcie powiodło się.
+Z oferty możliwe jest również usunięcie przypisania pokoju. Wówczas
+pozostaje on w systemie – usunięte jest jedynie odpowiednie powiązanie.
+Z oferty można odwiązać pokój niezależnie od liczby i stanu rezerwacji
+do niego przypisanych.
 
--   `RESERVATION_DELETE_FAILURE`\
-    Usunięcie nie powiodło się.
+**Lista wszystkich pokojów**
 
--   `ID_UNKNOWN`\
-    Nieznane ID rezerwacji.
+```yaml
+/offers:
+    /rooms:
+        get:
+            queryParameters::
+                roomNumber:
+                ...
+```
 
-### `RESERVATION_GET`
-
-Zapytanie o szczegóły konkretnej rezerwacji - na przykład w celu
-przekazania tych informacji klientowi.
-
-Oczekiwane odpowiedzi:
-
--   `RESERVATION_GET_RESPONSE`\
-    Szczegółowe info. dot. rezerwacji. Struktura wiadomości identyczna
-    jak w komunikacie `RESERVATION_CREATE `(patrz:
-    [Reservation_Create](#reservation_create)).
-
--   `ID_UNKNOWN`\
-    Nieznane ID rezerwacji.
-
+### `/rooms`
 
 # Klient-Serwer
 
