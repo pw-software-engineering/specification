@@ -16,27 +16,27 @@ traits:
           default: 0
 
 types:
-  Offer:
+  offer:
   type: object
   properties:
-    CostPerChild:
+    costPerChild:
       type: number
       multipleOf: 0.01
       required: true
-    CostPerAdult:
+    costPerAdult:
       type: number
       multipleOf: 0.01
       required: true
-    MaxGuests:
+    maxGuests:
       type: integer
       required: true
-    Description:
+    description:
       type: string
-    Pictures:
+    pictures:
       type: array
       items:
         type: file
-    Rooms:
+    rooms:
       type: array
       required: false
       items:
@@ -55,16 +55,16 @@ types:
     description: Dodanie nowej oferty.
     body:
       application/json:
-        type: Offer
+        type: offer
         example: |
-          {
-            "CostPerChild": 50,
-            "CostPerAdult": 80,
-            "MaxGuests": 5,
-            "Description": "Apartment overlooking the sea",
-            "Pictures": [],
-            "Room": ["12A”, "14B”]
-          }
+        {
+          "costPerChild": 50,
+          "costPerAdult": 80,
+          "maxGuests": 5,
+          "description": "Apartment overlooking the sea",
+          "pictures": [],
+          "rooms": ["12A”, "14B”]
+        }
     responses:
       200:
       #optional - return offerID
@@ -76,14 +76,14 @@ types:
           body:
             application/json:
               type: |
-              {
-                isActive: boolean,
-                costPerChild: double,
-                costPerAdult: double,
-                maxGuests: int,
-                description: string,
-                pictures: File[]
-              }
+                {
+                  isActive: boolean,
+                  costPerChild: double,
+                  costPerAdult: double,
+                  maxGuests: int,
+                  description: string,
+                  pictures: File[]
+                }
         400:
           description: An error containing message describing the type of error
           body:
@@ -104,13 +104,13 @@ types:
           body:
             application/json:
               example: |
-                { "message": "Offer not found or you are not the owner" }
+                { "error": "Offer not found or you are not the owner" }
         409:
           description: Oferta nie jest możliwa do usunięcia.
           body:
             application/json:
               example: |
-                { "message": "There are still pending reservations for this offer" }
+                { "error": "There are still pending reservations for this offer" }
     patch:
       descritpion: Serwer zmienia stan aktywności oferty.
       body:
@@ -123,9 +123,10 @@ types:
           body:
             application/json:
               example: |
-                { "message": "Offer not found or you are not the owner" }
+              { 
+                "error": "Offer not found or you are not the owner" 
+              }
     /rooms:
-      displayName: Rooms
       get:
         description: Lists all rooms related to an active hotel offer
         queryParameters:
@@ -141,12 +142,12 @@ types:
                 example: |       
                   [
                     {
-                      "RoomID": 5,
-                      "HotelRoomNumber": "13A"
+                      "roomID": 5,
+                      "hotelRoomNumber": "13A"
                     },
                     {
-                      "RoomID": 7,
-                      "HotelRoomNumber": "16"
+                      "roomID": 7,
+                      "hotelRoomNumber": "16"
                     }
                   ]
           400:
@@ -155,20 +156,40 @@ types:
                 example: |
                   {
                     "error": "Offer does not belong to this hotel/Invalid room number"
-                    
-      #HERE ADD POST - dodawanie pokoju do oferty
+                  }      
+      post:
+        description: Add a room associated with hotel offer.
+        body:
+          application/json:
+            type: object
+            properties:
+              roomID: integer
+            example: |
+              {
+                "roomID": 21
+              }
+        responses:
+          200:
+          404:
+            body:
+              application/json:
+                example: |
+                  {
+                    "error": "Room with ID equal to roomID parameter does not exist"
+                  }
       
       /{roomID}:
         delete:       
           description: Usuwa powiązanie między ofertą i pokojem z tabeli OfferHotelRooms
           responses:
-              200:
-                description: poprawnie i usuwanie
-              400:
-                example: |
-                  {
-                    "error": "nieistniejąca oferta/pokój"
-                  }
+            200:
+            400:
+              body:
+                application/json:
+                  example: |
+                    {
+                      "error": "nieistniejąca oferta/pokój"
+                    }
                   
 #--------------------------------------------------------------------------------------------------------
 #-----------------------------------------------ROOMS----------------------------------------------------
@@ -190,12 +211,12 @@ types:
             example: |
               [
                 {
-                  "RoomID": 5,
-                  "HotelRoomNumber": "13A"
+                  "roomID": 5,
+                  "hotelRoomNumber": "13A"
                 },
                 {
-                  "RoomID": 7,
-                  "HotelRoomNumber": "16"
+                  "roomID": 7,
+                  "hotelRoomNumber": "16"
                 }
               ]
       400:
@@ -205,9 +226,29 @@ types:
               {
                 "error": "Room number is invalid or does not exist"
               }
-  
-  #HERE ADD POST - dodanie pokoju do systemu (tabela HotelRoom)
-  
+  post:
+    description: Add a room not associated with any offer. (HotelRoom table)
+    body:
+      application/json:
+        type: object
+        properties:
+          hotelRoomNumber: string
+        example: |
+          {
+            "hotelRoomNumber": "12F"
+          }
+    responses:
+      200:
+        description: Room added successfully.
+        body:
+          application/json:
+            type: object
+            properties:
+              roomID: integer
+            example: |
+              {
+                "roomID": 14
+              } 
   /{roomID}:
     delete:
      #Usuwanie polega na sprawdzeniu czy w systemie są jeszcze nie zrealizowane rezerwacje w ramach tego pokoju. 
@@ -223,13 +264,13 @@ types:
           body:
             application/json:
               example: |
-                { "message": "Room not found or you are not the owner" }
+                { "error": "Room not found or you are not the owner" }
         409:
           description: Pokój nie jest możliwy do usunięcia.
           body:
             application/json:
               example: |
-                { "message": "There are still pending reservations for this room that cannot be moved" }
+                { "error": "There are still pending reservations for this room that cannot be moved" }
 
 #--------------------------------------------------------------------------------------------------------
 #--------------------------------------------RESERVATIONS------------------------------------------------
@@ -254,21 +295,21 @@ types:
             type: |
               [
                 {
-                  Reservation:
+                  reservation:
                   {
-                    ReservationID: int,
-                    HotelRoomNumber: string,
-                    OfferID: int,
-                    FromTime: date,
-                    ToTime: date,
-                    ChildrenCount: int,
-                    AdultsCount: int
+                    reservationID: int,
+                    hotelRoomNumber: string,
+                    offerID: int,
+                    fromTime: date,
+                    toTime: date,
+                    childrenCount: int,
+                    adultsCount: int
                   }
-                  Client: 
+                  client: 
                   {
-                    ClientID: int,                    
-                    Name: string,
-                    Surname: string
+                    clientID: int,                    
+                    name: string,
+                    surname: string
                   }
                 }
               ]
@@ -280,4 +321,3 @@ types:
               {
                 "error": "Room with ID equal to roomID parameter does not exist"
               }
-              
