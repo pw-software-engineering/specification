@@ -1,3 +1,4 @@
+#%RAML 1.0
 title: Hotel API
 baseUri: http://hotelservices.com/api-hotel/
 version: 1.0
@@ -59,9 +60,48 @@ types:
 #--------------------------------------------------------------------------------------------------------
 /offers:
   description: List of offers present in the system
-  
-  #HERE ADD GET - pobieranie listy wszystkich ofert
-  
+  # `offer` type + "isActive" field
+  get:
+    description: List all offers related to hotel.
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: array
+            items: |
+              {
+                "isActive": boolean,
+                "costPerChild": double,
+                "costPerAdult": double,
+                "maxGuests": int,
+                "description": string,
+                "offerPreviewPicture": file,
+                "pictures": file[]
+                "rooms": string[]
+              }
+            example: |
+              [
+                {
+                  "isActive": true,
+                  "costPerChild": 120.0,
+                  "costPerAdult": 150.0,
+                  "maxGuests": 4,
+                  "description": "You gonna be awestruck by this offer."
+                  "offerPreviewPicture": "kBKuB875JH5VJkhu",
+                  "pictures": [ "hbUbkjd86jhVG7JFjh", "kjdsf328KB53JVT9jk"],
+                  "rooms": [ "12F", "13A"]
+                },
+                {
+                  "isActive": false,
+                  "costPerChild": 130.0,
+                  "costPerAdult": 130.0,
+                  "maxGuests": 2,
+                  "description": "See yourself."
+                  "offerPreviewPicture": "kjdsf328KB53JVT9jk",
+                  "pictures": [ "kBKuB875JH5VJkhu", "hbUbkjd86jhVG7JFjh"],
+                  "rooms": [ "10", "121", "18", "01"]
+                }
+              ]
   post:
     description: Add new offer
     body:

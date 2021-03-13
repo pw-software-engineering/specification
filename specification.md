@@ -1434,19 +1434,66 @@ niedostępności ofert odpowiednio wyznaczone przez hotel.
 
 # Hotel-Serwer <a name="7"></a>
 
+Komunikacja pomiędzy modułem aplikacji hotelowej, a serwerem
+odbywa się przy użyciu połączeń HTTP i REST API. Poniżej opisane są
+wszystkie endpointy oraz związane z nimi żądania i odpowiedzi HTTP
+zamodelowane w RAML.
+
 ## Zarządzanie ofertami i pokojami
 
 ### `/offers`
 
-**Pobieranie listy ofert**
+#### **Pobieranie listy ofert**
 
 ```yaml
 /offers:
-    get:
-    ...
+  get:
+    description: List all offers related to hotel.
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: array
+            items: |
+              {
+                "isActive": boolean,
+                "costPerChild": double,
+                "costPerAdult": double,
+                "maxGuests": int,
+                "description": string,
+                "offerPreviewPicture": file,
+                "pictures": file[]
+                "rooms": string[]
+              }
+            example: |
+              [
+                {
+                  "isActive": true,
+                  "costPerChild": 120.0,
+                  "costPerAdult": 150.0,
+                  "maxGuests": 4,
+                  "description": "You gonna be awestruck by this offer."
+                  "offerPreviewPicture": "kBKuB875JH5VJkhu",
+                  "pictures": [ "hbUbkjd86jhVG7JFjh", "kjdsf328KB53JVT9jk"],
+                  "rooms": [ "12F", "13A"]
+                },
+                {
+                  "isActive": false,
+                  "costPerChild": 130.0,
+                  "costPerAdult": 130.0,
+                  "maxGuests": 2,
+                  "description": "See yourself."
+                  "offerPreviewPicture": "kjdsf328KB53JVT9jk",
+                  "pictures": [ "kBKuB875JH5VJkhu", "hbUbkjd86jhVG7JFjh"],
+                  "rooms": [ "10", "121", "18", "01"]
+                }
+              ]
 ```
 
-**Dodawanie nowej oferty**
+Endpoint służy do wyświetlania ofert, które zostały stworzone w hotelu 
+wysyłajacym zapytanie.
+
+#### **Dodawanie nowej oferty**
 
 ```yaml
 /offers:
@@ -1498,19 +1545,9 @@ informacji definiujących ofertę. Są to kolejno:
 
 Manager hotelu ma możliwość późniejszej edycji oferty i wprowadzenia dokładnych wartości.
 
-<!-- dlaczego dwie listy, nie jedna ze znacznikiem isActive? -->
-<!-- do uzupełnienia -->
-Endpoint służy do przeglądania ofert, które zostały stworzone w hotelu,
-który wysyła zapytanie. Lista jest zwracana w dwóch częściach:
-
--   `activeOffers` – zawiera wszystkie oferty z ustawionym znacznikiem `isActive`,
-
--   `inactiveOffers` – zawiera wszystkie oferty, które nie mają ustawionego
-    znacznika `isActive`.
-
 ### `/offers/{offerID}`
 
-**Pobieranie oferty**
+#### **Pobieranie oferty**
 
 ```yaml
 /offers:
@@ -1538,7 +1575,7 @@ który wysyła zapytanie. Lista jest zwracana w dwóch częściach:
 ```
 Hotel w każdym momencie może pobrać szczegółowe informacje o dowolnej własnej ofercie.
 
-**Usuwanie oferty**
+#### **Usuwanie oferty**
 
 ```yaml
 /offers:
@@ -1580,7 +1617,7 @@ Próba usunięcia oferty aktywnej lub takiej, która posiada niezrealizowane
 rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienione.
 
 
-**Modyfikacja oferty**
+#### **Modyfikacja oferty**
 
 ```yaml
 /offers:
@@ -1604,32 +1641,14 @@ rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienion
           description: Not found
 ```
 
+Modyfikacja oferty dotyczy wyłącznie tych jej cech, które są najbardziej reprezentatywne dla klienta oraz kwestii aktywności oferty. Aby zmienić właściwości oferty związane z jej kosztem lub maksymalną liczbą gości, należy stworzyć nową ofertę, a tę zdezaktywować.
 W ramch modyfikacji oferty możemy ją dezaktywować. W ten sposób uniemożliwiamy jej odnalezienie w wyszukiwarce.
 Oferta taka nie znika – wszystkie przypisane do niej rezerwacje są ważne, natomiast
 niemożliwe jest stworzenie nowych.
 
 ### `/offers/{offerID}/rooms`
-<!-- 
-**Lista pokojów z ofertami**
 
-```yaml
-/offers:
- /rooms:
-        get:
-            queryParameters:
-                roomNumber:
-```
-
-Enpoint zwraca listę wszystkich pokoi w hotelu wraz z listą ofert, do
-których jest przypisany.
-
-Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.
-Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
-o numerze `roomNumber`. Jeżeli pokój o takim numerze nie istnieje, zwracana
-jest pusta lista.
-pusta lista czy kod błędu? tak samo niżej. -->
-
-**Lista pokojów przypisanych do oferty**
+#### **Lista pokoi przypisanych do oferty**
 
 ```yaml
 /offers:
@@ -1664,7 +1683,7 @@ pusta lista czy kod błędu? tak samo niżej. -->
             description: Offer not found
 ```
 
-Endpoint umożliwia uzyskanie listy wszystkich pokojów przypisanych do
+Endpoint umożliwia uzyskanie listy wszystkich pokoi przypisanych do
 oferty o danym ID.
 
 Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.
@@ -1672,7 +1691,7 @@ Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
 o numerze `roomNumber`. Jeżeli pokój o takim numerze nie jest powiązany
 z ofertą, zwracana jest pusta lista.
 
-**Dodawanie pokojów do oferty**
+#### **Dodawanie pokoi do oferty**
 
 ```yaml
 /offers:
@@ -1701,7 +1720,7 @@ Do nieusuniętej oferty można dodać pokój, przekazując jego ID. Pokój musi 
 istnieć w systemie; należy go dodać odwołując się do `/rooms POST`. Jeden
 pokój można powiązać z wieloma ofertami.
 
-**Usuwanie pokojów z oferty**
+#### **Usuwanie pokoi z oferty**
 
 ```yaml
 /offers:
@@ -1722,21 +1741,10 @@ Z oferty możliwe jest również usunięcie przypisanego pokoju. Wówczas
 pozostaje on w systemie – usunięte jest jedynie odpowiednie powiązanie (np. w tabeli OfferHotelRooms).
 Z oferty można odwiązać pokój niezależnie od liczby i stanu rezerwacji
 do niego przypisanych.
-<!-- 
-**Lista wszystkich pokojów**
-
-```yaml
-/offers:
-    /rooms:
-        get:
-            queryParameters::
-                roomNumber:
-                ...
-``` -->
 
 ### `/rooms`
 
-**Lista wszystkich pokojów**
+#### **Lista wszystkich pokoi**
 
 ```yaml
 /rooms:
@@ -1781,7 +1789,7 @@ Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
 o numerze `roomNumber` – w ten sposób uzyskujemy ID jednego pokoju.
 Jeżeli pokój o takim numerze nie istnieje w hotelu, zwracana jest pusta lista.
 
-**Dodawanie pokojów**
+#### **Dodawanie pokoi**
 
 ```yaml
 /rooms:
@@ -1814,7 +1822,7 @@ Dodany do systemu pokój nie jest powiązany z żadną ofertą (brak wpisów w t
 OfferHotelRooms). Numer pokoju powinien być unikalny w zakresie hotelu. Zwracane
 ID jest unikalne w zakresie całego systemu.
 
-**Usuwanie pokoju**
+#### **Usuwanie pokoju**
 
 ```yaml
 /rooms:
@@ -1843,11 +1851,10 @@ Jeśli nie jest to możliwe – zwracamy błąd 409 i nie podejmujemy żadnych d
 Jeśli rezerwacje da się przenieść lub nie ma żadnych rezerwacji – we wszystkich rezerwacjach (tabela z rezerwacjami),
 które wskazują na rozpatrywany pokój zmieniamy pokój na NULL (należy rozwiązać problem ze spójnością referencyjną)
 i usuwamy pokój (tabela HotelRoom).
-<!-- na NULL?? -->
 
 ## Zarządzanie rezerwacjami
 
-**Lista rezerwacji**
+### `/reservations GET`
 
 ```yaml
 /reservations:
@@ -1903,7 +1910,7 @@ Wraz z każdą rezerwacją zwracane są dane klienta, który ją złożył.
 
 ## Dane hotelu
 
-**Pobieranie danych**
+### `/hotelInfo GET`
 
 ```yaml
 /hotelInfo:
@@ -1926,7 +1933,7 @@ Wraz z każdą rezerwacją zwracane są dane klienta, który ją złożył.
 
 Endpoint służący do pobrania danych o hotelu znajdujących się na serwerze.
 
-**Uaktualnianie danych**
+### `/hotelInfo PATCH`
 
 ```yaml
 /hotelInfo:
