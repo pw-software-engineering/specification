@@ -59,3 +59,57 @@
           {
             "error": "Reservation is currently underway or already completed"
           }
+
+/hotels:
+  get:
+    description: Returns list of hotels according to filter values
+    is: [pageable]
+    queryParameters:
+      description: search based on prefix match (letter case ignored)
+      country:
+        type: string
+        required: false
+      city:
+        type: string
+        required: false
+      hotelName:
+        type: string
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            description: Array of objects containing preview information related to hotels
+            type: |
+              [
+                {
+                  "hotelID": int,
+                  "hotelName": string,
+                  "country": string,
+                  "city": string,
+                  "previewPicture": file
+                }
+              ]
+
+/hotels/{hotelID}:
+  get:
+    description: Gets detailed information about a hotel
+    responses:
+      200:
+        body:
+          application/json:
+            type: |
+              {
+                "hotelName": string,
+                "hotelDescription": string,
+                "country": string,
+                "city": string,
+                "hotelPictures": file[]
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "error": "Hotel with ID equal to hotelID parameter does not exist"
+              }
