@@ -113,3 +113,76 @@
               {
                 "error": "Hotel with ID equal to hotelID parameter does not exist"
               }
+
+/hotels/{hotelID}/offers:
+  get:
+    description: Returns list of offers according to filter values
+    is:  [pageable]
+    queryParameters:
+      fromTime:
+        displayName: From
+        type: date-only
+        required: false
+        example: 2021-05-23
+      toTime:
+        displayName: To
+        type: date-only
+        required: false
+        example: 2021-06-01
+      minGuests:
+        type: integer
+        required: false
+        minimum: 1
+        example: 3
+      costMax:
+        type: integer
+        required: false
+        minimum: 0
+        example: 100
+      costMin:
+        type: integer
+        required: false
+        minimum: 0
+        example: 50
+    responses:
+     200:
+      body:
+        application/json:
+          type: |
+            {
+              "offerID": int,
+              "offerTitle": string,
+              "offerPreviewPicture": file,
+              "maxGuests": int,
+              "costPerChild": double,
+              "costPerAdult": double,
+            }
+      404:
+        body:
+          application/json:
+            example: |
+              { "message": "Hotel with ID equal to hotelID parameter does not exist" }
+
+/hotels/{hotelID}/offers/{offerID}:
+  get:
+    description: Returns detailed information about an offer
+    responses:
+     200:
+      body:
+        application/json:
+          type: |
+            {
+              "offerTitle": string,
+              "offerDescription": string
+              "offerPictures": file[],
+              "maxGuests": int,
+              "costPerChild": double,
+              "costPerAdult": double,
+              "availabilityTimeIntervals": (datetime, datetime)[]
+              "isActive": boolean,
+            }
+      404:
+        body:
+          application/json:
+            example: |
+              { "message": "Hotel with ID equal to hotelID parameter does not exist" }
