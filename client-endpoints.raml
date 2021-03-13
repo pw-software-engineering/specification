@@ -1,0 +1,61 @@
+/reservations:
+  get:
+    description: Get list of all reservations made by the client
+    responses:
+      200:
+        body:
+          application/json:
+            description: List of reservation information and offerID relating to the reservation and preview information related to the hotel
+            type: |
+              [
+                {
+                  "hotelInfoPreview": {
+                    "hotelID": int,
+                    "hotelName": string,
+                    "longitude": double,
+                    "latitude": double
+                  },
+                  "reservationInfo": {
+                    "reservationID": int,
+                    "offerID": int,
+                    "from": datetime,
+                    "to": datetime,
+                    "numberOfChildren": int,
+                    "numberOfAdults": int
+                  }
+                }
+              ]
+  post:
+    description: Create new reservation
+    body:
+      application/json:
+        type: |
+          {
+            "offerID": int,
+            "from": datetime,
+            "to": datetime,
+            "numberOfChildren": int,
+            "numberOfAdults": int
+          }
+    responses:
+      200:
+      400:
+        body:
+          application/json:
+            description: Error containing an error message describing the type of error (Offer with ID equal to offer ID does not exist, offer is inactive or deleted, offer is not currently available during chosen time interval - refresh offer availability (sync error))
+            example: |
+              {
+                "error": "Offer with ID equal to offerID parameter does not exist"
+              }
+        
+/reservations/{reservationID}:
+  delete:
+    description: Cancel exisiting reservation provided that it hasn't started
+    responses:
+      200:
+      400:
+        description: Cannot delete reservation either becuase of no ownership of a reservation with ID equal to reservationID query parameter, or reservation doesn't exist or is currenty underway or already completed
+        example: |
+          {
+            "error": "Reservation is currently underway or already completed"
+          }
