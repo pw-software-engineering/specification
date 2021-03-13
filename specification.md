@@ -1434,184 +1434,23 @@ niedostępności ofert odpowiednio wyznaczone przez hotel.
 
 # Hotel-Serwer <a name="7"></a>
 
-Do przesyłania wiadomości używane są trwałe połączenia TCP. Wynika to z
-faktu, że komunikacja między modułami hotelowymi, a modułem serwerowym
-może się rozpocząć zarówno po stronie hotelu jak i serwera. Format
-przesyłanych wiadomości jest następujący:
+## Zarządzanie ofertami i pokojami
 
-1.  Unsigned integer (enum) oznaczający kontekst wiadomości (kod
-    operacyjny)
-
-2.  Unsigned integer oznaczający id kontekstu (procesu) pozwalający
-    odróżnić wiadomość od innych o takim samym kodzie operacyjnym (w
-    przypadku gdy realizowanych jest kilka takich samych procesów
-    biznesowych jak tworzenie rezerwacji, istnieje konieczność
-    odróżnienia, który ciąg wiadomości odnosi się do którego procesu)
-
-3.  Unsigned integer oznaczający liczbę bajtów przesyłanych danych
-
-4.  Ciąg bajtów danych zawierający zserializowany obiekt JSON
-
-Standard unsigned integerów to ISO/IEC 9899. Standardem zapisu JSONa
-jest UTF-8. Pozwoli nam to zachować polskie znaki wewnątrz Opinii
-klientów i wewnątrz Ofert wystawianych przez Hotele. W odniesieniu do
-jednego połączenia TCP między hotelem oraz serwerem procesy biznesowe i
-wiadomości są podzielone na 2 grupy - procesy, których żądania związane
-z rozpoczęciem są zawsze żądaniami wychodzącymi oraz procesy, których
-żądania związane z rozpoczęciem tego procesu są zawsze żądaniami
-przychodzącymi. Każdy z tych procesów jest związany z oddzielnym
-gniazdem sieciowym realizującym połączenie TCP (te same adresy IP, ale
-różne porty). Każda z tych grup może być przetwarzana przez oddzielny
-proces na danym module (zatem w ramach jednego połączenia wyróżniamy 4
-procesy: 2 procesy po stronie serwera przetwarzające procesy związane z
-żądaniami wychodzącymi (serwera) i przychodzącymi (hotelu) oraz 2
-procesy po stronie hotelu przetwarzające procesy związane z żądaniami
-przychodzącymi (serwera) i wychodzącymi (hotelu)). Procesy te w obrębie
-jednego modułu są od siebie niezależne, wykorzystując własne gniazda
-sieciowe oraz mogą przetwarzać wiele procesów jednocześnie
-przyporządkowując odpowiednie id kontekstu procesu w wysyłanych
-wiadomościach. W przypadku źle sformatowanej wiadomości nie robimy nic.
-
-Poniżej zostały przedstawione wszystkie kody operacyjne wraz z ich
-prawdziwymi wartościami.
-
-|            kod operacyjny          |  numer  | wysyłany przez |
-| :--------------------------------: | :-----: |:--------------:|
-|        HOTEL_LOGIN_REQUEST         |    1    |     Hotel      |
-|    HOTEL_LOGIN_RESPONSE_SUCCESS    |    2    |     Serwer     |
-|    HOTEL_LOGIN_RESPONSE_FAILURE    |    3    |     Serwer     |
-|         HOTEL_SYNC_REQUEST         |    4    |     Hotel      |
-|    HOTEL_SYNC_RESPONSE_SUCCESS     |    5    |     Serwer     |
-|        SERWER_SYNC_REQUEST         |    6    |     Serwer     |
-|    SERWER_SYNC_RESPONSE_SUCCESS    |    7    |     Hotel      |
-|         RESERVATION_CREATE         |    8    |     Serwer     |
-|         OFFER_UNAVALAIBLE          |    9    |     Hotel      |
-|     RESERVATION_CREATE_SUCCESS     |   10    |     Hotel      |
-|     RESERVATION_CREATE_FAILURE     |   11    |     Hotel      |
-|             ID_UNKNOWN             |   12    |     Hotel      |
-|         RESERVATION_DELETE         |   13    |     Serwer     |
-|     RESERVATION_DELETE_SUCCESS     |   14    |     Hotel      |
-|     RESERVATION_DELETE_FAILURE     |   15    |     Hotel      |
-|         OFFER_ADD_REQUEST          |   16    |     Hotel      |
-|         OFFER_ADD_SUCCESS          |   17    |     Serwer     |
-|         OFFER_ADD_FAILURE          |   18    |     Serwer     |
-|        OFFER_DELETE_REQUEST        |   19    |     Hotel      |
-|        OFFER_DELETE_SUCCESS        |   20    |     Serwer     |
-|        OFFER_DELETE_FAILURE        |   21    |     Serwer     |
-|         OFFER_EDIT_REQUEST         |   22    |     Hotel      |
-|         OFFER_EDIT_SUCCESS         |   23    |     Serwer     |
-|         OFFER_EDIT_FAILURE         |   24    |     Serwer     |
-
-## Logowanie i uwierzytelnienie hotelu
-
-### `HOTEL_LOGIN_REQUEST`
-
-<img src="Hotel login + synchronizacja/hotel_login_request.png">
-
-W celu możliwości zarządzania ofertami hotelowymi i tworzenia rezerwacji
-system hotelowy musi nawiązać trwałe połączenie TCP z serwerem. Po
-nawiązaniu połączenia na znany adres IP i numer portu serwera pierwszym
-komunikatem wysyłanym przez hotel musi być wiadomość o kodzie
-operacyjnym `HOTEL_LOGIN_REQUEST` oraz zserializowanym obiektem JSON
-zgodnym ze schematem załączonym powyżej. W obiekcie tym znajduje się
-właściwość "authKey" będąca kluczem autentykacyjnym hotelu. Unikatowe
-klucze autentykacyjne są uprzednio nadawane przez administratora serwera
-każdemu hotelowi korzystającemu z serwisu. W związku z faktem, że
-połączenie składa się z 2 gniazd sieciowych przetwarzających różne grupy
-procesów biznesowych powyższa wiadomość musi być przesłana do każdego
-gniazda oddzielnie po nawiązaniu połączenia.
-
-Do kodów "akceptowalnych" należą:
-
--   `HOTEL_LOGIN_RESPONSE_SUCCESS` - wiadomość mówiąca o udanym
-    zalogowaniu. Utworzone zostaje stałe łącze TCP między hotelem a
-    serwerem, przez które mogą być wysyłane nowe żądania. Wiadomość ta
-    składa się jedynie z kodu operacyjnego - nie jest przesyłany
-    zserializowany obiekt JSON.
-
--   `HOTEL_LOGIN_RESPONSE_FAILURE`
-
-### `HOTEL_LOGIN_RESPONSE_FAILURE`
-
-<img src="Hotel login + synchronizacja/hotel_login_response_failure.png">
-
-Wiadomość wysyłana w przypadku niepowodzenia procesu logowania hotelu do
-serwisu. Zawiera ona obiekt JSON z właściwością "authError" zawierającą
-szczegółowy opis błędu autentykacji.
-
-## Synchronizacja
-
-Informacje o rezerwacji są przechowywane zarówno w bazie danych modułu
-hotelowego jak i modułu serwera. Gdy klient wyszukuje oferty możliwych
-do rezerwacji w określonym zakresie czasowym serwer znajduje
-odpowiadające oferty w oparciu o własne dane dotyczące przedziałów
-czasowych, w których dana oferta jest niedostępna. Dane te są na bieżąco
-aktualizowane z hotelami podczas procesu tworzenia i anulowania
-rezerwacji jak i w ramach możliwego mechanizmu periodycznej
-synchronizacji obu modułów. W przypadku gdy zostanie utworzona nowa
-rezerwacja anonimowa (na miejscu w hotelu) bądź system hotelowy
-przeorganizuje dopasowanie pokoi do rezerwacji tworząc lub zamykając tym
-samym "okna" dostępności danej oferty, potrzebna jest synchronizacja
-danych dostępności danej oferty z serwerem. Ponadto, system
-synchronizacji jest częścią procesu anulowania jak i tworzenia
-rezerwacji po stronie serwera. Serwer może w nieoczekiwanym przypadku
-mieć nieaktualne dane związane z dostępnością oferty w momencie wysłania
-wiadomości do hotelu o utworzeniu nowej rezerwacji. W efekcie zostanie
-zwrócony błąd o niedostępności oferty, przez co serwer zmuszony będzie
-do niezwłocznego wysłania żądania o synchronizacje danych.
-
-### `HOTEL_SYNC_REQUEST`
-
-<img src="Hotel login + synchronizacja/hotel_sync_request.png">
-
-Wiadomość ta jest żądaniem synchronizacji danych dotyczących dostępności
-oferty wysyłanym przez hotel. Żądanie to może się wiązać z anonimową
-rezerwacją lub przeorganizowaniem przyporządkowania pokoi do rezerwacji
-hotelu. Wysyłana jest wówczas do serwera powyższa wiadomość zawierająca
-tablicę przedziałów czasowych, podczas których nie jest możliwe
-wykonanie rezerwacji (we właściwości "unavailableTimeIntervals").
-
-Do kodów "akceptowalnych" należą:
-
--   `HOTEL_SYNC_RESPONSE_SUCCESS` - wiadomość zwrotna oznaczająca udaną
-    synchronizację danych po stronie serwera. Wiadomość ta nie zawiera
-    zserializowanego obiektu JSON.
-
-### `SERVER_SYNC_REQUEST`
-
-<img src="Hotel login + synchronizacja/server_sync_request.png">
-
-Wiadomość ta wiąże się z żądaniem serwera o synchronizację danych z
-hotelem. Może ono wystąpić w mechanizmie periodycznej synchronizacji
-danych w celu zachowania spójności danych w obu modułach, w przypadku
-anulowania rezerwacji lub podczas procesu tworzenia nowej rezerwacji
-klienckiej po otrzymaniu komunikatu `OFFER_UNAVAILABLE` oznaczającego
-niedostępność oferty. Wiadomość ta ma na celu potwierdzenie lub
-aktualizację dostępności danej oferty z hotelem.
-
-Do kodów "akceptowalnych" należą:
-
--   `SERVER_SYNC_RESPONSE_SUCCESS` - wiadomość zwrotna zawierające dane
-    potrzebne do synchronizacji dostępności oferty po stronie serwera.
-    Zawartość wiadomości jest identyczna jak zawartość wiadomości o
-    kodzie operacyjnym `HOTEL_SYNC_REQUEST`
-
-## Zarządzanie ofertami
-
-### `OFFER_ADD_REQUEST`
+### `/offers`
 
 **Dodawanie nowej oferty**
 
-<img src="Oferta-Hotel-Serwer/Offer_Add_JSON1.png">
-
-<img src="Oferta-Hotel-Serwer/Offer_Add_JSON2.png">
-
+```yaml
+/offers:
+    post:
+    ...
+```
+<!-- do uzupełnienia -->
 Proces dodawania nowej oferty zaczyna się od wypełnienia odpowiedniego
 formularza. Następnie dokonywana jest wstępna walidacja formularza po
-stronie systemu hotelowego. Jeżeli nie wykryto żadnych błędów, do
-serwera zostaje przesłany kod operacyjny: `OFFER_ADD_REQUEST` wraz z
-zserializowanym JSONem zawierającym kolejne pola formularza i informację
-o ID hotelu od którego pochodzi żądanie. Są to więc kolejno:
+stronie systemu hotelowego. Jeżeli nie wykryto żadnych błędów, następuje
+odwołanie do metody `POST /offers` i przesłanie w jej ciele wszystkich
+informacji definiujących ofertę. Są to kolejno:
 
 -   CostPerChild - koszt skorzystania z oferty dla dziecka. Powinien być
     większy od 0. Przyjęta precyzja to 0.01. Parametr ten nie jest
@@ -1622,7 +1461,7 @@ o ID hotelu od którego pochodzi żądanie. Są to więc kolejno:
     nie jest wymagany.
 
 -   MaxGuests - maksymalna liczba osób dla której przeznaczona jest
-    oferta. Minimalna wartość to 1. Parametr ten nie jest wymagany.
+    oferta. Minimalna wartość to 1.
 
 -   Description - szczegółowy opis oferty. Parametr ten nie jest
     wymagany.
@@ -1630,145 +1469,248 @@ o ID hotelu od którego pochodzi żądanie. Są to więc kolejno:
 -   Pictures - zdjęcia związane z dodawaną ofertą. Parametr ten nie jest
     wymagany.
 
+-   Rooms – lista numerów pokoi związanych z daną ofertą. Lista może być
+    pusta. Istnieje możliwość dodania
+    pokoju do oferty po jej stworzeniu.
+
 Wszystkie parametry dla których wartość nie została zdefiniowana są
 ukrywane w widoku oferty. Manager hotelu ma możliwość późniejszej edycji
-oferty i wprowadzenie dokładnych wartości.
+oferty i wprowadzenia dokładnych wartości.
 
-### `OFFER_ADD_SUCCESS`
+**Pobieranie listy ofert**
 
-<img src="Oferta-Hotel-Serwer/Offer_Add_Success.png">
+```yaml
+    get:
+    ...
+```
 
-Po otrzymaniu JSONa z informacjami o ofercie serwer dokonuje ponownej
-walidacji wszystkich parametrów. Jeśli oferta została uzupełniona
-poprawnie serwer dodaje ją do swojej lokalnej bazy danych i odsyła do
-hotelu informację o powodzeniu w postaci kodu operacyjnego:
-`OFFER_ADD_SUCCESS` i informacji o ID nowo dodanej oferty. Moduł
-hotelowy następnie dodaję do lokalnej bazy danych ofertę ze wskazanym
-przez serwer OfferID. Takie rozwiązanie pozwala na zachowanie spójności
-pomiędzy numerami identyfikacyjnymi ofert po stronie serwera i hotelu.
+<!-- dlaczego dwie listy, nie jedna ze znacznikiem isActive? -->
+<!-- do uzupełnienia -->
+Endpoint służy do przeglądania ofert, które zostały stworzone w hotelu,
+który wysyła zapytanie. Lista jest zwracana w dwóch częściach:
 
-### `OFFER_ADD_FAILURE`
+-   `activeOffers` – zawiera wszystkie oferty z ustawionym znacznikiem `isActive`,
 
-<img src="Oferta-Hotel-Serwer/Offer_Error.png">
+-   `inactiveOffers` – zawiera wszystkie oferty, które nie mają ustawionego
+    znacznika `isActive`.
 
-W przypadku błędów w formularzu serwer przesyła kod operacyjny:
-`OFFER_ADD_FAILURE` wraz z JSONem zawierającym jedynie informację na
-czym polegał błąd. Otrzymany JSON powinien być więc zgodny z powyższym
-schematem. Przykładowe błędy to między innymi:
+### `/offers/{offerID}`
 
--   Brak HotelID lub jego nieprawidłowa wartość
+**Pobieranie oferty**
 
--   Błędne wypełnienie jednego lub więcej pól formularza - niespełnienie
-    warunków walidacji
+<!-- gdzie isDeleted? -->
+```yaml
+/offers:
+    /{offerID}:
+        get:
+        ...
+```
+Hotel w każdym momencie może pobrać szczegółowe informacje o dowolnej własnej ofercie.
 
-### `OFFER_DELETE_REQUEST`
+**Aktywacja/dezaktywacja oferty**
+
+```yaml
+/offers:
+    /{offerID}:
+        patch:
+```
+
+Dezaktywując ofertę uniemożliwiamy jej odnalezienie przez klientów w wyszukiwarce.
+Oferta taka nie znika – wszystkie przypisane do niej rezerwacje są ważne, natomiast
+niemożliwe jest stworzenie nowych.
 
 **Usuwanie oferty**
 
-<img src="Oferta-Hotel-Serwer/Offer_DeleteJSON.png">
+```yaml
+/offers:
+    /{offerID}:
+        delete:
+```
 
-Manager hotelu wskazuje ofertę przeznaczoną do usunięcia. System
-hotelowy następnie przesyła kod operacyjny `OFFER_DELETE_REQUEST` wraz z
-zserializowanym JSONem zawierającym ID usuwanej oferty.
+Punkt końcowy komunikacji, który umożliwia "usunięcie" rezerwacji – tzn.
+ustawienie znacznika `isDeleted` na true. Usunąć można wyłącznie ofertę,
+która jest niektywna (patrz: aktywacja/dezaktywacja oferty) <!-- dodać odnośnik -->
+oraz w systemie nie znajdują się żadne niezrealizowane w jej ramach rezerwacje.
+Innymi słowy, aby oferta została usunięta, należy ją najpierw dezaktywować, a
+następnie poczekać, aż wszystkie rezerwacje do niej przypisane zostaną
+zrealizowane. Zmiana znacznika jest nieodwracalna, oferty raz usuniętej
+nie można przywrócić.
 
-### `OFFER_DELETE_SUCCESS`
+W efekcie tej operacji oferta nie jest uwzględniana w wyszukiwaniach
+realizowanych przez klienta. Hotel natomiast ma do niej dostęp za pośrednictwem
+metody `/offers GET` (wówczas warto przy wyświetlaniu taką ofertę wyróżnić
+odpowiednim znacznikiem, np "archived").
+Oferty nie powinny być fizycznie usuwane z systemu ze względu na zawarte do nich
+referencje np. w opiniach i rezerwacjach. Jeśli wystąpi taka konieczność, należy
+robić to ręcznie i ostrożnie.
 
-Po otrzymaniu JSONa serwer podejmuje próbę usunięcia ze swojej lokalnej
-bazy danych oferty o wskazanym ID. Jeśli operacja ta powiodła się, do
-systemu hotelowego odsyłana jest informacja o powodzeniu w postaci kodu
-operacyjnego: `OFFER_DELETE_SUCCESS`.
+Próba usunięcia oferty aktywnej lub takiej, która posiada niezrealizowane
+rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienione.
 
-### `OFFER_DELETE_FAILURE`
+### `/offers/{offerID}/rooms`
 
-<img src="Oferta-Hotel-Serwer/Offer_Error.png">
-Jeśli otrzymany JSON zawiera nieprawidłowe ID, serwer przekona się o tym przy
-próbie znalezienia zadanego rekordu o zadanym ID. System hotelowy
-zostanie poinformowany o zaistniałym błędzie poprzez przesłanie
-następującego kodu operacyjnego: `OFFER_DELETE_FAILURE` wraz ze
-stosownym komunikatem. W przypadku wystąpienia błędów po stronie
-serwera, system hotelowy zostanie poinformowany o zaistniałej sytuacji
-analogicznie kodem `OFFER_DELETE_FAILURE` wraz z JSONem zawierającym
-jedynie informację na czym polegał błąd. Niezależnie od natury błędu
-otrzymany JSON powinien być więc zgodny z powyższym schematem.
+**Lista pokojów z ofertami**
 
-### `OFFER_EDIT_REQUEST`
+```yaml
+/offers:
+    /rooms:
+        get:
+            queryParameters:
+                roomNumber:
+```
 
-**Edytowanie istniejącej oferty**
+Enpoint zwraca listę wszystkich pokoi w hotelu wraz z listą ofert, do
+których jest przypisany.
 
-<img src="Oferta-Hotel-Serwer/Offer_Edit_JSON1.png">
-<img src="Oferta-Hotel-Serwer/Offer_Edit_JSON2.png">
+Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.
+Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
+o numerze `roomNumber`. Jeżeli pokój o takim numerze nie istnieje, zwracana
+jest pusta lista.
+<!-- pusta lista czy kod błędu? tak samo niżej. -->
 
-Manager ma możliwość edycji już istniejącej oferty. W tym celu wybiera
-ofertę i przechodzi do jej edycji poprzez formularz znany mu dobrze z
-dodawania nowej oferty. Po zakończeniu edycji oferta jest ponownie
-walidowana po stronie systemu hotelowego, po czym do serwera zostaje
-przesłany kod operacyjny: `EDIT_OFFER_REQUEST` wraz z zserialiozowanym
-JSONem zawierającym pola, które zostały poddane modyfikacji. Schemat
-wiadomości jest więc analogiczny do tego dla dodawania nowej oferty.
-Wzbogacony jest jedynie o dodatkowe wymagane pole OfferID pozwalające na
-identyfikację modyfikowanej oferty.
+**Lista pokojów przypisanych do oferty**
 
-### `OFFER_EDIT_SUCCESS`
+<!-- po co tutaj param roomNumber? to serio jest potrzebne? -->
+```yaml
+/offers:
+    /{offerID}:
+        /rooms:
+            get:
+                queryParameters:
+                    roomNumber:
+                    ...
+```
 
-Po otrzymaniu JSONa z informacjami o ofercie serwer dokonuje ponownej
-walidacji wszystkich parametrów. Jeśli oferta została zedytowana
-poprawnie serwer uaktualnia odpowiedni wpis w swojej lokalnej bazie
-danych i odsyła do systemu hotelowego informację o powodzeniu w postaci
-kodu operacyjnego: `OFFER_EDIT_SUCCESS`.
+Endpoint umożliwia uzyskanie listy wszystkich pokojów przypisanych do
+oferty o danym ID.
 
-### `OFFER_EDIT_FAILURE`
+Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.
+Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
+o numerze `roomNumber`. Jeżeli pokój o takim numerze nie jest powiązany
+z ofertą, zwracana jest pusta lista.
 
-<img src="Oferta-Hotel-Serwer/Offer_Error.png">
+**Dodawanie pokojów do oferty**
 
-W przypadku błędów w formularzu serwer przesyła kod operacyjny:
-`OFFER_EDIT_FAILURE` wraz z JSONem zawierającym jedynie informację na
-czym polegał błąd.
+```yaml
+/offers:
+    /{offerID}:
+        /rooms:
+            post:
+            ...
+```
+<!-- czy do aktywnej oferty można dodawać pokoje? -->
+Do nieusuniętej oferty można dodać pokój, przekazując jego ID. Pokój musi już
+istnieć w systemie; należy go dodać odwołując się do `/rooms POST`. Jeden
+pokój można powiązać z wieloma ofertami.
+
+**Usuwanie pokojów z oferty**
+
+```yaml
+/offers:
+    /{offerID}:
+        /rooms:
+            /{roomID}:
+                delete:
+                ...
+```
+
+Z oferty możliwe jest również usunięcie przypisania pokoju. Wówczas
+pozostaje on w systemie – usunięte jest jedynie odpowiednie powiązanie.
+Z oferty można odwiązać pokój niezależnie od liczby i stanu rezerwacji
+do niego przypisanych.
+
+**Lista wszystkich pokojów**
+
+```yaml
+/offers:
+    /rooms:
+        get:
+            queryParameters::
+                roomNumber:
+                ...
+```
+
+### `/rooms`
+
+**Dodawanie pokojów**
+
+```yaml
+/rooms:
+    post:
+    ...
+```
+
+Dodany do systemu pokój nie jest powiązany z żadną ofertą. Numer pokoju
+powinien być unikalny w zakresie hotelu. Zwracane ID jest unikalne w zakresie
+całego systemu.
+
+**Lista wszystkich pokojów**
+
+```yaml
+/rooms:
+    get:
+        queryParameters:
+            roomNumber:
+            ...
+```
+
+Lista zawiera wszystkie pokoje znajdujące się w hotelu.
+
+Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.
+Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
+o numerze `roomNumber` – w ten sposób uzyskujemy ID jednego pokoju.
+Jeżeli pokój o takim numerze nie istnieje w hotelu, zwracana jest pusta lista.
+
+**Usuwanie pokoju**
+
+```yaml
+/rooms:
+    /{roomID}:
+        delete:
+        ...
+```
+
+Usuwanie polega na sprawdzeniu, czy w systemie są jeszcze niezrealizowane rezerwacje w ramach tego pokoju.
+Jeśli tylko to możliwe, przenosimy rezerwacje do innych pokoi zebranych w ramach tej samej oferty.
+Jeśli nie jest to możliwe – zwracamy błąd 409 i nie podejmujemy żadnych działań.
+Jeśli rezerwacje da się przenieść lub nie ma żadnych rezerwacji – we wszystkich rezerwacjach (tabela z rezerwacjami), które wskazują na rozpatrywany pokój
+zmieniamy pokój na NULL (należy rozwiązać problem ze spójnością referencyjną) i usuwamy pokój (tabela HotelRoom).
+<!-- na NULL?? -->
 
 ## Zarządzanie rezerwacjami
 
-### `RESERVATION_CREATE`
+**Lista rezerwacji**
 
-Komunikat przesyła szczegółowe informacje dot. rezerwacji. Serwer wysyła
-tę wiadomość natychmiast po prośbie klienta stworzenia tejże rezerwacji.
+```yaml
+/reservations:
+    get:
+    ...
+```
 
-Pola tego obiektu są analogiczne do odpowiadającej mu klasy
-`ReservationInfo`, rozszerzone o `ClientID` klienta powiązanego z
-rezerwacją.
+Hotel może pobrać listę wszystkich rezerwacji (w trakcie i oczekujące na realizację).
+Wraz z każdą rezerwacją zwracane są dane klienta, który ją złożył.
 
-<img src="Rezerwacje/ReservationInfoSchema.jpg">
+## Dane hotelu
 
-Oczekiwane odpowiedzi:
+**Pobieranie danych**
 
--   `OFFER_UNAVAILABLE`\
-    Oferta jest niedostępna w wybranym okresie wg danych po stronie
-    hotelu. Hotel sugeruje, że potrzebna jest synchronizacja.
-    
--   `RESERVATION_CREATE_FAILURE`\
-    Rezerwacja nie może zostać dokonana z innego powodu niż niedostępność oferty.
-    
--   `RESERVATION_CREATE_SUCCESS`\
-    Rezerwacja jest możliwa w wybranym terminie i jest dodawana do lokalnej 
-    bazy danych systemu hotelowego. Serwer po otrzymaniu wiadomości o tym kodzie
-    dodaje rezerwację również do swojej bazy danych i informuje klienta o pomyślnym
-    dokonaniu rezerwacji.
+```yaml
+/hotelInfo:
+    get:
+    ...
+```
 
-### `RESERVATION_DELETE`
+Endpoint służący do pobrania danych o hotelu znajdujących się na serwerze.
 
-Klient może zrezygnować ze swojej rezerwacji w dowolnym momencie. Zaraz
-po otrzymaniu przez serwer takiej prośby, przekazuje ją do hotelu
-niniejszym komunikatem. Wewnątrz wiadomości znajduje się ID rezerwacji,
-której dotyczy. 
+**Uaktualnianie danych**
 
-Oczekiwane odpowiedzi:
+```yaml
+/hotelInfo:
+    patch:
+    ...
+```
 
--   `RESERVATION_DELETE_SUCCESS`\
-    Usunięcie powiodło się.
-
--   `RESERVATION_DELETE_FAILURE`\
-    Usunięcie nie powiodło się.
-
--   `ID_UNKNOWN`\
-    Nieznane ID rezerwacji.
+Endpoint służący do aktualizacji danych reprezentatywnych hotelu.
 
 # Klient-Serwer
 
