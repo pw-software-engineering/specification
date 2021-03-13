@@ -1440,9 +1440,9 @@ niedostępności ofert odpowiednio wyznaczone przez hotel.
 <!-- do uzupełnienia -->
 Proces dodawania nowej oferty zaczyna się od wypełnienia odpowiedniego
 formularza. Następnie dokonywana jest wstępna walidacja formularza po
-stronie systemu hotelowego. Jeżeli nie wykryto żadnych błędów, następuje odwołanie do metody `POST /offers`,
-i przesłanie w jej ciele wszystkich informacji definiujących ofertę.
-Są to kolejno:
+stronie systemu hotelowego. Jeżeli nie wykryto żadnych błędów, następuje
+odwołanie do metody `POST /offers` i przesłanie w jej ciele wszystkich
+informacji definiujących ofertę. Są to kolejno:
 
 -   CostPerChild - koszt skorzystania z oferty dla dziecka. Powinien być
     większy od 0. Przyjęta precyzja to 0.01. Parametr ten nie jest
@@ -1461,7 +1461,8 @@ Są to kolejno:
 -   Pictures - zdjęcia związane z dodawaną ofertą. Parametr ten nie jest
     wymagany.
 
--   Rooms – lista numerów pokoi związanych z daną ofertą. Lista może być pusta. Istnieje możliwość dodania
+-   Rooms – lista numerów pokoi związanych z daną ofertą. Lista może być
+    pusta. Istnieje możliwość dodania
     pokoju do oferty po jej stworzeniu.
 
 Wszystkie parametry dla których wartość nie została zdefiniowana są
@@ -1477,72 +1478,63 @@ oferty i wprowadzenia dokładnych wartości.
 
 <!-- dlaczego dwie listy, nie jedna ze znacznikiem isActive? -->
 <!-- do uzupełnienia -->
-Endpoint służy do przeglądania ofert, które zostały stworzone w hotelu, który wysyła zapytanie. Lista jest zwracana w dwóch częściach:
+Endpoint służy do przeglądania ofert, które zostały stworzone w hotelu,
+który wysyła zapytanie. Lista jest zwracana w dwóch częściach:
 
 -   `activeOffers` – zawiera wszystkie oferty z ustawionym znacznikiem `isActive`,
 
--   `inactiveOffers` – zawiera wszystkie oferty, które nie mają ustawionego znacznika `isActive`.
+-   `inactiveOffers` – zawiera wszystkie oferty, które nie mają ustawionego
+    znacznika `isActive`.
 
-### `OFFER_DELETE_REQUEST`
+### `/offers/{offerID}`
 
-**Usuwanie oferty**\
+**Pobieranie oferty**
 
-Manager hotelu wskazuje ofertę przeznaczoną do usunięcia. System
-hotelowy następnie przesyła kod operacyjny `OFFER_DELETE_REQUEST` wraz z
-zserializowanym JSONem zawierającym ID usuwanej oferty.
+<!-- gdzie isDeleted? -->
+```yaml
+/offers:
+    /{offerID}:
+        get:
+        ...
+```
+Hotel w każdym momencie może pobrać szczegółowe informacje o dowolnej własnej ofercie.
 
-### `OFFER_DELETE_SUCCESS`
+**Aktywacja/dezaktywacja oferty**
 
-Po otrzymaniu JSONa serwer podejmuje próbę usunięcia ze swojej lokalnej
-bazy danych oferty o wskazanym ID. Jeśli operacja ta powiodła się, do
-systemu hotelowego odsyłana jest informacja o powodzeniu w postaci kodu
-operacyjnego: `OFFER_DELETE_SUCCESS`.
+```yaml
+/offers:
+    /{offerID}:
+        patch:
+```
 
-### `OFFER_DELETE_FAILURE`
+Dezaktywując ofertę uniemożliwiamy jej odnalezienie przez klientów w wyszukiwarce.
+Oferta taka nie znika – wszystkie przypisane do niej rezerwacje są ważne, natomiast
+niemożliwe jest stworzenie nowych.
 
-<img src="Oferta-Hotel-Serwer/Offer_Error.png">
-Jeśli otrzymany JSON zawiera nieprawidłowe ID, serwer przekona się o tym przy
-próbie znalezienia zadanego rekordu o zadanym ID. System hotelowy
-zostanie poinformowany o zaistniałym błędzie poprzez przesłanie
-następującego kodu operacyjnego: `OFFER_DELETE_FAILURE` wraz ze
-stosownym komunikatem. W przypadku wystąpienia błędów po stronie
-serwera, system hotelowy zostanie poinformowany o zaistniałej sytuacji
-analogicznie kodem `OFFER_DELETE_FAILURE` wraz z JSONem zawierającym
-jedynie informację na czym polegał błąd. Niezależnie od natury błędu
-otrzymany JSON powinien być więc zgodny z powyższym schematem.
+**Usuwanie oferty**
 
-### `OFFER_EDIT_REQUEST`
+```yaml
+/offers:
+    /{offerID}:
+        delete:
+```
 
-**Edytowanie istniejącej oferty**\
+Punkt końcowy komunikacji, który umożliwia "usunięcie" rezerwacji – tzn.
+ustawienie znacznika `isDeleted` na true. Usunąć można wyłącznie ofertę,
+która jest niektywna (patrz: aktywacja/dezaktywacja oferty) <!-- dodać odnośnik -->
+oraz w systemie nie znajdują się żadne niezrealizowane w jej ramach rezerwacje.
+Innymi słowy, aby oferta została usunięta, należy ją najpierw dezaktywować, a
+następnie poczekać, aż wszystkie rezerwacje do niej przypisane zostaną
+zrealizowane.
 
-<img src="Oferta-Hotel-Serwer/Offer_Edit_JSON1.png">
-<img src="Oferta-Hotel-Serwer/Offer_Edit_JSON2.png">
+W efekcie tej operacji oferta nie jest uwzględniana w wyszukiwaniach
+realizowanych przez klienta. Hotel natomiast ma do niej dostęp za pośrednictwem
+metody `/offers GET` (wówczas warto przy wyświetlaniu taką ofertę wyróżnić
+odpowiednim znacznikiem, np "archived").
+Oferty nie powinny być fizycznie usuwane z systemu ze względu na zawarte do nich referencje np. w opiniach i rezerwacjach. Jeśli wystąpi taka konieczność, należy
+robić to ręcznie i ostrożnie.
 
-Manager ma możliwość edycji już istniejącej oferty. W tym celu wybiera
-ofertę i przechodzi do jej edycji poprzez formularz znany mu dobrze z
-dodawania nowej oferty. Po zakończeniu edycji oferta jest ponownie
-walidowana po stronie systemu hotelowego, po czym do serwera zostaje
-przesłany kod operacyjny: `EDIT_OFFER_REQUEST` wraz z zserialiozowanym
-JSONem zawierającym pola które zostały poddane modyfikacji. Schemat
-wiadomości jest więc analogiczny do tego dla dodawania nowej oferty.
-Wzbogacony jest jedynie o dodatkowe wymagane pole OfferID pozwalające na
-identyfikację modyfikowanej oferty.
-
-### `OFFER_EDIT_SUCCESS`
-
-Po otrzymaniu JSONa z informacjami o ofercie serwer dokonuje ponownej
-walidacji wszystkich parametrów. Jeśli oferta została zedytowana
-poprawnie serwer uaktualnia odpowiedni wpis w swojej lokalnej bazie
-danych i odsyła do systemu hotelowego informację o powodzeniu w postaci
-kodu operacyjnego: `OFFER_EDIT_SUCCESS`.
-
-### `OFFER_EDIT_FAILURE`
-
-<img src="Oferta-Hotel-Serwer/Offer_Error.png">
-
-W przypadku błędów w formularzu serwer przesyła kod operacyjny:
-`OFFER_EDIT_FAILURE` wraz z JSONem zawierającym jedynie informację na
-czym polegał błąd.
+Próba usunięcia oferty aktywnej lub takiej, która posiada niezrealizowane rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienione.
 
 ## Zarządzanie rezerwacjami
 
