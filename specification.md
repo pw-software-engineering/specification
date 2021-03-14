@@ -1437,7 +1437,7 @@ niedostępności ofert odpowiednio wyznaczone przez hotel.
 Komunikacja pomiędzy modułem aplikacji hotelowej, a serwerem
 odbywa się przy użyciu połączeń HTTP i REST API. Poniżej opisane są
 wszystkie endpointy oraz związane z nimi żądania i odpowiedzi HTTP
-zamodelowane w RAML.
+zamodelowane w RAML. Używane w kodzie poniżej typy zostały dokładniej w pliku [hotel-endpoints.raml](hotel-endpoints.raml).
 
 ## Zarządzanie ofertami i pokojami
 
@@ -1448,43 +1448,34 @@ zamodelowane w RAML.
 ```yaml
 /offers:
   get:
-    description: List all offers related to hotel.
+    description: List all offers related to hotel
     responses: 
       200:
         body: 
           application/json:
-            type: array
-            items: |
-              {
-                "isActive": boolean,
-                "costPerChild": double,
-                "costPerAdult": double,
-                "maxGuests": int,
-                "description": string,
-                "offerPreviewPicture": file,
-                "pictures": file[]
-                "rooms": string[]
-              }
+            type: offer[]
             example: |
               [
                 {
                   "isActive": true,
+                  "offerTitle": "Great Offer",
                   "costPerChild": 120.0,
                   "costPerAdult": 150.0,
                   "maxGuests": 4,
-                  "description": "You gonna be awestruck by this offer."
+                  "description": "You gonna be awestruck by this offer.",
                   "offerPreviewPicture": "kBKuB875JH5VJkhu",
-                  "pictures": [ "hbUbkjd86jhVG7JFjh", "kjdsf328KB53JVT9jk"],
+                  "pictures": [ "hbUbkjd86jhVG7JFjh", "kjdsf328KB53JVT9jk" ],
                   "rooms": [ "12F", "13A"]
                 },
                 {
                   "isActive": false,
+                  "offerTitle": "Bad Offer",
                   "costPerChild": 130.0,
                   "costPerAdult": 130.0,
                   "maxGuests": 2,
-                  "description": "See yourself."
+                  "description": "",
                   "offerPreviewPicture": "kjdsf328KB53JVT9jk",
-                  "pictures": [ "kBKuB875JH5VJkhu", "hbUbkjd86jhVG7JFjh"],
+                  "pictures": [ "kBKuB875JH5VJkhu", "hbUbkjd86jhVG7JFjh" ],
                   "rooms": [ "10", "121", "18", "01"]
                 }
               ]
@@ -1492,6 +1483,10 @@ zamodelowane w RAML.
 
 Endpoint służy do wyświetlania ofert, które zostały stworzone w hotelu 
 wysyłajacym zapytanie.
+
+Wszystkie pola obiektów w zwracanej liście są wymagane.
+W przypadku, kiedy np. oferta nie posiada opisu, zwracany jest pusty string;
+jeśli nie posiada żadnych pokoi – zwracana jest pusta lista.
 
 #### **Dodawanie nowej oferty**
 
@@ -1501,16 +1496,17 @@ wysyłajacym zapytanie.
     description: Add new offer
     body:
       application/json:
-        type: offer
+        type: offerInfo
         example: |
           {
             "offerTitle": "Awesome offer",
             "costPerChild": 50,
             "costPerAdult": 80,
             "maxGuests": 5,
-            "description": "Apartment overlooking the sea",          
+            "description": "Apartment overlooking the sea",
+            "offerPreviewPicture": "hbUbkjd86jhVG7JFjh",
             "pictures": [],
-            "rooms": ["12A”, "14B”]
+            "rooms": [ "12A", "14B" ]
           }
     responses:
       200:
@@ -1519,7 +1515,15 @@ wysyłajacym zapytanie.
 
 Proces dodawania nowej oferty zaczyna się od wypełnienia odpowiedniego
 formularza. Następnie dokonywana jest wstępna walidacja formularza po
-stronie systemu hotelowego. Jeżeli nie wykryto żadnych błędów, następuje
+stronie systemu hotelowego.
+
+Pola `costPerChild`, `costPerAdult`, `maxGuests` są obowiązkowe.
+Pozostałe pola mogą pozostać niewypełnione.
+Jeżeli pole nieuzupełnione reprezentuje typ string, przesyłany jest pusty obiekt string.\
+Jeżeli pole nieuzupełnione reprezentuje tablicę, przesyłana jest pusta tablica.\
+Oczywiście nowo utworzona oferta posiada znacznik `isActive = true`.
+
+Jeżeli nie wykryto żadnych błędów, następuje
 odwołanie do metody `POST /offers` i przesłanie w jej ciele wszystkich
 informacji definiujących ofertę. Są to kolejno:
 
@@ -1543,7 +1547,10 @@ informacji definiujących ofertę. Są to kolejno:
 -   `rooms` – lista numerów pokoi związanych z daną ofertą; lista może być
     pusta; istnieje możliwość dodania pokoju do oferty po jej stworzeniu.
 
-Manager hotelu ma możliwość późniejszej edycji oferty i wprowadzenia dokładnych wartości.
+Manager hotelu ma możliwość późniejszej edycji oferty i wprowadzenia dokładnych
+wartości __niektórych__ pól (patrz: `/offers/{offerID} PATCH`). Manager powinien
+dokładnie wiedzieć, jaką cenę za osobodobę chce pobierać oraz jaką maksymalną
+liczbę gości oferta może przyjąć. Jeżeli będzie chciał te informacje zmienić w przyszłości, zmuszony będzie stworzyć nową ofertę, a tę – usunąć.
 
 ### `/offers/{offerID}`
 
@@ -1558,20 +1565,23 @@ Manager hotelu ma możliwość późniejszej edycji oferty i wprowadzenia dokła
         200:
           body:
             application/json:
-              type: |
+              type: offer
+              example: |
                 {
-                  "isActive": boolean,
-                  "costPerChild": double,
-                  "costPerAdult": double,
-                  "maxGuests": int,
-                  "description": string,
-                  "pictures": file[]
+                  "isActive": false,
+                  "offerTitle": "Rich Offer",
+                  "costPerChild": 50.0,
+                  "costPerAdult": 60.0,
+                  "maxGuests": 5,
+                  "description": "Offer description",
+                  "offerPreviewPicture": "hbUbkjd86jhVG7JFjh",
+                  "pictures": [],
+                  "rooms": [ "212" ]
                 }
         401:
           description: Offer does not belong to this hotel
         404:
           description: Offer not found
-  
 ```
 Hotel w każdym momencie może pobrać szczegółowe informacje o dowolnej własnej ofercie.
 
@@ -1581,7 +1591,7 @@ Hotel w każdym momencie może pobrać szczegółowe informacje o dowolnej włas
 /offers:
   /{offerID}:
     delete:
-      descritpion: Server marks the offer as deleted.
+      description: Server marks the offer as deleted.
       responses:
         200:
         401:
@@ -1598,7 +1608,7 @@ Hotel w każdym momencie może pobrać szczegółowe informacje o dowolnej włas
 
 Punkt końcowy komunikacji, który umożliwia "usunięcie" rezerwacji – tzn.
 ustawienie znacznika `isDeleted` na true. Usunąć można wyłącznie ofertę,
-która jest niektywna (patrz: modyfikacja oferty) <!-- dodać odnośnik -->
+która jest niektywna (patrz: modyfikacja oferty – `/offers/{offerID} PATCH`) <!-- dodać odnośnik -->
 oraz w systemie nie znajdują się żadne niezrealizowane w jej ramach rezerwacje.
 Innymi słowy, aby oferta została usunięta, należy ją najpierw dezaktywować, a
 następnie poczekać, aż wszystkie rezerwacje do niej przypisane zostaną
@@ -1606,12 +1616,14 @@ zrealizowane. Zmiana znacznika jest nieodwracalna, oferty raz usuniętej
 nie można przywrócić.
 
 W efekcie tej operacji oferta nie jest uwzględniana w wyszukiwaniach
-realizowanych przez klienta. Hotel natomiast ma do niej dostęp za pośrednictwem
-metody `/offers GET` (wówczas warto przy wyświetlaniu taką ofertę wyróżnić
-odpowiednim znacznikiem, np "archived").
-Oferty nie powinny być fizycznie usuwane z systemu ze względu na zawarte do nich
-referencje np. w opiniach i rezerwacjach. Jeśli wystąpi taka konieczność, należy
-robić to ręcznie i ostrożnie.
+realizowanych przez klienta. Hotel również nie ma do niej dostępu.\
+Oferta oznaczona jako `isDeleted` najczęściej nie zostaje fizycznie usunięta
+z systemu. Z uwagi na archiwizację, klient, który w jej ramach odbył rezerwację,
+powinien móc ją zobaczyć.
+
+Jedynym wyjątkiem, w którym przy implementacji operacji usunięcia oferty można
+rozważyć fizyczne jej usunięcie jest sytuacja, kiedy nie są z nią powiązane
+żadne rezerwacje ani opinie.
 
 Próba usunięcia oferty aktywnej lub takiej, która posiada niezrealizowane
 rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienione.
@@ -1623,16 +1635,26 @@ rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienion
 /offers:
   /{offerID}:
     patch:
-      descritpion: Server modifies offer.
+      description: Server modifies offer
       body:
         application/json:
-          { 
-            "isActive": boolean,
-            "offerTitle": string,
-            "offerPreviewPicture": file,
-            "description": string,
-            "offerPictures": file[]
-          }
+          type: object
+          properties: 
+            isActive: boolean
+            offerTitle: string
+            description: string
+            offerPreviewPicture: file
+            offerPictures:
+              type: array
+              items: file
+          example: |
+            { 
+              "isActive": true,
+              "offerTitle": "Not so great Offer",
+              "offerPreviewPicture": "hbUbkjd86jhVG7JFjh",
+              "description": "",
+              "offerPictures": []
+            }
       responses:
         200:
         401:
@@ -1641,10 +1663,13 @@ rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienion
           description: Not found
 ```
 
-Modyfikacja oferty dotyczy wyłącznie tych jej cech, które są najbardziej reprezentatywne dla klienta oraz kwestii aktywności oferty. Aby zmienić właściwości oferty związane z jej kosztem lub maksymalną liczbą gości, należy stworzyć nową ofertę, a tę zdezaktywować.
-W ramch modyfikacji oferty możemy ją dezaktywować. W ten sposób uniemożliwiamy jej odnalezienie w wyszukiwarce.
-Oferta taka nie znika – wszystkie przypisane do niej rezerwacje są ważne, natomiast
-niemożliwe jest stworzenie nowych.
+Modyfikacja oferty dotyczy wyłącznie tych jej cech, które są najbardziej
+reprezentatywne dla klienta oraz kwestii aktywności oferty. Aby zmienić
+właściwości oferty związane z jej kosztem lub maksymalną liczbą gości, należy
+stworzyć nową ofertę, a tę zdezaktywować.\
+Dezaktywacja oferty oznacza, że niemożliwe jest odnalezienie jej w wyszukiwarce.
+Oferta taka nie znika – wszystkie przypisane do niej rezerwacje są ważne,
+natomiast niemożliwe jest stworzenie nowych.
 
 ### `/offers/{offerID}/rooms`
 
@@ -1666,7 +1691,13 @@ niemożliwe jest stworzenie nowych.
           200:
             body:
               application/json:
-                example: |       
+                type: array
+                items:
+                  type: object
+                  properties: 
+                    roomID: integer
+                    hotelRoomNumber: string
+                example: |
                   [
                     {
                       "roomID": 5,
@@ -1678,7 +1709,7 @@ niemożliwe jest stworzenie nowych.
                     }
                   ]
           401:
-            description: Offer does not belong to this hotel     
+            description: Offer does not belong to this hotel
           404:
             description: Offer not found
 ```
@@ -1691,14 +1722,14 @@ Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
 o numerze `roomNumber`. Jeżeli pokój o takim numerze nie jest powiązany
 z ofertą, zwracana jest pusta lista.
 
-#### **Dodawanie pokoi do oferty**
+#### **Dodawanie pokoju do oferty**
 
 ```yaml
 /offers:
   /{offerID}:
     /rooms:
       post:
-        description: Add a room associated with hotel offer.
+        description: Add a room associated with hotel offer
         body:
           application/json:
             type: object
@@ -1717,8 +1748,8 @@ z ofertą, zwracana jest pusta lista.
 ```
 
 Do nieusuniętej oferty można dodać pokój, przekazując jego ID. Pokój musi już
-istnieć w systemie; należy go dodać odwołując się do `/rooms POST`. Jeden
-pokój można powiązać z wieloma ofertami.
+istnieć w systemie; należy go wcześniej dodać odwołując się do `/rooms POST`.
+Jeden pokój można powiązać z wieloma ofertami.
 
 #### **Usuwanie pokoi z oferty**
 
@@ -1761,6 +1792,12 @@ do niego przypisanych.
       200:
         body:
           application/json:
+            type: array
+            items:
+              type: object
+              properties: 
+                roomID: integer
+                hotelRoomNumber: string
             example: |
               [
                 {
@@ -1775,7 +1812,7 @@ do niego przypisanych.
       400:
         body:
           application/json:
-          description: An error containing message describing the type of error
+            description: An error containing message describing the type of error
             example: |
               {
                 "error": "Room number not found"
@@ -1785,16 +1822,17 @@ do niego przypisanych.
 Lista zawiera wszystkie pokoje znajdujące się w hotelu.
 
 Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.
-Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
-o numerze `roomNumber` – w ten sposób uzyskujemy ID jednego pokoju.
-Jeżeli pokój o takim numerze nie istnieje w hotelu, zwracana jest pusta lista.
+Jeżeli został przekazany, możliwe są 2 rodzaje odpowiedzi:
+
+- pokój istnieje – zwracana jest lista zawierająca jeden pokój o numerze `roomNumber`,
+- pokój o takim numerze nie istnieje w hotelu – zwrócony jest błąd `400`.
 
 #### **Dodawanie pokoi**
 
 ```yaml
 /rooms:
   post:
-    description: Add a room not associated with any offer. (HotelRoom table)
+    description: Add a room not associated with any offer (HotelRoom table)
     body:
       application/json:
         type: object
@@ -1806,7 +1844,7 @@ Jeżeli pokój o takim numerze nie istnieje w hotelu, zwracana jest pusta lista.
           }
     responses:
       200:
-        description: Room added successfully.
+        description: Room added successfully
         body:
           application/json:
             type: object
@@ -1815,7 +1853,7 @@ Jeżeli pokój o takim numerze nie istnieje w hotelu, zwracana jest pusta lista.
             example: |
               {
                 "roomID": 14
-              } 
+              }
 ```
 
 Dodany do systemu pokój nie jest powiązany z żadną ofertą (brak wpisów w tabeli
@@ -1828,7 +1866,7 @@ ID jest unikalne w zakresie całego systemu.
 /rooms:
   /{roomID}:
     delete:
-      descritpion: Serwer usuwa pokój o wskazanym ID. (Usuwany jest wpis w tabeli HotelRoom)
+      description: Deletes room with given ID. (entry in HotelRoom table is deleted)
       responses:
         200:
         401:
@@ -1845,12 +1883,12 @@ ID jest unikalne w zakresie całego systemu.
                 }
 ```
 
-Usuwanie polega na sprawdzeniu, czy w systemie są jeszcze niezrealizowane rezerwacje w ramach tego pokoju.
-Jeśli tylko to możliwe, przenosimy rezerwacje do innych pokoi zebranych w ramach tej samej oferty.
-Jeśli nie jest to możliwe – zwracamy błąd 409 i nie podejmujemy żadnych działań.
-Jeśli rezerwacje da się przenieść lub nie ma żadnych rezerwacji – we wszystkich rezerwacjach (tabela z rezerwacjami),
-które wskazują na rozpatrywany pokój zmieniamy pokój na NULL (należy rozwiązać problem ze spójnością referencyjną)
-i usuwamy pokój (tabela HotelRoom).
+Usuwanie polega na sprawdzeniu, czy w systemie są jeszcze niezrealizowane rezerwacje w ramach tego pokoju.\
+Jeśli tylko to możliwe, przenosimy te rezerwacje do innych pokoi zebranych w ramach tej samej oferty.\
+Jeśli nie jest to możliwe – zwracamy błąd 409 i nie podejmujemy żadnych działań.\
+Jeśli rezerwacje da się przenieść lub nie ma żadnych rezerwacji – we wszystkich **zrealizowanych** rezerwacjach,
+które wskazują na rozpatrywany pokój zmieniamy pokój na NULL (należy rozwiązać
+problem ze spójnością referencyjną) i usuwamy pokój (tabela HotelRoom).
 
 ## Zarządzanie rezerwacjami
 
@@ -1867,34 +1905,14 @@ i usuwamy pokój (tabela HotelRoom).
         description: get reservations that are currently underway or all reservations (including ones that begin in the future)
       roomID:
         required: false
-        type: int
+        type: integer
         description: get reservations connected with room with ID equal to roomID parameter
     responses:
       200:
         body:
           application/json:
-            description: Returns an array of objects containing reservation and client information related to a hotel room reservation.  
-            type: |
-              [
-                {
-                  reservation:
-                  {
-                    reservationID: int,
-                    hotelRoomNumber: string,
-                    offerID: int,
-                    fromTime: date,
-                    toTime: date,
-                    childrenCount: int,
-                    adultsCount: int
-                  }
-                  client: 
-                  {
-                    clientID: int,                    
-                    name: string,
-                    surname: string
-                  }
-                }
-              ]
+            description: Returns an array of objects containing reservation and client information related to a hotel room reservation
+            type: reservationObject[]
       400:
         body:
           application/json:
@@ -1908,6 +1926,12 @@ i usuwamy pokój (tabela HotelRoom).
 Hotel może pobrać listę wszystkich rezerwacji (będących w trakcie i oczekujących na realizację).
 Wraz z każdą rezerwacją zwracane są dane klienta, który ją złożył.
 
+Zapytanie może zawierać 2 opcjonalne parametry stanowiące filtr dla wyników.
+- jeżeli przekazano `currentOnly = true`, zwracana lista zawiera wszystkie
+  (i tylko takie) rezerwacje, które są w tym momencie w trakcie realizacji,
+- jeżeli przekazano parametr `roomID`, zwracana lista zawiera wyłącznie
+  rezerwacje przypisane do konkretnego pokoju.
+
 ## Dane hotelu
 
 ### `/hotelInfo GET`
@@ -1920,14 +1944,22 @@ Wraz z każdą rezerwacją zwracane są dane klienta, który ją złożył.
       200:
         body:
           application/json:
-            type: |
+            type: object
+            properties:
+              country: string
+              city: string
+              hotelName: string
+              hotelDesc: string
+              hotelPreviewPicture: file
+              hotelPictures: file[]
+            example: |
               {
-                "country": string, 
-                "city": string,
-                "hotelPreviewPicture": file,
-                "hotelName": string,
-                "hotelDesc": string,
-                "hotelPictures": file[]  
+                "country": "Poland",
+                "city": "Warsaw",
+                "hotelName": "Novotel",
+                "hotelDesc": "Live Limitless",
+                "hotelPreviewPicture": "",
+                "hotelPictures": []
               }
 ```
 
@@ -1939,19 +1971,26 @@ Endpoint służący do pobrania danych o hotelu znajdujących się na serwerze.
 /hotelInfo:
   patch:
     description: Update info about hotel  
-     body:
-        application/json:
-          { 
-            "hotelDesc": string,
-            "hotelPreviewPicture": file,
-            "hotelPictures": file[],
-            "hotelName": string
+    body:
+      application/json:
+        type: object
+        properties:
+          hotelName: string
+          hotelDesc: string
+          hotelPreviewPicture: file
+          hotelPictures: file[]
+        example: |
+          {
+            "hotelName": "Novotel",
+            "hotelDesc": "Live Limitless",
+            "hotelPreviewPicture": "",
+            "hotelPictures": []
           }
-      responses:
-        200:
+    responses:
+      200:
 ```
 
-Endpoint służący do aktualizacji danych reprezentatywnych hotelu.
+Endpoint służący do aktualizacji danych reprezentujących hotel.
 
 # Klient-Serwer
 
