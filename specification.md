@@ -1841,6 +1841,8 @@ Jeżeli został przekazany, możliwe są 2 rodzaje odpowiedzi:
             type: integer
             description: roomID
             example: 14
+      409:
+        description: Room with given number already exists
 ```
 
 Dodany do systemu pokój nie jest powiązany z żadną ofertą (brak wpisów w tabeli
