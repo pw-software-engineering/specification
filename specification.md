@@ -1449,6 +1449,7 @@ zamodelowane w RAML. Używane w kodzie poniżej typy zostały dokładniej w plik
 /offers:
   get:
     description: List all offers related to hotel
+    is: [pageable]
     responses: 
       200:
         body: 
@@ -1671,6 +1672,8 @@ Dezaktywacja oferty oznacza, że niemożliwe jest odnalezienie jej w wyszukiwarc
 Oferta taka nie znika – wszystkie przypisane do niej rezerwacje są ważne,
 natomiast niemożliwe jest stworzenie nowych.
 
+Próba modyfikacji oferty oznaczonej `isDeleted = true` powinna zakończyć się błędem `404`.
+
 ### `/offers/{offerID}/rooms`
 
 #### **Lista pokoi przypisanych do oferty**
@@ -1681,6 +1684,7 @@ natomiast niemożliwe jest stworzenie nowych.
     /rooms:
       get:
         description: Lists all rooms related to the hotel offer
+        is: [pageable]
         queryParameters:
           roomNumber:
             required: false
@@ -1898,6 +1902,7 @@ problem ze spójnością referencyjną) i usuwamy pokój (tabela HotelRoom).
 /reservations:
   get:
     description: fetches current (and future) reservations made by clients and information regarding these clients
+    is: [pageable]
     queryParameters:
       currentOnly:
         required: false

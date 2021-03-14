@@ -115,6 +115,7 @@ types:
   description: List of offers present in the system
   get:
     description: List all offers related to hotel
+    is: [pageable]
     responses: 
       200:
         body: 
@@ -237,6 +238,7 @@ types:
     /rooms:
       get:
         description: Lists all rooms related to the hotel offer
+        is: [pageable]
         queryParameters:
           roomNumber:
             required: false
@@ -393,6 +395,7 @@ types:
 /reservations:
   get:
     description: fetches current (and future) reservations made by clients and information regarding these clients
+    is: [pageable]
     queryParameters:
       currentOnly:
         required: false
