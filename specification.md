@@ -1715,16 +1715,17 @@ Próba modyfikacji oferty oznaczonej `isDeleted = true` powinna zakończyć się
           401:
             description: Offer does not belong to this hotel
           404:
-            description: Offer not found
+            description: Offer not found / Room with given roomNumber not found
 ```
 
 Endpoint umożliwia uzyskanie listy wszystkich pokoi przypisanych do
 oferty o danym ID.
 
-Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.
+Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.\
 Jeżeli został przekazany, w liście znajduje się maksymalnie jeden pokój
-o numerze `roomNumber`. Jeżeli pokój o takim numerze nie jest powiązany
-z ofertą, zwracana jest pusta lista.
+o numerze `roomNumber`.\
+Jeżeli pokój o takim numerze nie jest powiązany z ofertą lub w ogóle nie istnieje,
+zwracany jest błąd `404`.
 
 #### **Dodawanie pokoju do oferty**
 
@@ -1809,14 +1810,8 @@ do niego przypisanych.
                   "hotelRoomNumber": "16"
                 }
               ]
-      400:
-        body:
-          application/json:
-            description: An error containing message describing the type of error
-            example: |
-              {
-                "error": "Room number not found"
-              }
+      404:
+        description: Room with given roomNumber not found
 ```
 
 Lista zawiera wszystkie pokoje znajdujące się w hotelu.
@@ -1825,7 +1820,7 @@ Parametr `roomNumber` jest opcjonalny i stanowi filtr nałożony na wyniki.
 Jeżeli został przekazany, możliwe są 2 rodzaje odpowiedzi:
 
 - pokój istnieje – zwracana jest lista zawierająca jeden pokój o numerze `roomNumber`,
-- pokój o takim numerze nie istnieje w hotelu – zwrócony jest błąd `400`.
+- pokój o takim numerze nie istnieje w hotelu – zwrócony jest błąd `404`.
 
 #### **Dodawanie pokoi**
 

@@ -269,7 +269,7 @@ types:
           401:
             description: Offer does not belong to this hotel
           404:
-            description: Offer not found
+            description: Offer not found / Room with given roomNumber not found
       post:
         description: Add a room associated with hotel offer
         body:
@@ -329,14 +329,8 @@ types:
                   "hotelRoomNumber": "16"
                 }
               ]
-      400:
-        body:
-          application/json:
-            description: An error containing message describing the type of error
-            example: |
-              {
-                "error": "Room number not found"
-              }
+      404:
+        description: Room with given roomNumber not found
   post:
     description: Add a room not associated with any offer (HotelRoom table)
     body:
