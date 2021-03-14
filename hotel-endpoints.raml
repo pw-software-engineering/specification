@@ -280,9 +280,9 @@ types:
         responses:
           200:
           401:
-            description: Offer does not belong to this hotel 
+            description: Offer or room with given ID does not belong to this hotel 
           404:
-            description: Offer not found
+            description: Offer or room with given ID not found
       /{roomID}:
         uriParameters: 
           roomID: integer
@@ -291,10 +291,10 @@ types:
           responses:
             200:
             401:
-              description: Offer or room does not belong to this hotel   
+              description: Offer or room with given ID does not belong to this hotel   
             404:
               description: Offer or room not found
-                  
+
 #--------------------------------------------------------------------------------------------------------
 #-----------------------------------------------ROOMS----------------------------------------------------
 #--------------------------------------------------------------------------------------------------------

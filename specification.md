@@ -1743,9 +1743,9 @@ zwracany jest błąd `404`.
         responses:
           200:
           401:
-            description: Offer does not belong to this hotel 
+            description: Offer or room with given ID does not belong to this hotel 
           404:
-            description: Offer not found
+            description: Offer or room with given ID not found
 ```
 
 Do nieusuniętej oferty można dodać pokój, przekazując jego ID. Pokój musi już
@@ -1764,7 +1764,7 @@ Jeden pokój można powiązać z wieloma ofertami.
           responses:
             200:
             401:
-              description: Offer or room does not belong to this hotel   
+              description: Offer or room with given ID does not belong to this hotel   
             404:
               description: Offer or room not found
 ```
