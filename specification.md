@@ -1736,13 +1736,9 @@ z ofertą, zwracana jest pusta lista.
         description: Add a room associated with hotel offer
         body:
           application/json:
-            type: object
-            properties:
-              roomID: integer
-            example: |
-              {
-                "roomID": 21
-              }
+            type: integer
+            description: roomID
+            example: 21
         responses:
           200:
           401:
@@ -1839,25 +1835,17 @@ Jeżeli został przekazany, możliwe są 2 rodzaje odpowiedzi:
     description: Add a room not associated with any offer (HotelRoom table)
     body:
       application/json:
-        type: object
-        properties:
-          hotelRoomNumber: string
-        example: |
-          {
-            "hotelRoomNumber": "12F"
-          }
+        type: string
+        description: hotelRoomNumber
+        example:  "12F"
     responses:
       200:
         description: Room added successfully
         body:
           application/json:
-            type: object
-            properties:
-              roomID: integer
-            example: |
-              {
-                "roomID": 14
-              }
+            type: integer
+            description: roomID
+            example: 14
 ```
 
 Dodany do systemu pokój nie jest powiązany z żadną ofertą (brak wpisów w tabeli
