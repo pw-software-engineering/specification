@@ -395,7 +395,9 @@ types:
           application/json:
             description: Returns an array of objects containing reservation and client information related to a hotel room reservation
             type: reservationObject[]
-      400:
+      403:
+        description: Room with ID equal to roomID does not belong to the hotel
+      404:
         body:
           application/json:
             description: An error containing message describing the type of error
