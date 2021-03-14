@@ -23,82 +23,125 @@ traits:
           default: 10
 
 types:
-  offer:
-  type: object
-  properties:
-    offerTitle:
-      type: string
-    costPerChild:
-      type: number
-      multipleOf: 0.01
-      required: true
-    costPerAdult:
-      type: number
-      multipleOf: 0.01
-      required: true
-    maxGuests:
-      type: integer
-      minimum: 1
-      required: true
-    description:
-      type: string
-    offerPreviewPicture:
-      type: file
-    pictures:
-      type: array
-      items:
-        type: file
-    rooms:
-      type: array
-      required: false
-      items:
+  offerInfo:
+    type: object
+    properties:
+      offerTitle:
         type: string
-   
-     
+      costPerChild:
+        type: number
+        multipleOf: 0.01
+        required: true
+      costPerAdult:
+        type: number
+        multipleOf: 0.01
+        required: true
+      maxGuests:
+        type: integer
+        minimum: 1
+        required: true
+      description:
+        type: string
+      offerPreviewPicture:  # base-64 encoded image
+        type: file
+      pictures:             # base-64 encoded images
+        type: array
+        items:
+          type: file
+      rooms:
+        type: array
+        required: false
+        items:
+          type: string
+  # offer is offerInfo + "isActive"
+  # offer is returned by GETs
+  # offerInfo is sent with POST
+  offer:
+    type: object
+    properties:
+      isActive:
+        type: boolean
+      offerTitle:
+        type: string
+      costPerChild:
+        type: number
+        multipleOf: 0.01
+        required: true
+      costPerAdult:
+        type: number
+        multipleOf: 0.01
+        required: true
+      maxGuests:
+        type: integer
+        minimum: 1
+        required: true
+      description:
+        type: string
+      offerPreviewPicture:
+        type: file
+      pictures:
+        type: array
+        items:
+          type: file
+      rooms:
+        type: array
+        required: false
+        items:
+          type: string
+  reservationObject:
+    type: object
+    properties:
+      reservation:
+        type: object
+        properties:
+          reservationID: integer
+          hotelRoomNumber: string
+          offerID: integer
+          fromTime: datetime
+          toTime: datetime
+          childrenCount: integer
+          adultsCount: integer
+      client:
+        type: object
+        properties:
+          clientID: integer
+          name: string
+          surname: string
+
 #--------------------------------------------------------------------------------------------------------
 #-----------------------------------------------OFFERS---------------------------------------------------
 #--------------------------------------------------------------------------------------------------------
 /offers:
   description: List of offers present in the system
-  # `offer` type + "isActive" field
   get:
-    description: List all offers related to hotel.
+    description: List all offers related to hotel
     responses: 
       200:
         body: 
           application/json:
-            type: array
-            items: |
-              {
-                "isActive": boolean,
-                "costPerChild": double,
-                "costPerAdult": double,
-                "maxGuests": int,
-                "description": string,
-                "offerPreviewPicture": file,
-                "pictures": file[]
-                "rooms": string[]
-              }
+            type: offer[]
             example: |
               [
                 {
                   "isActive": true,
+                  "offerTitle": "Great Offer",
                   "costPerChild": 120.0,
                   "costPerAdult": 150.0,
                   "maxGuests": 4,
-                  "description": "You gonna be awestruck by this offer."
+                  "description": "You gonna be awestruck by this offer.",
                   "offerPreviewPicture": "kBKuB875JH5VJkhu",
-                  "pictures": [ "hbUbkjd86jhVG7JFjh", "kjdsf328KB53JVT9jk"],
+                  "pictures": [ "hbUbkjd86jhVG7JFjh", "kjdsf328KB53JVT9jk" ],
                   "rooms": [ "12F", "13A"]
                 },
                 {
                   "isActive": false,
+                  "offerTitle": "Bad Offer",
                   "costPerChild": 130.0,
                   "costPerAdult": 130.0,
                   "maxGuests": 2,
-                  "description": "See yourself."
+                  "description": "",
                   "offerPreviewPicture": "kjdsf328KB53JVT9jk",
-                  "pictures": [ "kBKuB875JH5VJkhu", "hbUbkjd86jhVG7JFjh"],
+                  "pictures": [ "kBKuB875JH5VJkhu", "hbUbkjd86jhVG7JFjh" ],
                   "rooms": [ "10", "121", "18", "01"]
                 }
               ]
@@ -106,7 +149,7 @@ types:
     description: Add new offer
     body:
       application/json:
-        type: offer
+        type: offerInfo
         example: |
           {
             "offerTitle": "Awesome offer",
@@ -114,27 +157,34 @@ types:
             "costPerAdult": 80,
             "maxGuests": 5,
             "description": "Apartment overlooking the sea",
+            "offerPreviewPicture": "hbUbkjd86jhVG7JFjh",
             "pictures": [],
-            "rooms": ["12A”, "14B”]
+            "rooms": [ "12A", "14B" ]
           }
     responses:
       200:
       #optional - return offerID
   /{offerID}:
+    uriParameters: 
+      offerID: integer
     get:
       description: Gets information related to a specific offer with ID equal to offerID
       responses:
         200:
           body:
             application/json:
-              type: |
+              type: offer
+              example: |
                 {
-                  "isActive": boolean,
-                  "costPerChild": double,
-                  "costPerAdult": double,
-                  "maxGuests": int,
-                  "description": string,
-                  "pictures": file[]
+                  "isActive": false,
+                  "offerTitle": "Rich Offer",
+                  "costPerChild": 50.0,
+                  "costPerAdult": 60.0,
+                  "maxGuests": 5,
+                  "description": "Offer description",
+                  "offerPreviewPicture": "hbUbkjd86jhVG7JFjh",
+                  "pictures": [],
+                  "rooms": [ "212" ]
                 }
         401:
           description: Offer does not belong to this hotel
@@ -144,7 +194,7 @@ types:
       #Usuwanie polega na sprawdzeniu czy w systemie są jeszcze nie zrealizowane rezerwacje w ramach tej oferty. 
       #Jeśli tak - zwracamy błąd 409 i nie podejmujemy żadnych działań
       #Jeśli nie - "odpinamy" pokoje od oferty (tabela OfferHotelRooms) i oznaczamy ofertę jako usuniętą (znacznik isDeleted w tabeli Offer)  
-      descritpion: Server marks the offer as deleted.
+      description: Server marks the offer as deleted.
       responses:
         200:
         401:
@@ -158,16 +208,26 @@ types:
               example: |
                 { "error": "There are still pending reservations for this offer" }
     patch:
-      descritpion: Server modifies offer.
+      description: Server modifies offer
       body:
         application/json:
-          { 
-            "isActive": boolean,
-            "offerTitle": string,
-            "offerPreviewPicture": file,
-            "description": string,
-            "offerPictures": file[]
-          }
+          type: object
+          properties: 
+            isActive: boolean
+            offerTitle: string
+            description: string
+            offerPreviewPicture: file
+            offerPictures:
+              type: array
+              items: file
+          example: |
+            { 
+              "isActive": true,
+              "offerTitle": "Not so great Offer",
+              "offerPreviewPicture": "hbUbkjd86jhVG7JFjh",
+              "description": "",
+              "offerPictures": []
+            }
       responses:
         200:
         401:
@@ -187,7 +247,13 @@ types:
           200:
             body:
               application/json:
-                example: |       
+                type: array
+                items:
+                  type: object
+                  properties: 
+                    roomID: integer
+                    hotelRoomNumber: string
+                example: |
                   [
                     {
                       "roomID": 5,
@@ -199,11 +265,11 @@ types:
                     }
                   ]
           401:
-            description: Offer does not belong to this hotel     
+            description: Offer does not belong to this hotel
           404:
-            description: Offer not found   
+            description: Offer not found
       post:
-        description: Add a room associated with hotel offer.
+        description: Add a room associated with hotel offer
         body:
           application/json:
             type: object
@@ -219,8 +285,9 @@ types:
             description: Offer does not belong to this hotel 
           404:
             description: Offer not found
-      
       /{roomID}:
+        uriParameters: 
+          roomID: integer
         delete:       
           description: Removes room from the offer
           responses:
@@ -247,6 +314,12 @@ types:
       200:
         body:
           application/json:
+            type: array
+            items:
+              type: object
+              properties: 
+                roomID: integer
+                hotelRoomNumber: string
             example: |
               [
                 {
@@ -261,13 +334,13 @@ types:
       400:
         body:
           application/json:
-          description: An error containing message describing the type of error
+            description: An error containing message describing the type of error
             example: |
               {
                 "error": "Room number not found"
               }
   post:
-    description: Add a room not associated with any offer. (HotelRoom table)
+    description: Add a room not associated with any offer (HotelRoom table)
     body:
       application/json:
         type: object
@@ -279,7 +352,7 @@ types:
           }
     responses:
       200:
-        description: Room added successfully.
+        description: Room added successfully
         body:
           application/json:
             type: object
@@ -290,13 +363,15 @@ types:
                 "roomID": 14
               } 
   /{roomID}:
+    uriParameters: 
+      roomID: integer
     delete:
      #Usuwanie polega na sprawdzeniu czy w systemie są jeszcze nie zrealizowane rezerwacje w ramach tego pokoju. 
      #Przenosimy rezerwacje do innych pokoi zebranych w ramach tej samej oferty (ZAWSZE). 
      #Jeśli rezerwacji nie da się przenieść do innych pokoi w ramach tej samej oferty - zwracamy błąd 409 i nie podejmujemy żadnych działań.
      #Jeśli rezerwacje da się przenieść lub nie ma żadnych rezerwacji - we wszystkich rezerwacjach (tabela z rezerwacjami), które wskazują na rozpatrywany pokój
      #zmieniamy pokój na NULL (należy rozwiązać problem ze spójnością referencyjną) i usuwamy pokój (tabela HotelRoom).
-      descritpion: Deletes room with given ID. (entry in HotelRoom table is deleted)
+      description: Deletes room with given ID. (entry in HotelRoom table is deleted)
       responses:
         200:
         401:
@@ -325,34 +400,14 @@ types:
         description: get reservations that are currently underway or all reservations (including ones that begin in the future)
       roomID:
         required: false
-        type: int
+        type: integer
         description: get reservations connected with room with ID equal to roomID parameter
     responses:
       200:
         body:
           application/json:
-            description: Returns an array of objects containing reservation and client information related to a hotel room reservation.  
-            type: |
-              [
-                {
-                  reservation:
-                  {
-                    reservationID: int,
-                    hotelRoomNumber: string,
-                    offerID: int,
-                    fromTime: date,
-                    toTime: date,
-                    childrenCount: int,
-                    adultsCount: int
-                  }
-                  client: 
-                  {
-                    clientID: int,                    
-                    name: string,
-                    surname: string
-                  }
-                }
-              ]
+            description: Returns an array of objects containing reservation and client information related to a hotel room reservation
+            type: reservationObject[]
       400:
         body:
           application/json:
@@ -371,24 +426,39 @@ types:
       200:
         body:
           application/json:
-            type: |
+            type: object
+            properties:
+              country: string
+              city: string
+              hotelName: string
+              hotelDesc: string
+              hotelPreviewPicture: file
+              hotelPictures: file[]
+            example: |
               {
-                "country": string, 
-                "city": string,
-                "hotelPreviewPicture": file,
-                "hotelName": string,
-                "hotelDesc": string,
-                "hotelPictures": file[]  
+                "country": "Poland",
+                "city": "Warsaw",
+                "hotelName": "Novotel",
+                "hotelDesc": "Live Limitless",
+                "hotelPreviewPicture": "",
+                "hotelPictures": []
               }
   patch:
     description: Update info about hotel  
-     body:
-        application/json:
-          { 
-            "hotelDesc": string,
-            "hotelPreviewPicture": file,
-            "hotelPictures": file[],
-            "hotelName": string
+    body:
+      application/json:
+        type: object
+        properties:
+          hotelName: string
+          hotelDesc: string
+          hotelPreviewPicture: file
+          hotelPictures: file[]
+        example: |
+          {
+            "hotelName": "Novotel",
+            "hotelDesc": "Live Limitless",
+            "hotelPreviewPicture": "",
+            "hotelPictures": []
           }
-      responses:
-        200:
+    responses:
+      200:
