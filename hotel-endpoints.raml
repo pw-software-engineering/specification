@@ -104,6 +104,12 @@ types:
   get:
     description: List all offers related to hotel
     is: [pageable]
+    queryParameters:
+      isActive:
+        required: false
+        type: boolean
+        description: Optional parameter deciding what type of offers should be returned |
+        true - only active, false - only inactive, no value - all offers
     responses: 
       200:
         body: 
