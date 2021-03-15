@@ -1560,7 +1560,8 @@ liczbę gości oferta może przyjąć. Jeżeli będzie chciał te informacje zmi
 #### **Pobieranie oferty**
 
 ```yaml
-/{offerID}:
+/offers
+  /{offerID}:
     uriParameters: 
       offerID: integer
     get:
@@ -1637,7 +1638,7 @@ rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienion
 ```yaml
 /offers:
   /{offerID}:
-   patch:
+    patch:
       description: Server modifies offer
       body:
         application/json:
@@ -1683,7 +1684,7 @@ Próba modyfikacji oferty oznaczonej `isDeleted = true` powinna zakończyć się
 ```yaml
 /offers:
   /{offerID}:
-   /rooms:
+    /rooms:
       get:
         description: Lists all rooms related to the hotel offer
         is: [pageable]
