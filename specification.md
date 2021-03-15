@@ -1437,7 +1437,7 @@ niedostępności ofert odpowiednio wyznaczone przez hotel.
 Komunikacja pomiędzy modułem aplikacji hotelowej, a serwerem
 odbywa się przy użyciu połączeń HTTP i REST API. Poniżej opisane są
 wszystkie endpointy oraz związane z nimi żądania i odpowiedzi HTTP
-zamodelowane w RAML. Używane w kodzie poniżej typy zostały dokładniej w pliku [hotel-endpoints.raml](hotel-endpoints.raml).
+zamodelowane w RAML. Używane w kodzie poniżej typy zostały dokładnie opisane w pliku [hotel-endpoints.raml](hotel-endpoints.raml).
 
 ## Zarządzanie ofertami i pokojami
 
@@ -1447,14 +1447,21 @@ zamodelowane w RAML. Używane w kodzie poniżej typy zostały dokładniej w plik
 
 ```yaml
 /offers:
+  description: List of offers present in the system
   get:
     description: List all offers related to hotel
     is: [pageable]
+    queryParameters:
+      isActive:
+        required: false
+        type: boolean
+        description: Optional parameter deciding what type of offers should be returned |
+        true - only active, false - only inactive, no value - all offers
     responses: 
       200:
         body: 
           application/json:
-            type: offer[]
+            type: offerPreview[]
             example: |
               [
                 {
@@ -1463,10 +1470,7 @@ zamodelowane w RAML. Używane w kodzie poniżej typy zostały dokładniej w plik
                   "costPerChild": 120.0,
                   "costPerAdult": 150.0,
                   "maxGuests": 4,
-                  "description": "You gonna be awestruck by this offer.",
                   "offerPreviewPicture": "kBKuB875JH5VJkhu",
-                  "pictures": [ "hbUbkjd86jhVG7JFjh", "kjdsf328KB53JVT9jk" ],
-                  "rooms": [ "12F", "13A"]
                 },
                 {
                   "isActive": false,
@@ -1474,10 +1478,7 @@ zamodelowane w RAML. Używane w kodzie poniżej typy zostały dokładniej w plik
                   "costPerChild": 130.0,
                   "costPerAdult": 130.0,
                   "maxGuests": 2,
-                  "description": "",
                   "offerPreviewPicture": "kjdsf328KB53JVT9jk",
-                  "pictures": [ "kBKuB875JH5VJkhu", "hbUbkjd86jhVG7JFjh" ],
-                  "rooms": [ "10", "121", "18", "01"]
                 }
               ]
 ```
@@ -1497,9 +1498,10 @@ jeśli nie posiada żadnych pokoi – zwracana jest pusta lista.
     description: Add new offer
     body:
       application/json:
-        type: offerInfo
+        type: offer
         example: |
           {
+            "isActive": true,
             "offerTitle": "Awesome offer",
             "costPerChild": 50,
             "costPerAdult": 80,
@@ -1558,8 +1560,9 @@ liczbę gości oferta może przyjąć. Jeżeli będzie chciał te informacje zmi
 #### **Pobieranie oferty**
 
 ```yaml
-/offers:
-  /{offerID}:
+/{offerID}:
+    uriParameters: 
+      offerID: integer
     get:
       description: Gets information related to a specific offer with ID equal to offerID
       responses:
@@ -1576,8 +1579,7 @@ liczbę gości oferta może przyjąć. Jeżeli będzie chciał te informacje zmi
                   "maxGuests": 5,
                   "description": "Offer description",
                   "offerPreviewPicture": "hbUbkjd86jhVG7JFjh",
-                  "pictures": [],
-                  "rooms": [ "212" ]
+                  "pictures": []
                 }
         401:
           description: Offer does not belong to this hotel
@@ -1592,7 +1594,7 @@ Hotel w każdym momencie może pobrać szczegółowe informacje o dowolnej włas
 /offers:
   /{offerID}:
     delete:
-      description: Server marks the offer as deleted.
+       description: Server marks the offer as deleted.
       responses:
         200:
         401:
@@ -1635,7 +1637,7 @@ rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienion
 ```yaml
 /offers:
   /{offerID}:
-    patch:
+   patch:
       description: Server modifies offer
       body:
         application/json:
@@ -1681,7 +1683,7 @@ Próba modyfikacji oferty oznaczonej `isDeleted = true` powinna zakończyć się
 ```yaml
 /offers:
   /{offerID}:
-    /rooms:
+   /rooms:
       get:
         description: Lists all rooms related to the hotel offer
         is: [pageable]
@@ -1701,15 +1703,18 @@ Próba modyfikacji oferty oznaczonej `isDeleted = true` powinna zakończyć się
                   properties: 
                     roomID: integer
                     hotelRoomNumber: string
+                    offerID: integer[]
                 example: |
                   [
                     {
                       "roomID": 5,
-                      "hotelRoomNumber": "13A"
+                      "hotelRoomNumber": "13A",
+                      "offerID": [1, 15]
                     },
                     {
                       "roomID": 7,
-                      "hotelRoomNumber": "16"
+                      "hotelRoomNumber": "16",
+                      "offerID": [2, 4, 5]
                     }
                   ]
           401:
@@ -1758,7 +1763,9 @@ Jeden pokój można powiązać z wieloma ofertami.
 /offers:
   /{offerID}:
     /rooms:
-      /{roomID}:
+     /{roomID}:
+        uriParameters: 
+          roomID: integer
         delete:       
           description: Removes room from the offer
           responses:
@@ -1767,6 +1774,7 @@ Jeden pokój można powiązać z wieloma ofertami.
               description: Offer or room with given ID does not belong to this hotel   
             404:
               description: Offer or room not found
+
 ```
 
 Z oferty możliwe jest również usunięcie przypisanego pokoju. Wówczas
@@ -1799,15 +1807,18 @@ do niego przypisanych.
               properties: 
                 roomID: integer
                 hotelRoomNumber: string
+                offerID: integer[]
             example: |
               [
                 {
                   "roomID": 5,
-                  "hotelRoomNumber": "13A"
+                  "hotelRoomNumber": "13A",
+                  "offerID": [1, 15, 28]
                 },
                 {
                   "roomID": 7,
-                  "hotelRoomNumber": "16"
+                  "hotelRoomNumber": "16",
+                  "offerID": [3, 4, 7]
                 }
               ]
       404:
@@ -1826,7 +1837,7 @@ Jeżeli został przekazany, możliwe są 2 rodzaje odpowiedzi:
 
 ```yaml
 /rooms:
-  post:
+   post:
     description: Add a room not associated with any offer (HotelRoom table)
     body:
       application/json:
@@ -1961,7 +1972,7 @@ Endpoint służący do pobrania danych o hotelu znajdujących się na serwerze.
 
 ```yaml
 /hotelInfo:
-  patch:
+   patch:
     description: Update info about hotel  
     body:
       application/json:
