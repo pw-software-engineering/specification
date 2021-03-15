@@ -23,9 +23,11 @@ traits:
           default: 10
 
 types:
-  offerInfo:
+  offerPreview:
     type: object
     properties:
+      isActive:
+        type: boolean
       offerTitle:
         type: string
       costPerChild:
@@ -40,22 +42,8 @@ types:
         type: integer
         minimum: 1
         required: true
-      description:
-        type: string
       offerPreviewPicture:  # base-64 encoded image
         type: file
-      pictures:             # base-64 encoded images
-        type: array
-        items:
-          type: file
-      rooms:
-        type: array
-        required: false
-        items:
-          type: string
-  # offer is offerInfo + "isActive"
-  # offer is returned by GETs
-  # offerInfo is sent with POST
   offer:
     type: object
     properties:
@@ -120,7 +108,7 @@ types:
       200:
         body: 
           application/json:
-            type: offer[]
+            type: offerPreview[]
             example: |
               [
                 {
@@ -129,10 +117,7 @@ types:
                   "costPerChild": 120.0,
                   "costPerAdult": 150.0,
                   "maxGuests": 4,
-                  "description": "You gonna be awestruck by this offer.",
                   "offerPreviewPicture": "kBKuB875JH5VJkhu",
-                  "pictures": [ "hbUbkjd86jhVG7JFjh", "kjdsf328KB53JVT9jk" ],
-                  "rooms": [ "12F", "13A"]
                 },
                 {
                   "isActive": false,
@@ -140,19 +125,17 @@ types:
                   "costPerChild": 130.0,
                   "costPerAdult": 130.0,
                   "maxGuests": 2,
-                  "description": "",
                   "offerPreviewPicture": "kjdsf328KB53JVT9jk",
-                  "pictures": [ "kBKuB875JH5VJkhu", "hbUbkjd86jhVG7JFjh" ],
-                  "rooms": [ "10", "121", "18", "01"]
                 }
               ]
   post:
     description: Add new offer
     body:
       application/json:
-        type: offerInfo
+        type: offer
         example: |
           {
+            "isActive": true,
             "offerTitle": "Awesome offer",
             "costPerChild": 50,
             "costPerAdult": 80,
@@ -184,8 +167,7 @@ types:
                   "maxGuests": 5,
                   "description": "Offer description",
                   "offerPreviewPicture": "hbUbkjd86jhVG7JFjh",
-                  "pictures": [],
-                  "rooms": [ "212" ]
+                  "pictures": []
                 }
         401:
           description: Offer does not belong to this hotel
@@ -255,15 +237,18 @@ types:
                   properties: 
                     roomID: integer
                     hotelRoomNumber: string
+                    offerID: integer[]
                 example: |
                   [
                     {
                       "roomID": 5,
-                      "hotelRoomNumber": "13A"
+                      "hotelRoomNumber": "13A",
+                      "offerID": [1, 15]
                     },
                     {
                       "roomID": 7,
-                      "hotelRoomNumber": "16"
+                      "hotelRoomNumber": "16",
+                      "offerID": [2, 4, 5]
                     }
                   ]
           401:
@@ -318,15 +303,18 @@ types:
               properties: 
                 roomID: integer
                 hotelRoomNumber: string
+                offerID: integer[]
             example: |
               [
                 {
                   "roomID": 5,
-                  "hotelRoomNumber": "13A"
+                  "hotelRoomNumber": "13A",
+                  "offerID": [1, 15, 28]
                 },
                 {
                   "roomID": 7,
-                  "hotelRoomNumber": "16"
+                  "hotelRoomNumber": "16",
+                  "offerID": [3, 4, 7]
                 }
               ]
       404:
