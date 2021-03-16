@@ -83,7 +83,6 @@ types:
         type: object
         properties:
           reservationID: integer
-          hotelRoomNumber: string
           offerID: integer
           fromTime: datetime
           toTime: datetime
@@ -95,6 +94,11 @@ types:
           clientID: integer
           name: string
           surname: string
+      room:
+        type: object
+        properties:
+          roomID: int
+          hotelRoomNumber: string
 
 #--------------------------------------------------------------------------------------------------------
 #-----------------------------------------------OFFERS---------------------------------------------------
