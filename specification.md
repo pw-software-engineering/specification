@@ -2575,7 +2575,7 @@ wypełnia formularz:
 
 -   Number of adults: 2
 
-i przesyła go do serwera. Po chwili otrzymuje szczegóły dot. swojej
+i przesyła go do serwera używając endpoint'u `/hotels/{hotelID}/offers/{offerID}/reservations POST`. Po chwili otrzymuje szczegóły dot. swojej
 potwierdzonej rezerwacji.
 
 -   Klient najpierw popełnia pomyłkę i w polu \"Liczba dzieci\" wpisuje
@@ -2583,14 +2583,12 @@ potwierdzonej rezerwacji.
     danych.\
     Jeżeli walidacja UI uniemożliwia wprowadzenie takiej liczby, można
     zasymulować ten przypadek ręcznym odniesieniem się do
-    `/Reservations POST`.
+    `/hotels/{hotelID}/offers/{offerID}/reservations POST`.
 
 -   Tym razem klient wypełnił formularz poprawnie. Nastąpiła wymiana
     wiadomości:
 
-    -   Client &#129030; Serwer `/Reservations POST`
-
-    -   Serwer &#129030; Hotel `RESERVATION_CREATE`
+    -   Client &#129030; Serwer `/hotels/{hotelID}/offers/{offerID}/reservations POST`
 
     -   Client &#129028; Serwer `HTTP 200`
 
@@ -2599,7 +2597,7 @@ potwierdzonej rezerwacji.
     formularzu.
 
 -   Rezerwację widzi również hotel. Ma łatwy podgląd danych klienta,
-    pokoju do którego zostanie skierowany oraz oferty, w ramach której
+    pokoju w którym odbędzie się pobyt oraz oferty, w ramach której
     złożono rezerwację wraz z przedziałem czasowym z nią związanym.
 
 ## Anulowanie Rezerwacji
@@ -2609,26 +2607,22 @@ Klient ma na swoim koncie 3 rezerwacje:
 1.  rezerwacja zakończona kilka dni temu - istnieje możliwość oceny
     pobytu,
 
-2.  rezerwacja w trakcie,
+2.  rezerwacja w trakcie realizacji,
 
-3.  rezerwacja z przyszłą datą pobytu, (już opłacona).
+3.  rezerwacja z przyszłą datą pobytu.
 
 Spośród nich tylko jedną (ostatnią) można anulować.
 
 -   Próba ręcznego anulowania rezerwacji przeszłej bądź będącej w
     trakcie, przez odwołanie się do endpointu
-    `/Reservations/{HotelID}/{ReservationID} DELETE` zwraca 400. Bazy
-    danych pozostają nienaruszone.
+     `/hotels/{hotelID}/offers/{offerID}/reservations/{reservationID} DELETE` zwraca 400. Baza
+    danych pozostaje nienaruszona.
 
 -   Anulowanie przyszłej rezerwacji kończy się sukcesem. Wymiana
     komunikatów:
 
     -   Client &#129030; Serwer
-        `/Reservations/{HotelID}/{ReservationID} DELETE`
-
-    -   Serwer &#129030; Hotel `RESERVATION_DELETE`
-
-    -   Serwer &#129028; Hotel `RESERVATION_DELETE_SUCCESS`
+        `/hotels/{hotelID}/offers/{offerID}/reservations/{reservationID} DELETE`
 
     -   Client &#129028; Serwer `HTTP 200`
 
@@ -2637,8 +2631,7 @@ Spośród nich tylko jedną (ostatnią) można anulować.
 -   Hotel również widzi aktualną listę rezerwacji.
 
 -   Jeśli zaszła taka potrzeba, dane (np. te dotyczące (nie)dostępności
-    oferty) po stronie serwera zostały zaktualizowane odpowiednio do
-    zmian - Serwer oraz hotel pozostają zsynchronizowane.
+    oferty) po stronie serwera zostały zaktualizowane.
 
 # Wymagania Technologiczne
 
