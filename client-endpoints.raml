@@ -409,6 +409,17 @@ types:
         description: Resource not found: there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or target review does not exist/is not related to the offer
   put:
     description: Edits a client review related to an offer
+	body:
+		application/json: 
+		   type: |
+                {
+                  "reviewID": int,
+                  "content": string,
+                  "rating": int,
+                  "creationDate": datetime,
+                  "reviewerUsername": string
+                }
+              
     responses:
       200:
       401:
