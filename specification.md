@@ -1283,7 +1283,17 @@ jeśli nie posiada żadnych pokoi – zwracana jest pusta lista.
           }
     responses:
       200:
-      #optional - return offerID
+        description: Succesfully added. Return offerID
+        body:
+          application/json:
+            example: |
+              { "offerID": 3 }
+      400:
+        description: Unable to add offer
+        body:
+          application/json:
+            example: |
+              { "error": "Unable to add offer" }
 ```
 
 Proces dodawania nowej oferty zaczyna się od wypełnienia odpowiedniego
@@ -1330,7 +1340,7 @@ liczbę gości oferta może przyjąć. Jeżeli będzie chciał te informacje zmi
 #### **Pobieranie oferty**
 
 ```yaml
-/offers
+/offers:
   /{offerID}:
     uriParameters: 
       offerID: integer
@@ -1365,7 +1375,7 @@ Hotel w każdym momencie może pobrać szczegółowe informacje o dowolnej włas
 /offers:
   /{offerID}:
     delete:
-       description: Server marks the offer as deleted.
+      description: Server marks the offer as deleted.
       responses:
         200:
         401:
@@ -1431,6 +1441,12 @@ rezerwacje kończy się niepowodzeniem; żadne dane nie powinny zostać zmienion
             }
       responses:
         200:
+        400:
+          description: Unable to edit offer
+          body:
+            application/json:
+              example: |
+                { "error": "Unable to edit offer" }
         401:
           description: Offer does not belong to this hotel
         404:
@@ -1518,6 +1534,12 @@ zwracany jest błąd `404`.
             example: 21
         responses:
           200:
+          400:
+            description: Unable to add room
+            body:
+              application/json:
+                example: |
+                  { "error": "Unable to add room" }
           401:
             description: Offer or room with given ID does not belong to this hotel 
           404:
@@ -1534,7 +1556,7 @@ Jeden pokój można powiązać z wieloma ofertami.
 /offers:
   /{offerID}:
     /rooms:
-     /{roomID}:
+      /{roomID}:
         uriParameters: 
           roomID: integer
         delete:       
@@ -1545,7 +1567,6 @@ Jeden pokój można powiązać z wieloma ofertami.
               description: Offer or room with given ID does not belong to this hotel   
             404:
               description: Offer or room not found
-
 ```
 
 Z oferty możliwe jest również usunięcie przypisanego pokoju. Wówczas
@@ -1608,7 +1629,7 @@ Jeżeli został przekazany, możliwe są 2 rodzaje odpowiedzi:
 
 ```yaml
 /rooms:
-   post:
+  post:
     description: Add a room not associated with any offer (HotelRoom table)
     body:
       application/json:
@@ -1623,6 +1644,12 @@ Jeżeli został przekazany, możliwe są 2 rodzaje odpowiedzi:
             type: integer
             description: roomID
             example: 14
+      400:
+        description: Unable to add room
+        body:
+          application/json:
+            example: |
+              { "error": "Unable to add room" }
       409:
         description: Room with given number already exists
 ```
@@ -1743,7 +1770,7 @@ Endpoint służący do pobrania danych o hotelu znajdujących się na serwerze.
 
 ```yaml
 /hotelInfo:
-   patch:
+  patch:
     description: Update info about hotel  
     body:
       application/json:
@@ -1762,6 +1789,12 @@ Endpoint służący do pobrania danych o hotelu znajdujących się na serwerze.
           }
     responses:
       200:
+      400:
+        description: Unable to add offer
+        body:
+          application/json:
+            example: |
+              { "error": "Unable to add offer" }
 ```
 
 Endpoint służący do aktualizacji danych reprezentujących hotel.
@@ -1839,7 +1872,7 @@ types:
 
 Rejestracja klientów do serwisu odbywa się poprzez bezpośredni kontakt
 z administratorem modułu serwerowego i prośbą utworzenia nowego wpisu w bazie
-danych do tabli przetrzymującej informacje o wszystkich kontach użytkowników.\
+danych do tabeli przetrzymującej informacje o wszystkich kontach użytkowników.\
 Poniżej przedstawiona została implementacja logowania klientów w przypadku
 procesu autentykacji przeprowadzanej przez serwer w oparciu o lokalną
 tablicę sekretów w bazie danych. Jako login klienta przyjmowany jest jego obecna nazwa
@@ -1849,8 +1882,8 @@ zwracany jest odpowiednio token przechowujący ID klienta. Zwracane ID
 klienta odpowiada numerowi rekordu w tabeli bazy danych serwera, w której
 przetrzymywane sa informacje o wszystkich użytkownikach.\
 Do zarządzania danymi związanymi z kontem klienta oraz logowania do
-serwisu służą odpowiednio endpointy: `/Client` oraz `/Client/login`.
-Endpoint `/Client` jest zabezpieczony wyżej zdefiniowanym schematem
+serwisu służą odpowiednio endpointy: `/client` oraz `/client/login`.
+Endpoint `/client` jest zabezpieczony wyżej zdefiniowanym schematem
 autentykacji, natomiast endpoint służący do logowania nie wymaga
 przesyłania nagłówka `x-session-token`.
 
@@ -1870,6 +1903,8 @@ przesyłania nagłówka `x-session-token`.
                 "username": "User123",
                 "email": "j.kowalski@example.mail.com"
               }
+      401:
+        description: Login credentials not correct
   patch:
     description: Update currently logged in client's information.
     body: 
@@ -1904,12 +1939,13 @@ przesyłania nagłówka `x-session-token`.
                 }
 ```
 
-Endpoint ten definiuje 2 metody HTTP: `GET` oraz `PATCH`. Metoda `GET`
-pobiera informacje o aktualnie zalogowanym użytkowniku, natomiast metoda
-`PATCH` udostępnia możliwość zmiany danych użytkownika takich jak e-mail
-lub nazwa użytkownika. W przypadku niepowodzenia metody `PATCH` wysyłany
-jest obiekt JSON z właściwością `"errorDescription"` opisującą rodzaj
-błędu.
+Endpoint ten definiuje 2 metody HTTP: `GET` oraz `PATCH`.\
+Metoda `GET` pobiera informacje o aktualnie zalogowanym użytkowniku,
+natomiast metoda `PATCH` udostępnia możliwość zmiany danych użytkownika
+takich jak e-mail lub nazwa użytkownika. Użytkownik może zmienić tylko login,
+tylko hasło bądź obie te rzeczy. W przypadku niepowodzenia
+metody `PATCH` wysyłany jest obiekt JSON z właściwością
+`"errorDescription"` opisującą rodzaj błędu.
 
 #### **Rejestracja/logowanie klienta**
 
@@ -1948,8 +1984,8 @@ błędu.
                 }
 ```
 
-Endpoint ten nie jest zabezpieczony przez schemat autentykacji – nie
-jest wymagane dołączanie tokenu do nagłówka `"x-session-token"`.
+Endpoint ten (jako jedyny) nie jest zabezpieczony przez schemat autentykacj
+ – nie jest wymagane dołączanie tokenu do nagłówka `"x-session-token"`.
 Służy do logowania się użytkowników do systemu za pomocą ustalonego
 przy rejestracji loginu i hasła. Wysłane przez klienta dane logowania
 jako metoda `POST` sprawdzane są następnie przez serwer. W przypadku
@@ -1960,6 +1996,54 @@ kolejnych żądań HTTP w nagłówku `"x-session-token"`. W przypadku
 niepowodzenia serwer zwraca odpowiedni kod błędu oraz dokładny opis
 błędu w ciele odpowiedzi HTTP. Powyżej znajdują się szczegółowe opisy
 żądań i odpowiedzi HTTP w języku RAML.
+
+#### **Rejestracje złożone przez klienta**
+
+```yaml
+/client:
+  /reservations:
+    get:
+      description: Get list of all reservations made by the client
+      responses:
+        200:
+          body:
+            application/json:
+              description: List of reservation information and offerID relating to the reservation and preview information related to the hotel
+              type: |
+                [
+                  {
+                    "hotelInfoPreview": {
+                      "hotelID": int,
+                      "hotelName": string,
+                      "country": string,
+                      "city": string
+                    },
+                    "offerReservations": {
+                      "reservationsInfo": [
+                        {
+                          "reservationID": int,
+                          "from": datetime,
+                          "to": datetime,
+                          "numberOfChildren": int,
+                          "numberOfAdults": int
+                        }
+                      ],
+                      "offerID": int,
+                      "offerReviewID": int? (optional - not present if there is no client review for an offer),
+                    }
+                  }
+                ]
+```
+
+W tym miejscu klient może uzyskać wszystkie rezerwacje, które kiedykolwiek
+złożył do systemu (poza tymi, które zdążył usunąć). Zwracane obiekty mają
+złożoną strukturę. `hotelInfoPreview` to pole zawierające informacje o hotelu, w
+którym rezerwacja została złożona. Obiekt `offerReservations` składa się z listy
+wszystkich rezerwacji, które zostały złożone w ramach tej oferty, ID tej oferty
+oraz opcjonalne `offerReviewID` – identyfikator opinii, jeżeli klient taką opinię wystawił danej ofercie.
+
+Nie przewiduje się błędów związanych z listowaniem rezerwacji. W razie braku
+rezerwacji spełniających kryteria – zwracana jest pusta lista.
 
 ## Wyszukiwanie hoteli / ofert
 
@@ -2003,7 +2087,10 @@ błędu w ciele odpowiedzi HTTP. Powyżej znajdują się szczegółowe opisy
 Endpoint służy do przeglądania hoteli współpracujących z systemem. Ponadto
 użytkownik ma możliwość wyszukiwania wymarzonego hotelu po zestawie
 filtrów takich jak lokalizacja, czy nazwa hotelu. Wynikiem udanego
-wyszukiwania hoteli jest kod 200 wraz z listą zawierającą obiekty z podstawowymi informacjami o nich.
+wyszukiwania hoteli jest kod `200` wraz z listą zawierającą obiekty
+z podstawowymi informacjami o nich. Jeżeli nie ma hoteli spełniających
+kryteria wyszukiwania, zwraca się pustą listę.
+
 Każdy z elementów listy składa się wyłącznie z
 kluczowych informacji na temat hotelu co poprawia czytelność wyników
 wyszukiwania. Są to odpowiednio nazwa hotelu i jego lokalizacja.
@@ -2103,7 +2190,7 @@ także maksymalna liczba gości, która może skorzystać z oferty.
 Użytkownik aplikacji przy wyszukiwaniu wymarzonej oferty ponownie może
 skorzystać z zestawu filtrów. Poprawne wyszukiwanie ofert kończy się,
 więc zwróceniem kodu `200` wraz z listą obiektów typu OfferPreview
-przedstawionych na powyższym schemacie. O niepoprawnym użyciu filtrów
+opisanych na powyższym schemacie. O niepoprawnym użyciu filtrów
 czy błędzie innej postaci informuje kod `400`.
 
 #### **Szczegółowe informacje o ofercie**
@@ -2133,7 +2220,6 @@ czy błędzie innej postaci informuje kod `400`.
                   }
             404:
               description: Resource not found: e.g. there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or hotel/offer does not exist
-
 ```
 
 Po wybraniu z listy konkretnej oferty możemy poznać jej szczegóły takie
@@ -2141,9 +2227,15 @@ jak opis, zdjęcia czy opinie innych użytkowników aplikacji, którzy
 skorzystali już z tej oferty. Przykładowy obiekt offer zwracany w
 przypadku poprawnego offerID został przedstawiony na powyższej grafice
 ilustrującej cały endpoint. W przypadku wskazania oferty o
-nieprawidłowym offerID jesteśmy informowani o błędzie przez kod 404.
+nieprawidłowym offerID jesteśmy informowani o błędzie przez kod `404`.
 
 ## Zarządzanie rezerwacjami
+
+Warto zwrócić uwagę na mechanizm zarządzania rezerwacjami z perspektywy klienta.
+Może on znaleźć listę wszystkich swoich rezerwacji pod adresem
+`/client/reservations`, natomiast jeśli zechciałby którąś z nich anulować, bądź
+stworzyć nową – musi odwołać się do niej za pośrednictwem oferty ją
+reprezentującej, tak jak poniżej.
 
 ### `/hotels/{hotelID}/offers/{offerID}/reservations`
 
@@ -2179,6 +2271,9 @@ nieprawidłowym offerID jesteśmy informowani o błędzie przez kod 404.
 Klient, chcąc stworzyć nową ofertę, powinien odwołać się do węzła
 komunikacyjnego reprezentującego konkretną ofertę w systemie ( + `.../reservations`).
 Przesłane informacje dotyczą czasu pobytu oraz liczby dzieci / dorosłych.
+Serwer nie musi dbać o fakt, czy dany klient posiada już rezerwację z tym samym
+czasie w tej samej ofercie – nawet identyczną. Klient może zechcieć przecież
+stworzyć rezerwację w czyimś imieniu.
 
 #### **Anulowanie rezerwacji**
 
@@ -2235,6 +2330,9 @@ Anulować można oczywiście tylko własną rezerwację (wpp. `401`).
         description: Resource not found: e.g. there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or hotel/offer does not exist
 ```
 
+Chcąc przejrzeć opinie o danej ofercie (np. podczas wyszukiwania wymarzonej
+oferty), należy odwołać się pod powyższy adres.
+
 #### **Dodawanie opinii**
 
 ```yaml
@@ -2287,27 +2385,27 @@ Anulować można oczywiście tylko własną rezerwację (wpp. `401`).
 #### **Edycja Opinii**
 
 ```yaml
-/hotels/{hotelID}/offers/{offerID}/reviews/{reviewID}:
-  put:
-    description: Edits a client review related to an offer
+/hotels/{hotelID}/offers/{offerID}/reviews:
+  /{reviewID}:
+    put:
+      description: Edits a client review related to an offer
     body:
       application/json: 
         type: |
-        {
-          "reviewID": int,
-          "content": string,
-          "rating": int,
-          "creationDate": datetime,
-          "reviewerUsername": string
-        }            
-    responses:
-      200:
-      401:
-        description: Error related to an attempt of review edition without it's ownership
-      404:
-        description: Resource not found: there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or target review does not exist/is not related to the offer
-
-
+                  {
+                    "reviewID": int,
+                    "content": string,
+                    "rating": int,
+                    "creationDate": datetime,
+                    "reviewerUsername": string
+                  }
+                
+      responses:
+        200:
+        401:
+          description: Error related to an attempt of review edition without it's ownership
+        404:
+          description: Resource not found: there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or target review does not exist/is not related to the offer
 ```
 
 # Scenariusze testowe
