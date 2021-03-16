@@ -1286,7 +1286,7 @@ proces się kończy.
 <img src="Sekwencje/Offer_Delete.png">
 
 Usuwanie oferty odbywa się w następujący sposób. System hotelowy wysyła
-żądanie, a serwer prubuje odczepić pokoje od oferty, jeśli mu się powiedzie to
+żądanie, a serwer, który sprawdza czy nie ma żadnych ofert, jeśli nie to prubuje odczepić pokoje od oferty, jeśli mu się powiedzie to
 odsyła informacje o powodzeniu operacji, a jeśli nie to odsyłą błąd.
 Jeśli system hotelowy nie może wysłać komunikatu ponawia próbę po pewnym
 czasie. Powtarza to 5 razy co sekundę, po czym zarzuca wykonywanie
@@ -1388,21 +1388,6 @@ walidowany (w przypadku niepowodzenie proszony jest o naniesienie poprawek
 w formularzu). Po przejściu przez walidację żądanie wysyłane jest do
 serwera, który ponownie je waliduje i odsyła informacje czy operacja się
 powiodła czy nie.
-
-## Synchronizacja
-
-<img src="Sekwencje/Synchronization_Server.png.png">
-<img src="Sekwencje/Synchronization_Hotel.png"> 
-
-W dowolnym momencie dane między hotelem a serwerem dotyczące dostępności
-ofert mogą się zdesynchronizować. Może to wynikać np. z błędów
-systemowych/sprzętowych po stronie serwera powodujących utratę danych,
-przeorganizowanie przyporządkowań pokoi do rezerwacji czy utworzenia
-nowej, anonimowej rezerwacji w hotelu niezależnej od systemu. W celu
-zsynchronizowania danych, zarówno serwer jak i hotel mogą rozpocząć
-procedurę synchronizacji danych w odniesieniu do konkretnej oferty
-hotelowej. Przesyłane są wówczas dane zawierające przedziały czasowe
-niedostępności ofert odpowiednio wyznaczone przez hotel.
 
 # Hotel-Serwer <a name="7"></a>
 
