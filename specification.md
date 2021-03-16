@@ -2467,30 +2467,6 @@ W przypadku gdy:
 użytkownik jest informowany o błędzie w postaci kodu 400. Ma możliwość
 wznowienia wyszukiwania od momentu zakończonego błędem.
 
-## Synchronizacja / dodawanie lokalnej Rezerwacji
-
-W hotelu dodano nową rezerwacje lokalnie. W tym celu system hotelowy
-dodaje rezerwację używając swojego UserID i przeprowadza synchronizację
-jeśli na serwerze zostanie wykryta rezerwacja kolidująca z wprowadzaną
-to wprowadzana zostaje cofnięta, a wykryta zostaje wprowadzona do
-systemu i operacja kończy się niepowodzeniem. Z punktu widzenia całego
-systemu nie różni się to niczym od przeprowadzenia synchronizacji.
-
-1.  Hotel &#129030; Serwer `Hotel_SYNC_REQUEST`\
-    Rozpoczęcie synchronizacji.
-
-2.  Serwer &#129030; Hotel `HOTEL_SYNC_RESPONSE_SUCCESS`\
-    Poprawnie przeprowadzono synchronizację
-
-W wypadku gdy:
-
--   Offer IsActive = false
-
--   Nie ma przypisanych pokoi do Offer
-
-, to funkcja `AddLocalReservation` nie dodaje rezerwacji do systemu i
-zwraca false.
-
 ## Dodawanie Opinii
 
 Klient dodaje opinię do rezerwacji. W tym celu ściąga swoje rezerwacje i
