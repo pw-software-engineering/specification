@@ -2236,7 +2236,7 @@ Formularz został wypełniony następującymi danymi:
 
 Następuje wymiana wiadomości:
 
--   Hotel &#129030; Serwer `OFFER_ADD_REQUEST`\
+-   Hotel &#129030; Serwer `/offers/ POST`\
     Do modułu serwerowego przesłany zostaje zserializowany obiekt
     oferty. Oferta jest walidowana, a następnie dodawana do lokalnej
     bazy danych serwera. Powiedzmy, że oferta zostaje dodana do
@@ -2244,13 +2244,9 @@ Następuje wymiana wiadomości:
 
     -   OfferID: 3
 
--   Hotel &#129028; Serwer `OFFER_ADD_SUCCESS`\
-    W odpowiedzi odsyłany jest OfferID pod jakim oferta została dodana.
-    Moduł hotelowy następnie dodaje ofertę pod tym samym ID do swojej
-    lokalnej bazy danych.
 
 Wynikiem pomyślnego zakończenia operacji jest dodanie do bazy danych
-serwera i hotelu w stosownych tabelach następującego wpisu:
+serwera w stosownych tabelach następującego wpisu:
 
 -   OfferID: 3
 
@@ -2278,14 +2274,9 @@ W przypadku gdy:
 
 -   Dojdzie do utraty połączenia przy przesyłaniu odpowiedzi serwera.
 
--   Przesyłane wiadomości są niezgodne z przyjętym formatem (kody
-    operacyjne, treść wiadomości).
-
 operacja kończy się niepowodzeniem i nowa oferta nie jest dodawana do
-systemu. Jeśli oferta została już dodana po stronie serwera, z bazy
-danych usuwany jest dodany rekord. W przypadku błędów przy walidacji do
-modułu hotelowego odsyłana jest odpowiedź o kodzie `OFFER_ADD_FAILURE`
-wraz z informacją, które pole zostało błędnie wypełnione.
+systemu. W przypadku błędów przy walidacji do
+modułu hotelowego odsyłana jest odpowiedź o kodzie 200.
 
 ## Edycja istniejącej oferty
 
@@ -2311,18 +2302,13 @@ Formularz został wypełniony następującymi danymi:
 
 Następuje wymiana wiadomości:
 
--   Hotel &#129030; Serwer `OFFER_EDIT_REQUEST`\
+-   Hotel &#129030; Serwer `/offers/{offerID} PATCH`\
     Do modułu serwerowego przesłany zostaje zserializowany obiekt
     oferty. Oferta jest walidowana, a następnie uaktualniany jest
     stosowny wpis w bazie danych serwera.
 
--   Hotel &#129028; Serwer `OFFER_EDIT_SUCCESS`\
-    Po otrzymaniu potwierdzenia moduł hotelowy uaktualnia wpis z daną
-    ofertą w swojej lokalnej bazie danych
-
 Wynikiem pomyślnego zakończenia operacji jest uaktualnienie wpisu
-zawierającego informacje o wskazanej ofercie dla baz danych serwera i
-hotelu:
+zawierającego informacje o wskazanej ofercie dla baz danych serwera:
 
 -   OfferID: 3
 
@@ -2350,13 +2336,11 @@ W przypadku gdy:
 
 -   Dojdzie do utraty połączenia przy przesyłaniu odpowiedzi serwera.
 
--   Przesyłane wiadomości są niezgodne z przyjętym formatem (kody
-    operacyjne, treść wiadomości).
+-   Przesyłane wiadomości są niezgodne z przyjętym formatem.
 
 operacja kończy się niepowodzeniem i oferta nie ulega modyfikacji. W
 przypadku błędów przy walidacji do modułu hotelowego odsyłana jest
-odpowiedź o kodzie `OFFER_EDIT_FAILURE` wraz z informacją, które pole
-zostało błędnie wypełnione.
+odpowiedź o kodzie 200 , 400 , 401 lub 404.
 
 ## Usuwanie istniejącej oferty
 
@@ -2372,13 +2356,9 @@ Wybrana przez niego oferta ma następujące ID:
 
 Następuje wymiana wiadomości:
 
--   Hotel &#129030; Serwer `OFFER_DELETE_REQUEST`\
+-   Hotel &#129030; Serwer `/offers/{offerID} DELETE`\
     Do modułu serwerowego przesłane zostaje OfferID=3. Ze stosownej
     tabeli usuwany jest wpis zawierający żądane OfferID.
-
--   Hotel &#129028; Serwer `OFFER_DELETE_SUCCESS`\
-    Po otrzymaniu potwierdzenia moduł hotelowy również usuwa stosowny
-    wpis ze swojej lokalnej bazy danych.
 
 Operacja zakończona powodzeniem usunie z systemu ofertę o wskazanym
 OfferID (w tym przypadku OfferID=3). W przypadku gdy:
@@ -2394,8 +2374,7 @@ OfferID (w tym przypadku OfferID=3). W przypadku gdy:
 -   Oferta o wskazanym ID nie istnieje w systemie.
 
 operacja kończy się niepowodzeniem i stan ofert nie ulega zmianie (żadna
-z ofert nie jest usuwana). W przypadku wskazania oferty o nieistniejącym
-ID przesyłana jest odpowiedź `OFFER_DELETE_FAILURE`.
+z ofert nie jest usuwana). Odsyłana jest błą o kodzie 200 , 400 , 401 , 404 lub 409.
 
 ## Wyszukiwanie ofert
 
