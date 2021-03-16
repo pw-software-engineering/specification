@@ -2210,7 +2210,7 @@ Anulować można oczywiście tylko własną rezerwację (wpp. `401`).
 
 ### `/hotels/{hotelID}/offers/{offerID}/reviews`
 
-#### **Przeglądanie oponii**
+#### **Przeglądanie opinii**
 
 ```yaml
 /hotels/{hotelID}/offers/{offerID}/reviews:
@@ -2290,17 +2290,16 @@ Anulować można oczywiście tylko własną rezerwację (wpp. `401`).
 /hotels/{hotelID}/offers/{offerID}/reviews/{reviewID}:
   put:
     description: Edits a client review related to an offer
-	body:
-		application/json: 
-		   type: |
-                {
-                  "reviewID": int,
-                  "content": string,
-                  "rating": int,
-                  "creationDate": datetime,
-                  "reviewerUsername": string
-                }
-              
+    body:
+      application/json: 
+        type: |
+        {
+          "reviewID": int,
+          "content": string,
+          "rating": int,
+          "creationDate": datetime,
+          "reviewerUsername": string
+        }            
     responses:
       200:
       401:
