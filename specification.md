@@ -2260,6 +2260,33 @@ Anulować można oczywiście tylko własną rezerwację (wpp. `401`).
           description: Resource not found: there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or target review does not exist/is not related to the offer
 ```
 
+#### **Edycja Opinii**
+
+```yaml
+/hotels/{hotelID}/offers/{offerID}/reviews/{reviewID}:
+  put:
+    description: Edits a client review related to an offer
+	body:
+		application/json: 
+		   type: |
+                {
+                  "reviewID": int,
+                  "content": string,
+                  "rating": int,
+                  "creationDate": datetime,
+                  "reviewerUsername": string
+                }
+              
+    responses:
+      200:
+      401:
+        description: Error related to an attempt of review edition without it's ownership
+      404:
+        description: Resource not found: there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or target review does not exist/is not related to the offer
+
+
+```
+
 # Scenariusze testowe
 
 Scenariusze przedstawiają proponowane testy do przeprowadzania na
