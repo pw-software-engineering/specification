@@ -2314,10 +2314,10 @@ wybiera dla jednej z nich opcję dodania Opinii. Następnie wypełnia
 formularz i przesyła go do serwera. Serwer następnie odsyła info o id
 nadane Opinii. Z punktu widzenia systemu sytuacja wygląda następująco:
 
-1.  Client &#129030; Serwer `/Reservations GET`\
+1.  Client &#129030; Serwer `/client/reservations GET`\
     Pobieranie własnych rezerwacji.
 
-2.  Client &#129030; Serwer `/Review POST`\
+2.  Client &#129030; Serwer `/hotels/{hotelID}/offers/{offerID}/reviews POST`\
     Klient wysyła formularz i dostaje zwrot z id Opinii.
 
 W wypadku gdy:
@@ -2340,18 +2340,18 @@ rezerwację i stąd mieć możliwość usunięcia Opinii przypisanej do danej
 rezerwacji lub wyświetlić wszystkie swoje Opinie i stąd usunąć jedną
 wybraną. Pierwszy sposób z punktu widzenia systemu wygląda następująco:
 
-1.  Client &#129030; Serwer `/Reservations GET`\
+1.  Client &#129030; Serwer `/client/reservations GET`\
     Pobieranie własnych rezerwacji.
 
-2.  Client &#129030; Serwer `/Review/{id} DELETE`\
+2.  Client &#129030; Serwer `/hotels/{hotelID}/offers/{offerID}/reviews/{reviewID} DELETE`\
     Klient wysyła prośbę o usunięcie Opinii o danym id.
 
 Drugi natomiast:
 
-1.  Client &#129030; Serwer `/Review GET`\
+1.  Client &#129030; Serwer `/hotels/{hotelID}/offers/{offerID} GET`\
     Pobieranie własnych Opinii.
 
-2.  Client &#129030; Serwer `/Review/{id} DELETE`\
+2.  Client &#129030; Serwer `/hotels/{hotelID}/offers/{offerID}/reviews/{reviewID} DELETE`\
     Klient wysyła prośbę o usunięcie Opinii o danym id.
 
 Operacja zakończona powodzeniem usunie z systemu daną opinię.
@@ -2373,18 +2373,18 @@ rezerwację i stąd mieć możliwość edycji Opinii przypisanej do danej
 rezerwacji lub wyświetlić wszystkie swoje Opinie i stąd edytować jedną
 wybraną. Pierwszy sposób z punktu widzenia systemu wygląda następująco:
 
-1.  Client &#129030; Serwer `/Reservations GET`\
+1.  Client &#129030; Serwer `/client/reservations: GET`\
     Pobieranie własnych rezerwacji.
 
-2.  Client &#129030; Serwer `/Review/{id} PUT`\
+2.  Client &#129030; Serwer `/hotels/{hotelID}/offers/{offerID}/reviews/{reviewID} PUT`\
     Klient wysyła prośbę o nadpisanie Opinii o danym id.
 
 Drugi natomiast:
 
-1.  Client &#129030; Serwer `/Review GET`\
+1.  Client &#129030; Serwer `/hotels/{hotelID}/offers/{offerID} GET`\
     Pobieranie własnych Opinii.
 
-2.  Client &#129030; Serwer `/Review/{id} PUT`\
+2.  Client &#129030; Serwer `/hotels/{hotelID}/offers/{offerID}/reviews/{reviewID} PUT`\
     Klient wysyła prośbę o nadpisanie Opinii o danym id.
 
 Operacja zakończona powodzeniem nadpisze z systemu daną opinię.
