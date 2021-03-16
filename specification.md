@@ -723,20 +723,7 @@ udostępnianych następnie klientom.
 ### Client
 
 Klasa trzyma informacje o kliencie. Przedstawia jeden rekord z bazy
-danych.
-
-### ClientConnection
-
-Klasa ta to interfejs sieciowy pomiędzy aplikacją kliencką i serwerem.
-Klasa w metodzie `ParseClientRESTRequest` implementuje procesy biznesowe
-związane z REST API, z których korzystają klienci. W zależności od
-żądania wywoływane są odpowiednie metody klasy ServerManager i zwracane
-są klientowi dane lub błąd (co wynika np. ze zwrócenia błędu przez
-odpowiednią metodę klasy ServerManager, bądź wyrzuceniem określonego
-typu wyjątku). Klasa ta może również przekazać żądanie do konkretnego
-hotelu wykorzystując metodę `GetHotelConnection` w ramach dalszej
-realizacji określonego procesu biznesowego (np. tworzenie rezerwacji)
-jednocześnie oczekując na odpowiedź od hotelu.
+danych. W tabeli tej znajduję się równiez informacje potrzebne to zalogowania klienta do serwisu.
 
 ### DataManager
 
@@ -746,7 +733,8 @@ ServerManager.
 
 ### HotelInfo
 
-Klasa trzymająca informacje o hotelach korzystających z serwisu.
+Klasa trzymająca informacje o hotelach korzystających z serwisu wraz z tokenami dostępu dla każdego hotelu.
+Z tabelą tą związana jest tabela `HotelPictures`, w której przechowywane są zdjęcia danego hotelu.
 
 ### HotelSearchOptions
 
@@ -773,11 +761,18 @@ identyfikatorze oferty.
 
 ### Offer
 
-Klasa trzymająca wszystkie informacje o ofercie oraz dodatkowo
-informacje o przedziałach czasowych, w których oferta jest niedostępna.
-Informacja ta jest otrzymywana na bieżąco od hotelu w ramach procesu
-synchronizacji danych. ID oferty jest unikatowe w obrębie jednego hotelu
-(nie globalnie).
+Klasa trzymająca wszystkie informacje o ofercie wraz ze zdjęciami związanymi z tą ofertą w tabeli `OfferPictures` oraz dodatkowo
+informacje o przedziałach czasowych, w których oferta jest dostępna.
+
+### OfferHotelRooms
+
+Klasa reprezentująca tabelę przetrzymującą informację o pokojach hotelowych, w których mogą
+się odbywać rezerwacje w ramach określonych ofert
+
+### HotelRoom
+
+Klasa reprezentjąca tabelę przetrzymująca informację o dostępnych pokojach hotelowych wraz
+z lokalnie adanym identyfikatorem hotelowym danego pokoju (HotelRoomNumber)
 
 ### ReviewInfo
 
@@ -786,77 +781,7 @@ opinii bądź przynależności opinii do konkretnego użytkownika.
 
 ### ClientReview
 
-Zawiera wszystkie informacje o pojedynczej opinii.
-
-### HotelConnectionIncoming
-
-Klasa stanowiąca pomost w komunikacji między hotelem oraz serwerem dla
-wiadomości inicjowanych przez hotel. Głównym zadaniem tej klasy jest
-więc interpretacja żądań formułowanych przez hotel, ich przetwarzanie i
-zwrócenie stosownych informacji za pomocą metody **SendMessage** czy też
-dalsza komunikacja z modułem serwera.
-
--   SendMessage\
-    Podstawowy sposób wysyłania wiadomości do hotelu. Wiadomość jest
-    przekazywana do metody jako parametr typu string. Metoda ta ma na
-    celu zagwarantowanie poprawnego przesyłu danych (np. ponawianie prób
-    wysyłania w przypadku chwilowego przerwania połączenia). Zwracany
-    jest typ bool, który mówi o udanym transferze danych przez gniazdo
-    sieciowe.
-
--   ParseServerMessage\
-    W tej metodzie analizowana jest wiadomość wysłana przez hotel.
-    Poprzez interpretację otrzymanego kodu operacyjnego następuję
-    rozpoznanie rodzaju żądania i jego stosowna obsługa w oparciu o
-    przesłane parametry.
-
-### HotelConnectionOutgoing
-
-Klasa reprezentująca procesy biznesowe, dla których żądania wysyłane są
-z serwera do hotelu. Każda instancja tej klasy zawiera informacje o
-hotelu, w ramach którego utrzymywane jest połączenie sieciowe (pole
-Hotel). Ponadto zawarte jest prywatne pole ProcessList, w którym zawarte
-są informacje o wszystkich bieżąco realizowanych procesach biznesowych
-wraz z ich ID kontekstu, kodem ostatnio wysłanej wiadomości oraz danymi
-związanymi z ostatnio wysłaną wiadomością. Metody:
-
--   ParseHotelMessage\
-    W tej metodzie analizowana jest odpowiedź hotelu związana z danym ID
-    kontekstu procesu. ID procesu jest wiązane z ID procesu zapisanym w
-    polu ProcessList. W zależności od otrzymanej odpowiedzi proces może
-    się zakończyć lub mogą zostać ponownie wywołane odpowiednie metody z
-    klasy ServerManager, utworzona nowa wiadomość (żądanie) i
-    kontynuacja procesu biznesowego.
-
--   SendMessage\
-    Podstawowy sposób wysyłania wiadomości do hotelu. Wiadomość jest
-    przekazywana do metody jako parametr typu string. Metoda ta ma na
-    celu zagwarantowanie poprawnego przesyłu danych (np. ponawianie prób
-    wysyłania w przypadku chwilowego przerwania połączenia). Zwracany
-    jest typ bool, który mówi o udanym transferze danych przez gniazdo
-    sieciowe.
-
--   MakeReservation\
-    Metoda, która tworzy proces związany z utworzeniem nowej rezerwacji.
-    Wysyłane jest odpowiednie żądanie do hotelu oraz odkładane jest na
-    listę ProcessList ID nowego procesu związanego z utworzeniem nowej
-    rezerwacji. W przypadku sukcesu tworzony jest wpis w tabeli
-    ClientReservations o nowo utworzonej rezerwacji.
-
--   CancelReservation\
-    Metoda, która tworzy proces związany z anulowaniem nowej rezerwacji.
-    Wysyłane jest odpowiednie żądanie do hotelu oraz odkładane jest na
-    listę ProcessList ID nowego procesu związanego z utworzeniem nowej
-    rezerwacji. W przypadku sukcesu usuwany jest lokalny wpis o
-    rezerwacji klienta.
-
--   Synchronize\
-    Metoda, która tworzy proces związany z synchronizacją danych
-    dotyczących dostępności oferty. Wysyłane jest odpowiednie żądanie do
-    hotelu oraz odkładane jest na listę ProcessList ID nowego procesu
-    związanego z utworzeniem nowej rezerwacji. W przypadku sukcesu
-    aktualizowane są dane o dostępności określonej oferty za pomocą
-    metody UpdateOfferUnavailability klasy ServerManager.
+Zawiera wszystkie informacje o pojedynczej opinii łącznie z ID klienta i ID oferty.
 
 ### ReservationService
 
@@ -948,6 +873,11 @@ hoteli z bazy danych. Metody:
 
 -   RemoveHotel\
     Usunięcie z systemu hotelu.
+
+### RESTConnection
+
+Klasa odpowiadająca za przetworzenie przychodzących rządań HTTP klientów oraz hoteli, odpowiednie
+oddelegowanie akcji związanych z tymi żądaniami oraz odesłaniem odpowiedzi na żądania.
 
 # Diagramy stanu
 
