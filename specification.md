@@ -1272,12 +1272,12 @@ Dodawanie oferty to operacja między systemem hotelowym, a serwerem.
 System hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
 wszystkimi informacjami o ofercie. Serwer po otrzymaniu żądania waliduje
 otrzymane dane. W przypadku ich niepoprawności odsyła hotelowi stosowny błąd.
-Po zwalidowaniu, nowa oferta zapisywana jest w lokalnej bazie danych serwera.
+Po zwalidowaniu, nowa oferta zapisywana jest w bazie danych serwera.
 Do hotelu odsyłane jest potwierdzenie. Jeśli system hotelowy nie może otrzymać
 komunikatu ponawia próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
 wykonywanie aktywności. W przypadku otrzymania potwierdzenia system
-hotelowy kończy operacje dodaniem do swojej bazy danych oferty. W
-przypadku niepowodzenia oferta nie zostaje dodana do bazy danych i
+hotelowy kończy operacje wyświetleniem potwierdzenia. W
+przypadku niepowodzenia oferta nie zostaje dodana do bazy danych, wyświtlany jest błąd i
 proces się kończy.
 
 ### Usuwanie oferty
@@ -1286,7 +1286,8 @@ proces się kończy.
 <img src="Sekwencje/Offer_Delete.png">
 
 Usuwanie oferty odbywa się w następujący sposób. System hotelowy wysyła
-żądanie, a serwer odsyła informacje o powodzeniu operacji lub o błędzie.
+żądanie, a serwer prubuje odczepić pokoje od oferty, jeśli mu się powiedzie to
+odsyła informacje o powodzeniu operacji, a jeśli nie to odsyłą błąd.
 Jeśli system hotelowy nie może wysłać komunikatu ponawia próbę po pewnym
 czasie. Powtarza to 5 razy co sekundę, po czym zarzuca wykonywanie
 aktywności.
@@ -1349,23 +1350,11 @@ modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 Proces tworzenia rezerwacji zaczyna się po wybraniu przez użytkownika
 aplikacji klienckiej hotelu oraz oferty, w ramach której ma być
 utworzona nowa rezerwacja. Prośba o utworzenie nowej rezerwacji jest
-przesyłana do serwera, który sprawdza czy oferta jest dostępna w oparciu
-o własne dane uzyskane z hotelu. W przypadku braku wolnego terminu
+przesyłana do serwera, który sprawdza czy oferta jest dostępna.
+W przypadku braku wolnego terminu
 zwracany jest błąd i kończony jest proces tworzenia rezerwacji. Jeśli
-jednak z lokalnych danych wynika możliwość utworzenia rezerwacji,
-przesyłane jest żądanie do hotelu o wstępne utworzenie rezerwacji. Hotel
-w oparciu o swoje dane ponownie sprawdza dostępność oferty. W przypadku
-gdy oferta nie jest dostępna w wyznaczonym czasie zawracany jest błąd,
-który oznacza desynchronizację między danymi hotelu a serwera
-opasującymi dostępność oferty. W efekcie serwer odsyła użytkownikowi
-informację o nieudanej rezerwacji oraz natychmiastowo wykonuje proces
-związany z synchronizacją danych. W przypadku gdy hotel będzie mógł
-przyporządkować odpowiedni pokój na podany okres czasowy, tworzy on
-lokalny wpis w bazie danych związany z tą rezerwacją. Klient może anulować
-rezerwację oraz wysłać do serwera odpowiedni komunikat, który następnie
-jest przesyłany do hotelu. Hotel usuwa wówczas utworzony wpis rezerwacji
-i zwraca odpowiednią informację serwerowi, która jest propagowana do
-klienta.
+jednak istnieje możliwość utworzenia rezerwacji, to jest ona tworzona,
+a użytkownikowi wyświetlane jest potwierdzenie.
 
 ### Anulowanie rezerwacji
 
@@ -1373,30 +1362,13 @@ klienta.
 <img src="Sekwencje/Reservation_Cancel.png">
 
 Po wybraniu swojej rezerwacji klient ma możliwość anulowania jej.
-Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do serwera,
-który przekazuje ją odpowiedniemu hotelowi. Hotel usuwa ze swojej bazy
-danych rezerwacje i przesyła potwierdzenie do serwera, który również
-usuwa rezerwację ze swojej bazy danych i przesyła potwierdzenie do
+Aplikacja Kliencka wysyła wtedy żądanie do serwera, a ten po wykonaniu operacji
+przesyła potwierdzenie do
 klienta. W przypadku wystąpienia błędu na którymkolwiek z tych etapów,
 przesyłany jest błąd w stronę klienta i żadne zmiany w bazie danych nie
 są dokonywane. Jeśli któryś z modułów nie może wysłać komunikatu ponawia
 próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
 wykonywanie aktywności.
-
-### Tworzenie rezerwacji lokalnie
-
-<img src="Aktywnosc/IO_Aktywności-Local reservation.png">
-
-Istnieje również możliwość, że klient przyjdzie do hotelu bez rezerwacji, 
-chcąc dokonać rezerwacji bezpośrednio na miejscu. System
-hotelowy może zarezerwować pokój w imieniu klienta. Po takiej rezerwacji
-nie może zostać strworzona opinia, gdyż serwer nie wie o istnieniu
-takowej. ID klienta w bazie danych systemu hotelowego jest IDUser
-hotelu. Hotel nie przetrzymuje wtedy żadnych informacji o kliencie, ale
-za to klient nie musi tworzyć nowego konta. System hotelowy próbuje
-synchronizować się z serwerem i gdy nie ma żadnych przeciwności 
-(np. nie ma rezerwacji które były na serwerze na dany okres, a system
-hotelowy o nich nie wiedział) dodaje rezerwację do lokalnej bazy danych.
 
 ## Opinia
 
