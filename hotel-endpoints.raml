@@ -83,7 +83,6 @@ types:
         type: object
         properties:
           reservationID: integer
-          hotelRoomNumber: string
           offerID: integer
           fromTime: datetime
           toTime: datetime
@@ -95,6 +94,11 @@ types:
           clientID: integer
           name: string
           surname: string
+      room:
+        type: object
+        properties:
+          roomID: int
+          hotelRoomNumber: string
 
 #--------------------------------------------------------------------------------------------------------
 #-----------------------------------------------OFFERS---------------------------------------------------
@@ -153,7 +157,17 @@ types:
           }
     responses:
       200:
-      #optional - return offerID
+        description: Succesfully added. Return offerID
+        body:
+          application/json:
+            example: |
+              { "offerID": 3 }
+      400:
+        description: Unable to add offer
+        body:
+          application/json:
+            example: |
+              { "error": "Unable to add offer" }
   /{offerID}:
     uriParameters: 
       offerID: integer
@@ -219,6 +233,12 @@ types:
             }
       responses:
         200:
+        400:
+          description: Unable to edit offer
+          body:
+            application/json:
+              example: |
+                { "error": "Unable to edit offer" }
         401:
           description: Offer does not belong to this hotel
         404:
@@ -270,6 +290,12 @@ types:
             example: 21
         responses:
           200:
+          400:
+            description: Unable to add room
+            body:
+              application/json:
+                example: |
+                  { "error": "Unable to add room" }
           401:
             description: Offer or room with given ID does not belong to this hotel 
           404:
@@ -340,6 +366,12 @@ types:
             type: integer
             description: roomID
             example: 14
+      400:
+        description: Unable to add room
+        body:
+          application/json:
+            example: |
+              { "error": "Unable to add room" }
       409:
         description: Room with given number already exists
   /{roomID}:
@@ -445,3 +477,9 @@ types:
           }
     responses:
       200:
+      400:
+        description: Unable to add offer
+        body:
+          application/json:
+            example: |
+              { "error": "Unable to add offer" }
