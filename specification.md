@@ -684,202 +684,37 @@ Klasa przetrzymująca wszystkie informacje o opinii.
 
 ### OfferInfo
 
-Klasa przechowuje informacje opisujące daną ofertę bez informacji o jej
-identyfikatorze oraz stanu dotyczącego aktywności.
+Klasa przechowuje informacje opisujące daną ofertę, w tym znacznik `isActive`, 
+mówiący o tym czy oferta jest widoczna dla klientów.
 
-### Offer
+### RoomInfo
 
-Klasa przechowuje informacje dotyczące różnych rodzajów ofert, jakie
-proponuje właściciel hotelu swoim potencjalnym klientom. Ponadto
-przechowywana jest informacja o tym czy oferta jest aktywna oraz jej
-identyfikator.
-
-### Room
-
-`Pokój` jest klasą, która reprezentuje fizyczny pokój obecny w budynku
+`RoomInfo` jest klasą, która reprezentuje fizyczny pokój obecny w budynku
 hotelowym. Jego identyfikacja leży całkowicie w gestii zarządcy
-hotelowego. Ma odwołanie do `Offer`, w ramach której jest przedstawiany
-na stronie.
+hotelowego. Oferty przechowują informacje o tym w jakich pokojach można 
+skorzystać z oferty w postaci listy obiektów typu `RoomInfo`.  
 
-### Client
+### ClientInfo
 
 Reprezentuje klienta, którego konto istnieje w systemie rezerwacji
 pokoi.
-
-### Reservation
-
-Przechowuje informacje dotyczące rezerwacji klienckiej razem z ID pokoju
-oraz ID oferty.
 
 ### ReservationInfo
 
 Przechowuje szczegóły dotyczące pojedynczej, potwierdzonej rezerwacji,
 czyli daty od kiedy do kiedy ma ona trwać, oraz liczbę gości w jej
-ramach.
-
-### DataManager
-
-Klasa pośrednicząca w wydobywaniu informacji z bazy danych. W tym celu
-używa jej HotelManager. Posiada jedną metodę --
-**ParseQueryString(string)**, która przyjmuje kwerendę do sparsowania w
-języku bazy, np SQL. Ze względu na to, że pobranie danych możliwe jest
-wyłącznie za pośrednictwem tej metody, **DataManager** agreguje obiekty
-wszystkich opisanych wyżej klas.
+ramach, a także ID pokoju w którym odbędzie się pobyt oraz ID oferty.
 
 ### HotelInfo
 
-Przechowuje informacje o danym hotelu, takie jak lokalizacja, nazwa czy
-jego opis.
-
-### ServerConnectionIncoming
-
-Klasa stanowiąca pomost w komunikacji między hotelem oraz serwerem dla
-wiadomości inicjowanych przez serwer. Głównym zadaniem tej klasy jest
-więc interpretacja żądań formułowanych przez serwer, ich przetwarzanie i
-zwrócenie stosownych informacji za pomocą metody **SendMessage** czy też
-dalsza komunikacja z modułem serwera. Metody:
-
--   Login\
-    Metoda wywoływana w czasie nawiązywania połączenia ze stosownym
-    gniazdem sieciowym po stronie serwera. Do autentykacji używany jest
-    nadany hotelowi authenticationKey. Zwraca boola czy operacja się
-    powiodła.
-
--   SendMessage\
-    Podstawowy sposób wysyłania wiadomości do serwera. Wiadomość jest
-    przekazywana do metody jako parametr typu string. Metoda ta ma na
-    celu zagwarantowanie poprawnego przesyłu danych (np. ponawianie prób
-    wysyłania w przypadku chwilowego przerwania połączenia). Zwracany
-    jest typ bool, który mówi o udanym transferze danych przez gniazdo
-    sieciowe.
-
--   ParseServerMessage\
-    W tej metodzie analizowana jest wiadomość wysłana przez serwer.
-    Poprzez interpretację otrzymanego kodu operacyjnego następuję
-    rozpoznanie rodzaju żądania i jego stosowna obsługa w oparciu o
-    przesłane parametry.
-
-### ServerConnectionOutgoing
-
-Klasa stanowiąca pomost w komunikacji między hotelem oraz serwerem dla
-wiadomości inicjowanych przez hotel. Metody wewnątrz tej klasy są
-kluczowe dla poprawnej synchronizacji danych pomiędzy modułami
-hotel-serwer. Ponadto występują metody implementujące procesy biznesowe
-i związane z nimi procesy komunikacji. W prywatnym polu ProcessList
-przechowywane są aktualnie przetwarzane procesy biznesowe wraz z kodem
-operacyjnym ostatniej wysłanej wiadomości i jej treścią (informacje te
-są potrzebne do rozróżnienia tych samych procesów biznesowych oraz
-aktualnego kontekstu danego procesu biznesowego i oczekiwanych kodów
-operacyjnych w wiadomościach zwrotnych, a także dalszej obsługi
-wychodzącego żądania po otrzymaniu pozytywnej odpowiedzi od serwera).
-Każda metoda związana z procesem biznesowym wywołuje odpowiednie metody
-klasy HotelManager i w zależności od sukcesu lub rodzaju błędu
-otrzymanego od HotelManager (np. w postaci wyjątku określonego typu)
-tworzy żądania i odpowiedzi o odpowiednich kodach operacyjnych
-jednocześnie implementując cały ciąg wiadomości (i związanych z nimi
-kodami operacyjnymi) oraz obsługę błędów związaną z danym procesem
-biznesowym. Metody:
-
--   Login\
-    Metoda wywoływana w czasie nawiązywania połączenia ze stosownym
-    gniazdem sieciowym po stronie serwera. Do autentykacji używany jest
-    nadany hotelowi authenticationKey. Zwraca boola czy operacja się
-    powiodła.
-
--   ParseServerMessage\
-    W tej metodzie analizowana jest odpowiedź serwera związana z danym
-    ID kontekstu procesu. ID kontekstu procesu jest szukane w prywatnym
-    polu ProcessList w celu zidentyfikowania ostatniej wysłanej
-    wiadomości i odtworzenia kontekstu procesu biznesowego. W zależności
-    od otrzymanej odpowiedzi proces może się zakończyć lub mogą zostać
-    ponownie wywołane odpowiednie metody z klasy HotelManager, utworzona
-    nowa wiadomość (żądanie) i kontynuacja procesu biznesowego.
-
--   SendMessage\
-    Podstawowy sposób wysyłania wiadomości do serwera. Wiadomość jest
-    przekazywana do metody jako parametr typu string. Metoda ta ma na
-    celu zagwarantowanie poprawnego przesyłu danych (np. ponawianie prób
-    wysyłania w przypadku chwilowego przerwania połączenia). Zwracany
-    jest typ bool, który mówi o udanym transferze danych przez gniazdo
-    sieciowe.
-
--   AddOffer\
-    Metoda dodaje do serwerowej i hotelowej bazy danych nową ofertę
-    stworzoną przez managera konta hotelowego (w przypadku sukcesu).\
-    Zwraca wartość bool określającą, czy operacja się powiodła oraz ID,
-    jakie przyjęła oferta po stronie serwera.
-
--   RemoveOffer\
-    Metoda usuwa z serwerowej oraz hotelowej bazy danych ofertę
-    przekazaną jako argument (w przypadku sukcesu).\
-    Zwraca wartość bool określającą, czy operacja się powiodła.
-
--   ActivateOffer, DeactivateOffer\
-    Metoda aktualizuje dostępność oferty przekazanej jako argument
-    metody. Administrator hotelu może ofertę dowolnie zdezaktualizować
-    lub zaktualizować ponownie, manipulując w ten sposób wachlarzem
-    propozycji dla swoich potencjalnych klientów (więcej nt. stanów
-    klasy Offer patrz: (offerStateDiagram)
-    Zwraca wartość bool określającą, czy operacja się powiodła.
+Przechowuje informacje o danym hotelu, takie jak lokalizacja, nazwa,
+opis, czy lista zdjęć przedstawianych klientowi.
 
 ### HotelManager
 
-Centralna klasa modułu. Przechowuje wysokopoziomowe metody niezbędne do
-interakcji z bazą danych i implementacji wszystkich procesów
-biznesowych. Ponadto przechowywane są informacje o hotelu oraz
-referencje do klas ServerConnectionIncoming oraz
-ServerConnectionOutgoing. Metody:
-
--   AddOffer\
-    Metoda dodaje do lokalnej bazy danych nową ofertę stworzoną przez
-    managera konta hotelowego.\
-    Zwraca wartość bool określającą, czy operacja się powiodła.
-
--   RemoveOffer\
-    Metoda usuwa z lokalnej bazy danych ofertę o ID przekazanym jako
-    argument.\
-    Zwraca wartość bool określającą, czy operacja się powiodła.
-
--   ActivateOffer, DeactivateOffer\
-    Metody aktualizują dostępność oferty. Administrator hotelu może
-    ofertę dowolnie zdezaktualizować lub zaaktualizować ponownie,
-    manipulując w ten sposób wachlarzem propozycji dla swoich
-    potencjalnych klientów (więcej nt. stanów klasy Offer patrz: offerStateDiagram.
-    Zwracają wartość bool określającą, czy operacja się powiodła.
-
--   CheckReservationAvailability\
-    Metoda zwraca wartość bool opisującą dostępność oferty o ID w
-    określonym czasie zawartym w obiekcie ReservationInfo przekazanym
-    jako argument.
-
--   RemoveRoom\
-    Usuwa pokój o zadanym ID.\
-    Zwraca wartość bool określającą, czy operacja się powiodła.
-
--   CreateReservation\
-    Odpowiedzialnością metody jest stworzenie rezerwacji. Zwraca wartość
-    bool określającą, czy operacja się powiodła.
-
--   CreateLocalReservation\
-    Odpowiedzialnością metody jest stworzenie rezerwacji anonimowej
-    przez obsługę hotelową. Metoda sprawdza uprawnienia użytkownika czy
-    może on tworzyć nowe rezerwacje. Zwraca wartość bool określającą,
-    czy operacja się powiodła oraz stworzoną rezerwację.
-
--   RemoveReservation\
-    Odpowiedzialnością metody jest usunięcie rezerwacji. Pierwsza,
-    wersja metody obsługuje zapytania otrzymane od serwera. Druga wersja
-    jest dostępna dla członków personelu, sprawdza uprawnienia do
-    wykonania tej akcji.\
-    Zwraca wartość bool określającą, czy operacja się powiodła.
-
--   ValidateOffer Metoda, która ma na celu sprawdzenie czy utworzona,
-    bądź zmodyfikowana oferta jest zgodna z wewnętrznymi regułami
-    związanymi z walidacją danych.
-
--   GetUnavailabilityIntervals Metoda, która przyjmuje jako argument ID
-    oferty oraz zwraca przedziały czasowe, w których oferta jest
-    niedostępna.
+Centralna klasa modułu. Za jej pośrednictwem zachodzi interakcja z modułem serwerowym.
+Zdefiniowane metody pozwalają na pobieranie, tworzenie, a także modyfikację zasobów 
+udostępnianych następnie klientom.
 
 ## Moduł Serwerowy
 
@@ -1272,12 +1107,12 @@ Dodawanie oferty to operacja między systemem hotelowym, a serwerem.
 System hotelowy wysyła po walidacji lokalnej żądanie do serwera wraz z
 wszystkimi informacjami o ofercie. Serwer po otrzymaniu żądania waliduje
 otrzymane dane. W przypadku ich niepoprawności odsyła hotelowi stosowny błąd.
-Po zwalidowaniu, nowa oferta zapisywana jest w lokalnej bazie danych serwera.
+Po zwalidowaniu, nowa oferta zapisywana jest w bazie danych serwera.
 Do hotelu odsyłane jest potwierdzenie. Jeśli system hotelowy nie może otrzymać
 komunikatu ponawia próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
 wykonywanie aktywności. W przypadku otrzymania potwierdzenia system
-hotelowy kończy operacje dodaniem do swojej bazy danych oferty. W
-przypadku niepowodzenia oferta nie zostaje dodana do bazy danych i
+hotelowy kończy operacje wyświetleniem potwierdzenia. W
+przypadku niepowodzenia oferta nie zostaje dodana do bazy danych, wyświtlany jest błąd i
 proces się kończy.
 
 ### Usuwanie oferty
@@ -1286,7 +1121,8 @@ proces się kończy.
 <img src="Sekwencje/Offer_Delete.png">
 
 Usuwanie oferty odbywa się w następujący sposób. System hotelowy wysyła
-żądanie, a serwer odsyła informacje o powodzeniu operacji lub o błędzie.
+żądanie, a serwer, który sprawdza czy nie ma żadnych ofert, jeśli nie to prubuje odczepić pokoje od oferty, jeśli mu się powiedzie to
+odsyła informacje o powodzeniu operacji, a jeśli nie to odsyłą błąd.
 Jeśli system hotelowy nie może wysłać komunikatu ponawia próbę po pewnym
 czasie. Powtarza to 5 razy co sekundę, po czym zarzuca wykonywanie
 aktywności.
@@ -1349,23 +1185,11 @@ modułami podczas tworzenia i anulowania rezerwacji przez klienta.
 Proces tworzenia rezerwacji zaczyna się po wybraniu przez użytkownika
 aplikacji klienckiej hotelu oraz oferty, w ramach której ma być
 utworzona nowa rezerwacja. Prośba o utworzenie nowej rezerwacji jest
-przesyłana do serwera, który sprawdza czy oferta jest dostępna w oparciu
-o własne dane uzyskane z hotelu. W przypadku braku wolnego terminu
+przesyłana do serwera, który sprawdza czy oferta jest dostępna.
+W przypadku braku wolnego terminu
 zwracany jest błąd i kończony jest proces tworzenia rezerwacji. Jeśli
-jednak z lokalnych danych wynika możliwość utworzenia rezerwacji,
-przesyłane jest żądanie do hotelu o wstępne utworzenie rezerwacji. Hotel
-w oparciu o swoje dane ponownie sprawdza dostępność oferty. W przypadku
-gdy oferta nie jest dostępna w wyznaczonym czasie zawracany jest błąd,
-który oznacza desynchronizację między danymi hotelu a serwera
-opasującymi dostępność oferty. W efekcie serwer odsyła użytkownikowi
-informację o nieudanej rezerwacji oraz natychmiastowo wykonuje proces
-związany z synchronizacją danych. W przypadku gdy hotel będzie mógł
-przyporządkować odpowiedni pokój na podany okres czasowy, tworzy on
-lokalny wpis w bazie danych związany z tą rezerwacją. Klient może anulować
-rezerwację oraz wysłać do serwera odpowiedni komunikat, który następnie
-jest przesyłany do hotelu. Hotel usuwa wówczas utworzony wpis rezerwacji
-i zwraca odpowiednią informację serwerowi, która jest propagowana do
-klienta.
+jednak istnieje możliwość utworzenia rezerwacji, to jest ona tworzona,
+a użytkownikowi wyświetlane jest potwierdzenie.
 
 ### Anulowanie rezerwacji
 
@@ -1373,30 +1197,13 @@ klienta.
 <img src="Sekwencje/Reservation_Cancel.png">
 
 Po wybraniu swojej rezerwacji klient ma możliwość anulowania jej.
-Aplikacja Kliencka wysyła wtedy żądanie usunięcia rezerwacji do serwera,
-który przekazuje ją odpowiedniemu hotelowi. Hotel usuwa ze swojej bazy
-danych rezerwacje i przesyła potwierdzenie do serwera, który również
-usuwa rezerwację ze swojej bazy danych i przesyła potwierdzenie do
+Aplikacja Kliencka wysyła wtedy żądanie do serwera, a ten po wykonaniu operacji
+przesyła potwierdzenie do
 klienta. W przypadku wystąpienia błędu na którymkolwiek z tych etapów,
 przesyłany jest błąd w stronę klienta i żadne zmiany w bazie danych nie
 są dokonywane. Jeśli któryś z modułów nie może wysłać komunikatu ponawia
 próbę po pewnym czasie. Powtarza to 5 razy co sekundę, po czym zarzuca
 wykonywanie aktywności.
-
-### Tworzenie rezerwacji lokalnie
-
-<img src="Aktywnosc/IO_Aktywności-Local reservation.png">
-
-Istnieje również możliwość, że klient przyjdzie do hotelu bez rezerwacji, 
-chcąc dokonać rezerwacji bezpośrednio na miejscu. System
-hotelowy może zarezerwować pokój w imieniu klienta. Po takiej rezerwacji
-nie może zostać strworzona opinia, gdyż serwer nie wie o istnieniu
-takowej. ID klienta w bazie danych systemu hotelowego jest IDUser
-hotelu. Hotel nie przetrzymuje wtedy żadnych informacji o kliencie, ale
-za to klient nie musi tworzyć nowego konta. System hotelowy próbuje
-synchronizować się z serwerem i gdy nie ma żadnych przeciwności 
-(np. nie ma rezerwacji które były na serwerze na dany okres, a system
-hotelowy o nich nie wiedział) dodaje rezerwację do lokalnej bazy danych.
 
 ## Opinia
 
@@ -1433,7 +1240,8 @@ hotelowej. Przesyłane są wówczas dane zawierające przedziały czasowe
 niedostępności ofert odpowiednio wyznaczone przez hotel.
 
 Komunikacja międzymodułowa
-==========================
+
+# Hotel-Serwer <a name="7"></a>
 
 Komunikacja wewnątrz systemu po obu stronach serwera (klient <-> serwer oraz serwer <-> hotel)
 odbywa się przy użyciu połączeń HTTP i REST API. Poniżej opisane są
@@ -2550,7 +2358,7 @@ Formularz został wypełniony następującymi danymi:
 
 Następuje wymiana wiadomości:
 
--   Hotel &#129030; Serwer `OFFER_ADD_REQUEST`\
+-   Hotel &#129030; Serwer `/offers/ POST`\
     Do modułu serwerowego przesłany zostaje zserializowany obiekt
     oferty. Oferta jest walidowana, a następnie dodawana do lokalnej
     bazy danych serwera. Powiedzmy, że oferta zostaje dodana do
@@ -2558,13 +2366,9 @@ Następuje wymiana wiadomości:
 
     -   OfferID: 3
 
--   Hotel &#129028; Serwer `OFFER_ADD_SUCCESS`\
-    W odpowiedzi odsyłany jest OfferID pod jakim oferta została dodana.
-    Moduł hotelowy następnie dodaje ofertę pod tym samym ID do swojej
-    lokalnej bazy danych.
 
 Wynikiem pomyślnego zakończenia operacji jest dodanie do bazy danych
-serwera i hotelu w stosownych tabelach następującego wpisu:
+serwera w stosownych tabelach następującego wpisu:
 
 -   OfferID: 3
 
@@ -2592,14 +2396,9 @@ W przypadku gdy:
 
 -   Dojdzie do utraty połączenia przy przesyłaniu odpowiedzi serwera.
 
--   Przesyłane wiadomości są niezgodne z przyjętym formatem (kody
-    operacyjne, treść wiadomości).
-
 operacja kończy się niepowodzeniem i nowa oferta nie jest dodawana do
-systemu. Jeśli oferta została już dodana po stronie serwera, z bazy
-danych usuwany jest dodany rekord. W przypadku błędów przy walidacji do
-modułu hotelowego odsyłana jest odpowiedź o kodzie `OFFER_ADD_FAILURE`
-wraz z informacją, które pole zostało błędnie wypełnione.
+systemu. W przypadku błędów przy walidacji do
+modułu hotelowego odsyłana jest odpowiedź o kodzie 200.
 
 ## Edycja istniejącej oferty
 
@@ -2625,18 +2424,13 @@ Formularz został wypełniony następującymi danymi:
 
 Następuje wymiana wiadomości:
 
--   Hotel &#129030; Serwer `OFFER_EDIT_REQUEST`\
+-   Hotel &#129030; Serwer `/offers/{offerID} PATCH`\
     Do modułu serwerowego przesłany zostaje zserializowany obiekt
     oferty. Oferta jest walidowana, a następnie uaktualniany jest
     stosowny wpis w bazie danych serwera.
 
--   Hotel &#129028; Serwer `OFFER_EDIT_SUCCESS`\
-    Po otrzymaniu potwierdzenia moduł hotelowy uaktualnia wpis z daną
-    ofertą w swojej lokalnej bazie danych
-
 Wynikiem pomyślnego zakończenia operacji jest uaktualnienie wpisu
-zawierającego informacje o wskazanej ofercie dla baz danych serwera i
-hotelu:
+zawierającego informacje o wskazanej ofercie dla baz danych serwera:
 
 -   OfferID: 3
 
@@ -2664,13 +2458,11 @@ W przypadku gdy:
 
 -   Dojdzie do utraty połączenia przy przesyłaniu odpowiedzi serwera.
 
--   Przesyłane wiadomości są niezgodne z przyjętym formatem (kody
-    operacyjne, treść wiadomości).
+-   Przesyłane wiadomości są niezgodne z przyjętym formatem.
 
 operacja kończy się niepowodzeniem i oferta nie ulega modyfikacji. W
 przypadku błędów przy walidacji do modułu hotelowego odsyłana jest
-odpowiedź o kodzie `OFFER_EDIT_FAILURE` wraz z informacją, które pole
-zostało błędnie wypełnione.
+odpowiedź o kodzie 200 , 400 , 401 lub 404.
 
 ## Usuwanie istniejącej oferty
 
@@ -2686,13 +2478,9 @@ Wybrana przez niego oferta ma następujące ID:
 
 Następuje wymiana wiadomości:
 
--   Hotel &#129030; Serwer `OFFER_DELETE_REQUEST`\
+-   Hotel &#129030; Serwer `/offers/{offerID} DELETE`\
     Do modułu serwerowego przesłane zostaje OfferID=3. Ze stosownej
     tabeli usuwany jest wpis zawierający żądane OfferID.
-
--   Hotel &#129028; Serwer `OFFER_DELETE_SUCCESS`\
-    Po otrzymaniu potwierdzenia moduł hotelowy również usuwa stosowny
-    wpis ze swojej lokalnej bazy danych.
 
 Operacja zakończona powodzeniem usunie z systemu ofertę o wskazanym
 OfferID (w tym przypadku OfferID=3). W przypadku gdy:
@@ -2708,8 +2496,7 @@ OfferID (w tym przypadku OfferID=3). W przypadku gdy:
 -   Oferta o wskazanym ID nie istnieje w systemie.
 
 operacja kończy się niepowodzeniem i stan ofert nie ulega zmianie (żadna
-z ofert nie jest usuwana). W przypadku wskazania oferty o nieistniejącym
-ID przesyłana jest odpowiedź `OFFER_DELETE_FAILURE`.
+z ofert nie jest usuwana). Odsyłana jest błą o kodzie 200 , 400 , 401 , 404 lub 409.
 
 ## Wyszukiwanie ofert
 
@@ -2801,30 +2588,6 @@ W przypadku gdy:
 
 użytkownik jest informowany o błędzie w postaci kodu 400. Ma możliwość
 wznowienia wyszukiwania od momentu zakończonego błędem.
-
-## Synchronizacja / dodawanie lokalnej Rezerwacji
-
-W hotelu dodano nową rezerwacje lokalnie. W tym celu system hotelowy
-dodaje rezerwację używając swojego UserID i przeprowadza synchronizację
-jeśli na serwerze zostanie wykryta rezerwacja kolidująca z wprowadzaną
-to wprowadzana zostaje cofnięta, a wykryta zostaje wprowadzona do
-systemu i operacja kończy się niepowodzeniem. Z punktu widzenia całego
-systemu nie różni się to niczym od przeprowadzenia synchronizacji.
-
-1.  Hotel &#129030; Serwer `Hotel_SYNC_REQUEST`\
-    Rozpoczęcie synchronizacji.
-
-2.  Serwer &#129030; Hotel `HOTEL_SYNC_RESPONSE_SUCCESS`\
-    Poprawnie przeprowadzono synchronizację
-
-W wypadku gdy:
-
--   Offer IsActive = false
-
--   Nie ma przypisanych pokoi do Offer
-
-, to funkcja `AddLocalReservation` nie dodaje rezerwacji do systemu i
-zwraca false.
 
 ## Dodawanie Opinii
 
@@ -2934,7 +2697,7 @@ wypełnia formularz:
 
 -   Number of adults: 2
 
-i przesyła go do serwera. Po chwili otrzymuje szczegóły dot. swojej
+i przesyła go do serwera używając endpoint'u `/hotels/{hotelID}/offers/{offerID}/reservations POST`. Po chwili otrzymuje szczegóły dot. swojej
 potwierdzonej rezerwacji.
 
 -   Klient najpierw popełnia pomyłkę i w polu \"Liczba dzieci\" wpisuje
@@ -2942,14 +2705,12 @@ potwierdzonej rezerwacji.
     danych.\
     Jeżeli walidacja UI uniemożliwia wprowadzenie takiej liczby, można
     zasymulować ten przypadek ręcznym odniesieniem się do
-    `/Reservations POST`.
+    `/hotels/{hotelID}/offers/{offerID}/reservations POST`.
 
 -   Tym razem klient wypełnił formularz poprawnie. Nastąpiła wymiana
     wiadomości:
 
-    -   Client &#129030; Serwer `/Reservations POST`
-
-    -   Serwer &#129030; Hotel `RESERVATION_CREATE`
+    -   Client &#129030; Serwer `/hotels/{hotelID}/offers/{offerID}/reservations POST`
 
     -   Client &#129028; Serwer `HTTP 200`
 
@@ -2958,7 +2719,7 @@ potwierdzonej rezerwacji.
     formularzu.
 
 -   Rezerwację widzi również hotel. Ma łatwy podgląd danych klienta,
-    pokoju do którego zostanie skierowany oraz oferty, w ramach której
+    pokoju w którym odbędzie się pobyt oraz oferty, w ramach której
     złożono rezerwację wraz z przedziałem czasowym z nią związanym.
 
 ## Anulowanie Rezerwacji
@@ -2968,26 +2729,22 @@ Klient ma na swoim koncie 3 rezerwacje:
 1.  rezerwacja zakończona kilka dni temu - istnieje możliwość oceny
     pobytu,
 
-2.  rezerwacja w trakcie,
+2.  rezerwacja w trakcie realizacji,
 
-3.  rezerwacja z przyszłą datą pobytu, (już opłacona).
+3.  rezerwacja z przyszłą datą pobytu.
 
 Spośród nich tylko jedną (ostatnią) można anulować.
 
 -   Próba ręcznego anulowania rezerwacji przeszłej bądź będącej w
     trakcie, przez odwołanie się do endpointu
-    `/Reservations/{HotelID}/{ReservationID} DELETE` zwraca 400. Bazy
-    danych pozostają nienaruszone.
+     `/hotels/{hotelID}/offers/{offerID}/reservations/{reservationID} DELETE` zwraca 400. Baza
+    danych pozostaje nienaruszona.
 
 -   Anulowanie przyszłej rezerwacji kończy się sukcesem. Wymiana
     komunikatów:
 
     -   Client &#129030; Serwer
-        `/Reservations/{HotelID}/{ReservationID} DELETE`
-
-    -   Serwer &#129030; Hotel `RESERVATION_DELETE`
-
-    -   Serwer &#129028; Hotel `RESERVATION_DELETE_SUCCESS`
+        `/hotels/{hotelID}/offers/{offerID}/reservations/{reservationID} DELETE`
 
     -   Client &#129028; Serwer `HTTP 200`
 
@@ -2996,8 +2753,7 @@ Spośród nich tylko jedną (ostatnią) można anulować.
 -   Hotel również widzi aktualną listę rezerwacji.
 
 -   Jeśli zaszła taka potrzeba, dane (np. te dotyczące (nie)dostępności
-    oferty) po stronie serwera zostały zaktualizowane odpowiednio do
-    zmian - Serwer oraz hotel pozostają zsynchronizowane.
+    oferty) po stronie serwera zostały zaktualizowane.
 
 # Wymagania Technologiczne
 
