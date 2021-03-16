@@ -22,6 +22,31 @@ traits:
           example: 20
           default: 10
 
+securitySchemes: 
+  customTokenSecurity:
+    type: x-hotel-token
+    description: Custom security token given by the server administrator.
+    describedBy: 
+      headers: 
+        x-hotel-token:
+          description: This header contains a string represening a valid token received from the server administrator.
+      responses: 
+        401:
+          description: |
+            Hotel provided an invalid token (invalid or malformed token format, expired token) and couldn't be authenticated. Re-authentication is necessary.
+          body: 
+            application/json:
+              type: authenticationError
+
+types:
+  authenticationError:
+    type: object
+    properties: 
+      desc:
+        type: string
+        required: true
+        description: A description of the type of the authentication error.
+
 types:
   offerPreview:
     type: object
