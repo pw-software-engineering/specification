@@ -2079,6 +2079,7 @@ Następuje wymiana wiadomości:
 
     -   OfferID: 3
 
+-   Hotel &#129028; Serwer `HTTP 200`
 
 Wynikiem pomyślnego zakończenia operacji jest dodanie do bazy danych
 serwera w stosownych tabelach następującego wpisu:
@@ -2142,6 +2143,8 @@ Następuje wymiana wiadomości:
     oferty. Oferta jest walidowana, a następnie uaktualniany jest
     stosowny wpis w bazie danych serwera.
 
+-   Hotel &#129028; Serwer `HTTP 200`
+
 Wynikiem pomyślnego zakończenia operacji jest uaktualnienie wpisu
 zawierającego informacje o wskazanej ofercie dla baz danych serwera:
 
@@ -2194,6 +2197,8 @@ Następuje wymiana wiadomości:
 -   Hotel &#129030; Serwer `/offers/{offerID} DELETE`\
     Do modułu serwerowego przesłane zostaje OfferID=3. Ze stosownej
     tabeli usuwany jest wpis zawierający żądane OfferID.
+
+-   Hotel &#129028; Serwer `HTTP 200`
 
 Operacja zakończona powodzeniem usunie z systemu ofertę o wskazanym
 OfferID (w tym przypadku OfferID=3). W przypadku gdy:
