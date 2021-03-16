@@ -1432,12 +1432,20 @@ procedurę synchronizacji danych w odniesieniu do konkretnej oferty
 hotelowej. Przesyłane są wówczas dane zawierające przedziały czasowe
 niedostępności ofert odpowiednio wyznaczone przez hotel.
 
-# Hotel-Serwer <a name="7"></a>
+Komunikacja międzymodułowa
+==========================
 
-Komunikacja pomiędzy modułem aplikacji hotelowej, a serwerem
+Komunikacja wewnątrz systemu po obu stronach serwera (klient <-> serwer oraz serwer <-> hotel)
 odbywa się przy użyciu połączeń HTTP i REST API. Poniżej opisane są
-wszystkie endpointy oraz związane z nimi żądania i odpowiedzi HTTP
-zamodelowane w RAML. Używane w kodzie poniżej typy zostały dokładnie opisane w pliku [hotel-endpoints.raml](hotel-endpoints.raml).
+wszystkie endpointy oraz związane z nimi żądania i odpowiedzi zamodelowane w RAML.
+
+Wszystkie używane w kodzie poniżej typy zostały dokładnie opisane w plikach
+[hotel-endpoints.raml](hotel-endpoints.raml) oraz
+[client-endpoints.raml](client-endpoints.raml) (warto się zaznajomić).
+Ponadto wersja zwizualizowana komunikacji znajduje się odpowiednio w plikach
+[hotel-endpoints.html](hotel-endpoints.html) oraz [client-endpoints.html](client-endpoints.html).
+
+# Hotel-Serwer <a name="7"></a>
 
 ## Zarządzanie ofertami i pokojami
 
@@ -1998,19 +2006,16 @@ Endpoint służący do aktualizacji danych reprezentujących hotel.
 
 # Klient-Serwer
 
-Komunikacja pomiędzy klientem (modułem aplikacji klienckiej), a serwerem
-odbywa się przy użyciu połączeń HTTP i REST API. Poniżej opisane są
-wszystkie endpointy oraz związane z nimi żądania i odpowiedzi HTTP
-zamodelowane w RAML.
-
 ## Autentykacja i autoryzacja
 
 Wszystkie endpointy serwera (poza endpointem związanym z logowaniem)
 zabezpieczone są przez schemat autentykacji opierający się na tworzeniu
 tokenów autentykacyjnych dla każdego klienta w momencie gdy dostarczone
-zostaną poprawne dane logowania. W każdym zapytaniu klienta powinien być
+zostaną poprawne dane logowania.
+
+W każdym zapytaniu klienta powinien być
 dołączony nagłówek `x-session-token`, którego wartością jest otrzymany
-przez klienta token autentykacyjny. Token ten jest zawsze tworzony po
+przez klienta __token autentykacyjny__. Token ten jest zawsze tworzony po
 stronie serwera. Generowany token ma format JSON i jego
 zawartość jest podana poniżej. Token
 `clientSessionToken` jest obiektem JSON zawierającym właściwość `id`,
@@ -2181,7 +2186,7 @@ błędu.
                 }
 ```
 
-Endpoint ten nie jest zabezpieczony przez schemat autentykacji - nie
+Endpoint ten nie jest zabezpieczony przez schemat autentykacji – nie
 jest wymagane dołączanie tokenu do nagłówka `"x-session-token"`.
 Służy do logowania się użytkowników do systemu za pomocą ustalonego
 przy rejestracji loginu i hasła. Wysłane przez klienta dane logowania
