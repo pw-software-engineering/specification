@@ -211,40 +211,40 @@ types:
             description: Cannot delete reservation becuase of no ownership of a reservation with ID equal to reservationID path parameter
           404:
             description: Reservation with ID equal to reservationID path parameter doesn't exist
-        /review:
-          get:
-            description: Pobiera opinię do danej rezerwacji
+      /review:
+        get:
+          description: Pobiera opinię do danej rezerwacji
+          responses:
+            200:
+              body:
+                  application/json: 
+                     type: |
+                        {
+                          "reviewID": int,
+                          "content": string,
+                          "rating": int,
+                          "creationDate": datetime,
+                          "reviewerUsername": string
+                        }
+            404:
+              description: Reservation not found
+        put:
+          description: Creates/edits a new review related to an offer
+          body:
+            application/json:
+              type: |
+                {
+                  "content": string,
+                  "rating": int,
+                }                
             responses:
               200:
-                body:
-                    application/json: 
-                       type: |
-                          {
-                            "reviewID": int,
-                            "content": string,
-                            "rating": int,
-                            "creationDate": datetime,
-                            "reviewerUsername": string
-                          }
               404:
-                description: Reservation not found
-          put:
-            description: Creates/edits a new review related to an offer
-            body:
-              application/json:
-                type: |
-                  {
-                    "content": string,
-                    "rating": int,
-                  }                
-              responses:
-                200:
-                404:
-          delete:
-              description: Deletes a client review related to an offer
-              responses:
-                200:
-                404:
+        delete:
+            description: Deletes a client review related to an offer
+            responses:
+              200:
+              404:
 
 /hotels:
   get:
