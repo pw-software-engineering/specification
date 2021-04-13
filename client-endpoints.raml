@@ -179,21 +179,72 @@ types:
                       "country": string,
                       "city": string
                     },
-                    "offerReservations": {
-                      "reservationsInfo": [
-                        {
-                          "reservationID": int,
-                          "from": datetime,
-                          "to": datetime,
-                          "numberOfChildren": int,
-                          "numberOfAdults": int
-                        }
-                      ],
+                    "reservationInfo":  {
+                      "reservationID": int,
+                      "from": datetime,
+                      "to": datetime,
+                      "numberOfChildren": int,
+                      "numberOfAdults": int,
+                      "reviewID": int? (optional - present if there is no client review for an offer)
+                    }
+                    "offerInfoPreview": {
                       "offerID": int,
-                      "offerReviewID": int? (optional - not present if there is no client review for an offer),
+                      "offerTitle": string,
+                      "offerPreviewPicture": file,
                     }
                   }
                 ]
+    /{reservationID}:
+      delete:
+        description: Cancel exisiting reservation provided that it hasn't started
+        responses:
+          200:
+          400:
+            body:
+              application/json:
+                description: Reservations cannot be deleted unless they haven't begun
+                example: |
+                  {
+                    "error": "Reservation is currently underway or already completed"
+                  }
+          401:
+            description: Cannot delete reservation becuase of no ownership of a reservation with ID equal to reservationID path parameter
+          404:
+            description: Reservation with ID equal to reservationID path parameter doesn't exist
+        /review:
+          get:
+            description: Pobiera opinię do danej rezerwacji
+            responses:
+              200:
+                body:
+                    application/json: 
+                       type: |
+                          {
+                            "reviewID": int,
+                            "content": string,
+                            "rating": int,
+                            "creationDate": datetime,
+                            "reviewerUsername": string
+                          }
+              404:
+                description: Reservation not found
+          put:
+            description: Creates/edits a new review related to an offer
+            body:
+              application/json:
+                type: |
+                  {
+                    "content": string,
+                    "rating": int,
+                  }                
+              responses:
+                200:
+                404:
+          delete:
+              description: Deletes a client review related to an offer
+              responses:
+                200:
+                404:
 
 /hotels:
   get:
@@ -333,23 +384,6 @@ types:
               }
       404:
         description: Resource not found: e.g. there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or hotel/offer does not exist
-  /{reservationID}:
-    delete:
-      description: Cancel exisiting reservation provided that it hasn't started
-      responses:
-        200:
-        400:
-          body:
-            application/json:
-              description: Reservations cannot be deleted unless they haven't begun
-              example: |
-                {
-                  "error": "Reservation is currently underway or already completed"
-                }
-        401:
-          description: Cannot delete reservation becuase of no ownership of a reservation with ID equal to reservationID query parameter
-        404:
-          description: Reservation with ID equal to reservationID query parameter doesn't exist
 
 /hotels/{hotelID}/offers/{offerID}/reviews:
   get:
@@ -371,60 +405,27 @@ types:
               ]
       404:
         description: Resource not found: e.g. there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or hotel/offer does not exist
-  post:
-    description: Creates a new review related to an offer
-    body:
-      application/json:
-        type: |
-          {
-            "content": string,
-            "rating": int,
-          }
+
+/hotels/{hotelID}/reviews:
+  get:
+    is:  [pageable]
+    description: Returns all reviews related to a hotel
     responses:
       200:
         body:
           application/json:
-            description: Returns an ID corresponding to a newly created review
+            description: An arry of objects containing information related to offer reviews
             type: |
-              {
-                "reviewID": int
-              }
-      400:
-        body:
-          application/json:
-            description: Invalid format of the JSON obejct containing data related to a new review
-            example: |
-              {
-                error: "[content] property is required and must be a non-empty string"
-              }
+              [
+                {
+                  "reviewID": int,
+                  "offerID": int,
+                  "offerTitle": string,
+                  "content": string,
+                  "rating": int,
+                  "creationDate": datetime,
+                  "reviewerUsername": string
+                }
+              ]
       404:
-        description: Resource not found: e.g. there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or hotel/offer does not exist
-  /{reviewID}:
-    delete:
-      description: Deletes a client review related to an offer
-      responses:
-        200:
-        401:
-          description: Error related to an attempt of review deletion without it's ownership
-        404:
-          description: Resource not found: there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or target review does not exist/is not related to the offer
-    put:
-      description: Edits a client review related to an offer
-    body:
-      application/json: 
-        type: |
-                  {
-                    "reviewID": int,
-                    "content": string,
-                    "rating": int,
-                    "creationDate": datetime,
-                    "reviewerUsername": string
-                  }
-                
-      responses:
-        200:
-        401:
-          description: Error related to an attempt of review edition without it's ownership
-        404:
-          description: Resource not found: there is no hotel with ID equal to hotelID that has an offer with ID equal to offerID or target review does not exist/is not related to the offer
-
+        description: Hotel not found
