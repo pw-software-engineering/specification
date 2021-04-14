@@ -238,7 +238,10 @@ types:
                   "rating": int,
                 }                
             responses:
-              200:
+              200: |
+                {
+                  "reviewID": int
+                }
               404:
         delete:
             description: Deletes a client review related to an offer
