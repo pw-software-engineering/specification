@@ -1237,6 +1237,7 @@ types:
             example: |
               [
                 {
+                  "offerID": 1,
                   "isActive": true,
                   "offerTitle": "Great Offer",
                   "costPerChild": 120.0,
@@ -1245,6 +1246,7 @@ types:
                   "offerPreviewPicture": "kBKuB875JH5VJkhu",
                 },
                 {
+                  "offerID": 17,
                   "isActive": false,
                   "offerTitle": "Bad Offer",
                   "costPerChild": 130.0,
